@@ -31,6 +31,25 @@ export const StyledText = styled(Typography.Text)`
     overflow: hidden;
 `
 
+export const LogoBox = styled.div`
+    display: flex;
+    padding: 0px 10px 10px 10px;
+    align-items: center;
+    gap: 10px;
+`
+
+export const ImageBox = styled.div`
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  overflow: hidden;
+`;
+
+export const LogoText = styled(StyledText)`
+    font-size: 20px;
+`
+
 export const ArrowDown = styled(CaretDownFilled) <{ isRotated: boolean }>`
     font-size: 10px;
     position: absolute;

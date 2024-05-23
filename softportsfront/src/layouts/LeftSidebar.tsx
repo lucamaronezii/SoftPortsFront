@@ -3,6 +3,8 @@ import { Flex } from 'antd'
 import { CustomSidebar } from './styles'
 import SidebarItem from '../components/SidebarItem/SidebarItem'
 import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, UserOutlined } from '@ant-design/icons'
+import logo from '../assets/SoftPortsLogo.png'
+import { ImageBox, LogoBox, LogoText, StyledText } from '../components/SidebarItem/styles'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)
@@ -10,6 +12,12 @@ const LeftSidebar = () => {
   return (
     <CustomSidebar vertical open={open}>
       <Flex vertical gap={8}>
+        <LogoBox>
+          <ImageBox>
+            <img src={logo} alt="SoftPorts Logo" style={{ width: '100%' }} />
+          </ImageBox>
+          <LogoText>Softports</LogoText>
+        </LogoBox>
         <SidebarItem
           text='Dashboard'
           icFilled={<PieChartFilled />}

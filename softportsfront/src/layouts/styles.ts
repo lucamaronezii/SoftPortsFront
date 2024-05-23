@@ -9,7 +9,7 @@ export const CustomSidebar = styled(Flex)<ILeftSidebarProps>`
     box-sizing: border-box;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 20px;
+    padding: 22px 20px;
     color: #FFF;
     gap: 20px;
 `
