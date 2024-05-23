@@ -20,7 +20,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                 selected={verify}
                 hasChild={hasChild}
             >
-                <Flex align='center' gap={12}>
+                <Flex align='center' gap={14}>
                     {verify ? selIcon : unsIcon}
                     <StyledText>{text}</StyledText>
                 </Flex>
