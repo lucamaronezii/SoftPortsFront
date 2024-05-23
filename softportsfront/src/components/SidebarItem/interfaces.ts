@@ -6,4 +6,5 @@ export interface ISidebarItemProps {
     selected?: boolean;
     icFilled: React.ReactNode;
     icOutlined: React.ReactNode;
+    hasChild?: boolean;
 }

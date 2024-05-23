@@ -6,6 +6,11 @@ import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartO
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)
+  const [selectedItem, setSelectedItem] = useState<string>('')
+
+  const handleItemClick = (to: string) => {
+    setSelectedItem(to)
+  }
 
   return (
     <CustomSidebar vertical open={open}>
@@ -21,6 +26,7 @@ const LeftSidebar = () => {
           icFilled={<FolderFilled />}
           icOutlined={<FolderOutlined />}
           to='/projetos'
+          hasChild
         />
         <SidebarItem
           text='Usuários'
@@ -35,8 +41,12 @@ const LeftSidebar = () => {
           to='/config'
         />
       </Flex>
-
-      <SidebarItem text='Logout' icFilled={<LogoutOutlined />} icOutlined={<LogoutOutlined />} to='/' />
+      <SidebarItem
+        text='Logout'
+        icFilled={<LogoutOutlined />}
+        icOutlined={<LogoutOutlined />}
+        to='/login'
+      />
     </CustomSidebar>
   )
 }

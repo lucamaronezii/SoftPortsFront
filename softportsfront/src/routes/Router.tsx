@@ -6,6 +6,7 @@ import NotFound from '../pages/NotFound/NotFound'
 import Projects from '../pages/Projects/Projects'
 import Users from '../pages/Users/Users'
 import Configurations from '../pages/Configurations/Configurations'
+import Login from '../pages/Login/Login'
 
 const Router = () => {
 
@@ -19,7 +20,11 @@ const Router = () => {
                 { path: '/projetos', element: <Projects /> },
                 { path: '/usuarios', element: <Users /> },
                 { path: '/config', element: <Configurations /> },
-            ]
+            ],
+        },
+        {
+            path: '/login',
+            element: <Login />
         }
     ])
 

@@ -11,4 +11,5 @@ export const CustomSidebar = styled(Flex)<ILeftSidebarProps>`
     align-items: center;
     padding: 30px 20px;
     color: #FFF;
+    gap: 20px;
 `
