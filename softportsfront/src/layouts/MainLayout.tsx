@@ -1,7 +1,7 @@
 import React from 'react'
 import LeftSidebar from './LeftSidebar'
 import { Outlet } from 'react-router-dom'
-import { Button, Flex } from 'antd'
+import { Flex } from 'antd'
 
 const MainLayout = () => {
     return (
