@@ -4,7 +4,7 @@ import { CustomSidebar } from './styles'
 import SidebarItem from '../components/SidebarItem/SidebarItem'
 import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, UserOutlined } from '@ant-design/icons'
 import logo from '../assets/SoftPortsLogo.png'
-import { ImageBox, LogoBox, LogoText, StyledText } from '../components/SidebarItem/styles'
+import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)

@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 import Router from './routes/Router';
 import ConfigProvider from './config/ConfigProvider';
+import GlobalContext from './context/GlobalContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ConfigProvider>
-      <Router />
+      <GlobalContext>
+        <Router />
+      </GlobalContext>
     </ConfigProvider>
   </React.StrictMode>
 );

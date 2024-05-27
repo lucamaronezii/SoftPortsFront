@@ -12,9 +12,9 @@ export const StyledSidebarItem = styled.div<Partial<ISidebarItemProps>>`
     box-sizing: border-box;
     display: flex;
     position: relative;
-    background-color: ${props => props.selected ? props.hasChild ? darkerPr : prColor : ''};
+    background-color: ${props => props.dropOpen ? darkerPr : props.selected ? prColor : ''};
     align-items: center;
-    border-radius: ${props => props.selected && props.hasChild ? '8px 8px 0px 0px' : '8px'};
+    border-radius: ${props => props.dropOpen ? '8px 8px 0px 0px' : '8px'};
     cursor: pointer;
     transition: background-color 0.3s;
     &:hover {
@@ -69,7 +69,7 @@ export const OptionsBox = styled(Flex)`
 `
 
 export const StyledOption = styled(StyledSidebarItem)`
-    background-color: ${darkerPr};
+    background-color: ${props => props.selProject == props.nameProject ? prColor : darkerPr};
     width: 150px;
     &:hover {
         background-color: ${prColor};

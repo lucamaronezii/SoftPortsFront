@@ -13,3 +13,9 @@ export const CustomSidebar = styled(Flex)<ILeftSidebarProps>`
     color: #FFF;
     gap: 20px;
 `
+
+export const CustomBox = styled.div`
+    color: #fff;
+    background-color: #000;
+    min-height: 100vh;
+`

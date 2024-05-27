@@ -7,4 +7,7 @@ export interface ISidebarItemProps {
     icFilled: React.ReactNode;
     icOutlined: React.ReactNode;
     hasChild?: boolean;
+    dropOpen?: boolean;
+    selProject?: string;
+    nameProject?: string;
 }
