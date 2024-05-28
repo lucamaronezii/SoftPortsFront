@@ -1,11 +1,11 @@
 import React from 'react'
-import { IIssue } from '../../interfaces'
+import { IIssue, IStyledItem } from '../../interfaces'
 import Typography from 'antd/es/typography/Typography'
 import { StyledItem } from './styles'
 
-const ListItem: React.FC<IIssue> = ({ name }) => {
+const ListItem: React.FC<IStyledItem> = ({ name, styled }) => {
   return (
-    <StyledItem>
+    <StyledItem style={styled}>
       <Typography>{name}</Typography>
     </StyledItem>
   )
