@@ -30,5 +30,5 @@ export const components: Partial<ComponentsToken> = {
     Segmented: {
         itemSelectedBg: prColor,
         trackBg: secBgColor
-    },
+    }
 }

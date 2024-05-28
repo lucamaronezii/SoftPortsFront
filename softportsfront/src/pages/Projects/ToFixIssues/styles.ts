@@ -1,9 +1,7 @@
-import { Flex } from "antd";
+import { Layout } from "antd";
 import styled from "styled-components";
 
-export const CustomRow = styled(Flex)`
-    flex-direction: row;
+export const CustomBox = styled(Layout)`
     margin: 0px 36px 0px 36px;
-    align-items: center;
-    justify-content: space-between;
+    gap: 20px;
 `
