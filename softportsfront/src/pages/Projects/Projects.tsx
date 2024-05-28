@@ -1,14 +1,28 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Divider, Menu, type MenuProps } from 'antd';
 import { menuItems } from '../../utils/menuItems';
+import ToFixIssues from './ToFixIssues/ToFixIssues';
+import FixedIssues from './FIxedIssues/FixedIssues';
+import Tracking from './Tracking/Tracking';
 
 const Projects = () => {
-  const [current, setCurrent] = useState<string>('mail');
+  const [current, setCurrent] = useState<string>('tofix');
 
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
     setCurrent(e.key);
+    sessionStorage.setItem('teste', e.key)
   };
+
+  const renderPage = () => {
+    switch (current) {
+      case "tofix":
+        return <ToFixIssues />
+      case "fixed":
+        return <FixedIssues />
+      case "track":
+        return <Tracking />
+    }
+  }
 
   return (
     <div>
@@ -16,6 +30,7 @@ const Projects = () => {
         <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={menuItems} />
       </div>
       <Divider orientation='center' style={{ marginTop: 0 }} />
+      {renderPage()}
     </div>
   )
 }

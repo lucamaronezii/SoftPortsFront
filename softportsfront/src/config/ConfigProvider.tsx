@@ -1,5 +1,5 @@
 import React from 'react'
-import { ConfigProvider as Configuration } from 'antd';
+import { ConfigProvider as Configuration, theme } from 'antd';
 import { components, token } from '../styles/theme'
 
 interface IConfigProviderProps {
@@ -12,8 +12,8 @@ const ConfigProvider: React.FC<IConfigProviderProps> = ({ children }) => {
             theme={{
                 token: token,
                 components: components,
+                algorithm: theme.darkAlgorithm
             }}
-            
         >
             {children}
         </Configuration>

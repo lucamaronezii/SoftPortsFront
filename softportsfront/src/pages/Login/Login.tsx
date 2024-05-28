@@ -19,11 +19,11 @@ const Login = () => {
             <Flex vertical gap={20}>
               <Flex vertical gap={10}>
                 <Text>E-mail</Text>
-                <Input placeholder='E-mail' addonAfter={<UserOutlined />} />
+                <Input placeholder='Digite seu e-mail' addonBefore={<UserOutlined />} />
               </Flex>
               <Flex vertical gap={10}>
                 <Text>Senha</Text>
-                <Input.Password placeholder='Senha' addonAfter={<KeyOutlined />} type='password'/>
+                <Input.Password placeholder='Digite sua senha' addonBefore={<KeyOutlined />} type='password'/>
               </Flex>
             </Flex>
             <Flex align='center' justify='space-between' >

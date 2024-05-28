@@ -28,10 +28,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
     return (
         <>
             <StyledSidebarItem
-                onClick={() => {
-                    handleClick()
-                    setProjectName('')
-                }}
+                onClick={() => { handleClick(); setProjectName('') }}
                 selected={verify}
                 hasChild={hasChild}
                 dropOpen={isOpen}

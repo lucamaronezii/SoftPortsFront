@@ -1,6 +1,5 @@
 import { MapToken } from "antd/es/theme/interface";
 import { ComponentsToken } from "antd/es/theme/context";
-import { darkerPr } from "../utils/darkerPrimary";
 
 export const prColor = "#1CAE9D"
 export const secBgColor = "#252426"
@@ -10,6 +9,7 @@ export const token: Partial<MapToken> = {
     colorPrimary: prColor,
     colorBgLayout: '#000',
     colorText: '#FFF',
+    colorError: '#FB223B'
 }
 
 export const components: Partial<ComponentsToken> = {
@@ -26,5 +26,9 @@ export const components: Partial<ComponentsToken> = {
     },
     Divider: {
         colorSplit: secBgColor
-    }
+    },
+    Segmented: {
+        itemSelectedBg: prColor,
+        trackBg: secBgColor
+    },
 }
