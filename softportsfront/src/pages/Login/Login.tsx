@@ -17,8 +17,14 @@ const Login = () => {
           </Flex>
           <Flex vertical gap={20} style={{ width: '100%' }}>
             <Flex vertical gap={20}>
-              <Input placeholder='E-mail' addonAfter={<UserOutlined />} allowClear />
-              <Input placeholder='Senha' addonAfter={<KeyOutlined />} />
+              <Flex vertical gap={10}>
+                <Text>E-mail</Text>
+                <Input placeholder='E-mail' addonAfter={<UserOutlined />} />
+              </Flex>
+              <Flex vertical gap={10}>
+                <Text>Senha</Text>
+                <Input.Password placeholder='Senha' addonAfter={<KeyOutlined />} type='password'/>
+              </Flex>
             </Flex>
             <Flex align='center' justify='space-between' >
               <Text>
