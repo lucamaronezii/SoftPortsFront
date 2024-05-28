@@ -11,8 +11,9 @@ const ConfigProvider: React.FC<IConfigProviderProps> = ({ children }) => {
         <Configuration
             theme={{
                 token: token,
-                components: components
+                components: components,
             }}
+            
         >
             {children}
         </Configuration>

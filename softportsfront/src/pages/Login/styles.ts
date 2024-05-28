@@ -1,10 +1,14 @@
 import { Flex, Layout, Typography } from "antd";
 import styled from "styled-components";
 import { prColor, secBgColor } from "../../styles/theme";
+import loginbg from "../../assets/loginbg.jpg"
 
 export const ImageLogin = styled(Layout)`
     background-color: #000;
     flex-grow: 1;
+    background-image: url(${loginbg});
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 `
 
 export const LoginBox = styled(Flex)`

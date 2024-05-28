@@ -16,6 +16,15 @@ export const components: Partial<ComponentsToken> = {
     Input: {
         colorBgContainer: 'transparent',
         colorTextPlaceholder: '#8f8f8f',
-        addonBg: prColor
+        addonBg: prColor,
     },
+    Menu: {
+        itemColor: '#FFF',
+        itemSelectedColor: '#FFF',
+        colorPrimary: '#FFF',
+        colorBgContainer: '#000',
+    },
+    Divider: {
+        colorSplit: secBgColor
+    }
 }
