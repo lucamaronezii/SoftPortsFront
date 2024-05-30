@@ -1,14 +1,14 @@
-import { AppstoreFilled, AppstoreOutlined, BarsOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, BarsOutlined } from "@ant-design/icons";
 
 export const segItems = [
     {
         label: 'Lista',
-        value: 'list',
+        value: 0,
         icon: <BarsOutlined/>
     },
     {
         label: 'Kanban',
-        value: 'kanban',
+        value: 1,
         icon: <AppstoreOutlined/>
     }
 ]

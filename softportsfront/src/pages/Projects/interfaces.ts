@@ -4,5 +4,11 @@ export interface IStyledItem extends IIssue {
 }
 
 export interface IIssue {
+    id: number;
     name: string;
+    description: string;
+    status: string;
+    responsibles: string[];
+    priority: string;
+    classification: string;
 }

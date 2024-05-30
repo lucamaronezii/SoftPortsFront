@@ -11,6 +11,7 @@ import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { secBgColor } from '../../../styles/theme'
+import { IIssue } from '../interfaces'
 
 const SortableIssue = ({ issue }: any) => {
   const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: issue.id })
@@ -40,23 +41,16 @@ const SortableIssue = ({ issue }: any) => {
 }
 
 const ToFixIssues = () => {
-  const [issues, setIssues] = useState(issuesList)
+  const [issues, setIssues] = useState<IIssue[]>(issuesList)
   const [input, setInput] = useState<string>('')
-
-  const addIssue = () => {
-    const newIssue = {
-      id: issues.length + 1,
-      label: input
-    }
-    setIssues([...issues, newIssue])
-    console.log(issues)
-  }
+  const [seg, setSeg] = useState<number>(0)
 
   const onDragEnd = (event: any) => {
-    const {active, over} = event
+    const { active, over } = event
     if (active.id === over.id) {
       return;
     }
+
     setIssues((issues) => {
       const oldIndex = issues.findIndex((issue) => issue.id == active.id);
       const newIndex = issues.findIndex((issue) => issue.id == over.id)
@@ -83,22 +77,41 @@ const ToFixIssues = () => {
           />
           <Segmented
             options={segItems}
+            value={seg}
+            onChange={(e) => setSeg(e)}
           />
         </Flex>
-        <Button type='primary' icon={<PlusOutlined />} iconPosition='end' onClick={addIssue}>
+        <Button type='primary' icon={<PlusOutlined />} iconPosition='end' >
           Novo problema
         </Button>
       </CustomRow>
 
-      <Flex vertical gap={10}>
-        <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-          <SortableContext items={issues} strategy={verticalListSortingStrategy}>
-            {issues.map((issue, index) => (
-              <SortableIssue key={issue.id} issue={issue} />
-            ))}
-          </SortableContext>
-        </DndContext>
-      </Flex>
+      {seg ? (
+        <Flex vertical gap={10}>
+          <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <SortableContext items={issues} strategy={verticalListSortingStrategy}>
+              {issues.map((issue, index) => (
+                <SortableIssue key={issue.id} issue={issue} />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </Flex>
+      ) : (
+        <>
+          {issues.map((issue, index) => (
+            <ListItem
+              key={index}
+              id={issue.id}
+              name={issue.name}
+              classification={issue.classification}
+              description={issue.description}
+              priority={issue.priority}
+              status={issue.status}
+              responsibles={issue.responsibles}
+            />
+          ))}
+        </>
+      )}
     </CustomBox>
   )
 }
