@@ -25,7 +25,8 @@ export const StyledChild = styled(Flex) <{ width?: string }>`
     white-space: nowrap;
 `
 
-export const StyledListText = styled(Typography)`
+export const ListText = styled(Typography)`
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
 `
