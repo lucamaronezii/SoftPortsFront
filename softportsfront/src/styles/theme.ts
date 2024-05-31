@@ -39,5 +39,8 @@ export const components: Partial<ComponentsToken> = {
     DatePicker: {
         colorBgContainer: 'transparent',
         colorTextPlaceholder: plcColor,
+    },
+    Upload: {
+        colorBgContainer: 'red'
     }
 }

@@ -1,17 +1,18 @@
-import { Flex, Select, Typography } from 'antd'
+import { Select, Typography } from 'antd'
 import React from 'react'
 import { ITitleSelect } from './interfaces'
+import GapColumn from '../Column/Column'
 
 const TitleSelect: React.FC<ITitleSelect> = ({ text, ...selectProps }) => {
     const { Text } = Typography
 
     return (
-        <Flex vertical gap={10}>
+        <GapColumn>
             <Text>{text}</Text>
             <Select
                 {...selectProps}
             />
-        </Flex>
+        </GapColumn>
     )
 }
 

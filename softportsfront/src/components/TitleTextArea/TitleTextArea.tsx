@@ -1,18 +1,19 @@
-import { Flex, Input, Typography } from 'antd'
+import { Input, Typography } from 'antd'
 import React from 'react'
 import { ITitleTextArea } from './interfaces'
+import GapColumn from '../Column/Column'
 
 const TitleTextArea: React.FC<ITitleTextArea> = ({ text, ...textAreaProps }) => {
     const { Text } = Typography
     const { TextArea } = Input
 
     return (
-        <Flex vertical gap={10}>
+        <GapColumn>
             <Text>{text}</Text>
             <TextArea
                 {...textAreaProps}
             />
-        </Flex>
+        </GapColumn>
     )
 }
 
