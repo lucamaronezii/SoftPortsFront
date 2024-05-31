@@ -1,10 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { IIssue } from '../../interfaces'
 import Typography from 'antd/es/typography/Typography'
 import { ListText, StyledChild, StyledItem } from './styles'
 import IssueTag from '../../../../components/IssueTag/IssueTag'
+import { Avatar } from 'antd'
+import { usersList } from '../../../../mocks/Users'
 
 const ListItem: React.FC<IIssue> = ({ name, priority, responsibles, status, classification }) => {
+  const [initials, setInitials] = useState<string[]>([])
+
+  const getUsersInitials = () => {
+    const newInitials = usersList.map(user => {
+      const text = user.name[0] + user.name[1]
+      return text.toUpperCase()
+    })
+    setInitials(newInitials)
+  }
+
+  useEffect(() => {
+    getUsersInitials()
+  }, [])
+
   return (
     <StyledItem>
       <StyledChild width='35%'>
@@ -20,7 +36,11 @@ const ListItem: React.FC<IIssue> = ({ name, priority, responsibles, status, clas
         <Typography>{classification}</Typography>
       </StyledChild>
       <StyledChild justify='end'>
-        <Typography>{responsibles}</Typography>
+        <Avatar.Group maxCount={2}>
+          {initials.map((user, index) => (
+            <Avatar size={'default'}>{user}</Avatar>
+          ))}
+        </Avatar.Group>
       </StyledChild>
     </StyledItem>
   )
