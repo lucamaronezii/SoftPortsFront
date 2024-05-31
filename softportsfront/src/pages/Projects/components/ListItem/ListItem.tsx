@@ -5,6 +5,8 @@ import { ListText, StyledChild, StyledItem } from './styles'
 import IssueTag from '../../../../components/IssueTag/IssueTag'
 import { Avatar } from 'antd'
 import { usersList } from '../../../../mocks/Users'
+import { prColor } from '../../../../styles/theme'
+import { darkerPr } from '../../../../utils/darkerPrimary'
 
 const ListItem: React.FC<IIssue> = ({ name, priority, responsibles, status, classification }) => {
   const [initials, setInitials] = useState<string[]>([])
@@ -36,9 +38,17 @@ const ListItem: React.FC<IIssue> = ({ name, priority, responsibles, status, clas
         <Typography>{classification}</Typography>
       </StyledChild>
       <StyledChild justify='end'>
-        <Avatar.Group maxCount={2}>
+        <Avatar.Group
+          maxCount={2}
+          maxStyle={{ color: '#FFF', backgroundColor: darkerPr }}
+        >
           {initials.map((user, index) => (
-            <Avatar size={'default'}>{user}</Avatar>
+            <Avatar
+              size={'default'}
+              style={{ backgroundColor: prColor }}
+            >
+              {user}
+            </Avatar>
           ))}
         </Avatar.Group>
       </StyledChild>
