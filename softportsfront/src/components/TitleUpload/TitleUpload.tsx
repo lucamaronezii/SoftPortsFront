@@ -1,15 +1,23 @@
 import React, { useState } from 'react'
 import { ITitleUpload } from './interfaces'
-import { Flex, Typography, Upload } from 'antd'
+import { Flex, Tooltip, Typography, Upload } from 'antd'
 import GapColumn from '../Column/Column'
-import { PlusOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { prColor } from '../../styles/theme'
 
-const TitleUpload: React.FC<ITitleUpload> = ({ text, ...uploadProps }) => {
+const TitleUpload: React.FC<ITitleUpload> = ({ text, tooltip, ...uploadProps }) => {
     const { Text } = Typography
 
     return (
         <GapColumn>
-            <Text>{text}</Text>
+            <Flex align='center' gap={10}>
+                <Text>{text}</Text>
+                {tooltip &&
+                    <Tooltip placement="right" title={tooltip}>
+                        <InfoCircleOutlined />
+                    </Tooltip>
+                }
+            </Flex>
             <Upload
                 {...uploadProps}
             >

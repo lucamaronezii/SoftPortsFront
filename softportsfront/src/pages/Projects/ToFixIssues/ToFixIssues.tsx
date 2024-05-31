@@ -1,4 +1,4 @@
-import { Button, Cascader, Flex, Input, Segmented } from 'antd'
+import { Button, Cascader, Flex, Input, Segmented, message } from 'antd'
 import { CustomBox } from './styles'
 import { cascaderItems } from '../../../utils/cascaderItems'
 import { segItems } from '../../../utils/segItems'
@@ -46,6 +46,14 @@ const ToFixIssues = () => {
   const [input, setInput] = useState<string>('')
   const [seg, setSeg] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'This is a success message',
+    });
+  };
 
   const onDragEnd = (event: any) => {
     const { active, over } = event
@@ -62,6 +70,7 @@ const ToFixIssues = () => {
 
   return (
     <CustomBox>
+      {contextHolder}
       <CustomRow>
         <Flex gap={15}>
           <div style={{ maxWidth: '300px' }}>
@@ -119,8 +128,9 @@ const ToFixIssues = () => {
           ))}
         </>
       )}
-
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} />
+      
+      RESOLVER SUCCESS MESSAGE QUE NÃO ESTÁ FUNCIONANDO
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={success}/>
     </CustomBox>
   )
 }

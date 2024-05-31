@@ -20,7 +20,7 @@ import { priorityItems } from '../../../../utils/priorityItems'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
+const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -36,9 +36,9 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setFileList(newFileList);
 
     const beforeUpload = (file: FileType) => {
-        // Impede o upload real do arquivo
         return false;
     };
+
     return (
         <Modal
             title="Novo registro de problema"
@@ -93,6 +93,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
                         options={statusList}
                     />
                     <TitleUpload
+                        tooltip={'Máximo: 3 imagens.'}
                         text='Screenshots'
                         listType="picture-card"
                         fileList={fileList}
@@ -101,6 +102,8 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
                         multiple
                         beforeUpload={beforeUpload}
                         accept='.jpg, .png, .jpeg'
+                        maxCount={3}
+                        showUploadList
                     />
                     {previewImage && (
                         <Image
