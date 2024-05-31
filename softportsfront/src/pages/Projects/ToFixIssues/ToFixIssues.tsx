@@ -12,6 +12,7 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities'
 import { secBgColor } from '../../../styles/theme'
 import { IIssue } from '../interfaces'
+import NewIssue from '../components/NewIssue/NewIssue'
 
 const SortableIssue = ({ issue }: any) => {
   const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: issue.id })
@@ -44,6 +45,7 @@ const ToFixIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>(issuesList)
   const [input, setInput] = useState<string>('')
   const [seg, setSeg] = useState<number>(0)
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
   const onDragEnd = (event: any) => {
     const { active, over } = event
@@ -81,7 +83,12 @@ const ToFixIssues = () => {
             onChange={(e) => setSeg(e)}
           />
         </Flex>
-        <Button type='primary' icon={<PlusOutlined />} iconPosition='end' >
+        <Button
+          type='primary'
+          icon={<PlusOutlined />}
+          iconPosition='end'
+          onClick={() => setOpenModal(true)}
+        >
           Novo problema
         </Button>
       </CustomRow>
@@ -90,7 +97,7 @@ const ToFixIssues = () => {
         <Flex vertical gap={10}>
           <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
             <SortableContext items={issues} strategy={verticalListSortingStrategy}>
-              {issues.map((issue, index) => (
+              {issues.map((issue) => (
                 <SortableIssue key={issue.id} issue={issue} />
               ))}
             </SortableContext>
@@ -112,6 +119,8 @@ const ToFixIssues = () => {
           ))}
         </>
       )}
+
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} />
     </CustomBox>
   )
 }

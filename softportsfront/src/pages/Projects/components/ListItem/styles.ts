@@ -1,6 +1,6 @@
 import { Flex, Typography } from "antd";
 import styled from "styled-components";
-import { prColor, secBgColor } from "../../../../styles/theme";
+import { plcColor, prColor, secBgColor } from "../../../../styles/theme";
 import { darken } from "polished";
 
 export const StyledItem = styled(Flex)`
@@ -29,4 +29,10 @@ export const ListText = styled(Typography)`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+`
+
+export const IdIssue = styled.span`
+    color: ${plcColor};
+    font-size: 12px;
+    font-weight: 500;
 `

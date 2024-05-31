@@ -3,19 +3,20 @@ import { ComponentsToken } from "antd/es/theme/context";
 
 export const prColor = "#1CAE9D"
 export const secBgColor = "#252426"
+export const plcColor = "#858585"
 
 export const token: Partial<MapToken> = {
     borderRadius: 6,
     colorPrimary: prColor,
     colorBgLayout: '#000',
     colorText: '#FFF',
-    colorError: '#FB223B'
+    colorError: '#FB223B',
 }
 
 export const components: Partial<ComponentsToken> = {
     Input: {
         colorBgContainer: 'transparent',
-        colorTextPlaceholder: '#8f8f8f',
+        colorTextPlaceholder: plcColor,
         addonBg: prColor,
     },
     Menu: {
@@ -30,5 +31,13 @@ export const components: Partial<ComponentsToken> = {
     Segmented: {
         itemSelectedBg: prColor,
         trackBg: secBgColor
+    },
+    Select: {
+        selectorBg: 'transparent',
+        colorTextPlaceholder: plcColor
+    },
+    DatePicker: {
+        colorBgContainer: 'transparent',
+        colorTextPlaceholder: plcColor,
     }
 }

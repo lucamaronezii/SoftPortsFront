@@ -27,7 +27,12 @@ const Projects = () => {
   return (
     <div>
       <div style={{ padding: '20px 0px 0px 20px' }}>
-        <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={menuItems} />
+        <Menu
+          onClick={onClick}
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={menuItems}
+        />
       </div>
       <Divider orientation='center' style={{ marginTop: 0 }} />
       {renderPage()}

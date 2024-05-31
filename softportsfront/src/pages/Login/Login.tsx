@@ -2,6 +2,7 @@ import { Button, Divider, Flex, Input, Layout, Typography } from 'antd'
 import { ImageLogin, LoginBox, LoginCard, ResetPw, Title } from './styles'
 import { KeyOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import TitleInput from '../../components/TitleInput/TitleInput'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -17,14 +18,17 @@ const Login = () => {
           </Flex>
           <Flex vertical gap={20} style={{ width: '100%' }}>
             <Flex vertical gap={20}>
-              <Flex vertical gap={10}>
-                <Text>E-mail</Text>
-                <Input placeholder='Digite seu e-mail' addonBefore={<UserOutlined />} />
-              </Flex>
-              <Flex vertical gap={10}>
-                <Text>Senha</Text>
-                <Input.Password placeholder='Digite sua senha' addonBefore={<KeyOutlined />} type='password'/>
-              </Flex>
+              <TitleInput
+                text='E-mail'
+                placeholder='Digite seu e-mail'
+                addonBefore={<UserOutlined />}
+              />
+              <TitleInput
+                text='Senha'
+                placeholder='Digite sua senha'
+                type='password'
+                addonBefore={<KeyOutlined />}
+              />
             </Flex>
             <Flex align='center' justify='space-between' >
               <Text>
