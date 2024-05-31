@@ -1,4 +1,5 @@
 import { IIssue } from "../pages/Projects/interfaces";
+import { usersList } from "./Users";
 
 export const issuesList: IIssue[] = [
     {
@@ -7,7 +8,7 @@ export const issuesList: IIssue[] = [
         classification: 'Bug',
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Crítico',
-        responsibles: ['Eduardo Pinder', 'Victor Buchs'],
+        responsibles: usersList,
         status: 'Em correção',
     },
     {
@@ -16,7 +17,7 @@ export const issuesList: IIssue[] = [
         classification: 'Bug',
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Alto',
-        responsibles: ['Eduardo Pinder', 'Victor Buchs'],
+        responsibles: usersList,
         status: 'Em correção',
     },
     {
@@ -25,7 +26,7 @@ export const issuesList: IIssue[] = [
         classification: 'Bug',
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Médio',
-        responsibles: ['Eduardo Pinder', 'Victor Buchs'],
+        responsibles: usersList,
         status: 'Em correção',
     },
     {
@@ -34,7 +35,7 @@ export const issuesList: IIssue[] = [
         classification: 'Bug',
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Baixo',
-        responsibles: ['Eduardo Pinder', 'Victor Buchs'],
+        responsibles: usersList,
         status: 'Em correção',
     },
 ];

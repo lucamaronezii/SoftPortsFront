@@ -1,4 +1,5 @@
 import { Priority } from "../../components/IssueTag/interfaces";
+import { IUser } from "../Users/interfaces";
 
 export interface IStyledItem extends IIssue {
     styled: any;
@@ -10,7 +11,7 @@ export interface IIssue {
     name: string;
     description: string;
     status: string;
-    responsibles: string[];
+    responsibles: IUser[];
     priority: Priority;
     classification: string;
 }
