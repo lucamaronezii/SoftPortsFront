@@ -1,4 +1,4 @@
-import { Flex, Image, Modal, Steps } from 'antd'
+import { Cascader, Flex, Image, Modal, Steps, Typography } from 'antd'
 import React, { useState } from 'react'
 import { INewIssue } from './interfaces'
 import { stepperItems } from '../../../../utils/stepperItems'
@@ -11,6 +11,12 @@ import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
 import type { GetProp, UploadProps } from 'antd';
 import { UploadFile } from 'antd/lib'
 import { getBase64 } from '../../../../utils/getBase64'
+import { usersList } from '../../../../mocks/Users'
+import { statusList } from '../../../../mocks/Status'
+import { classList } from '../../../../mocks/Class'
+import TitleCascader from '../../../../components/TitleCascader/TitleCascader'
+import GapColumn from '../../../../components/Column/Column'
+import { priorityItems } from '../../../../utils/priorityItems'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -66,9 +72,26 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
                 </FieldsBox>
 
                 <FieldsBox>
-                    <TitleSelect text='Prioridade' placeholder='Selecione a prioridade de correção' />
-                    <TitleSelect text='Categoria' placeholder='Selecione a categoria do problema' />
-                    <TitleSelect text='Status' placeholder='Selecione o status do problema' />
+                    <TitleSelect
+                        text='Prioridade'
+                        placeholder='Selecione a prioridade de correção'
+                        options={priorityItems[0].children}
+                    />
+                    {/* I put the Cascader manually because the component interface is bugged */}
+                    <GapColumn>
+                        <Typography.Text>Classificação</Typography.Text>
+                        <Cascader
+                            options={classList}
+                            multiple
+                            placeholder='Selecione a a classificação do problema'
+                            style={{ width: '100%' }}
+                        />
+                    </GapColumn>
+                    <TitleSelect
+                        text='Status'
+                        placeholder='Selecione o status do problema'
+                        options={statusList}
+                    />
                     <TitleUpload
                         text='Screenshots'
                         listType="picture-card"
@@ -90,7 +113,12 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose }) => {
                             src={previewImage}
                         />
                     )}
-                    <TitleSelect text='Status' placeholder='Selecione o status do problema' />
+                    <TitleSelect
+                        text='Responsáveis'
+                        placeholder='Selecione os responsáveis para correção'
+                        options={usersList}
+                        mode='multiple'
+                    />
                 </FieldsBox>
             </Flex>
         </Modal>

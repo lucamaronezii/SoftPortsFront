@@ -34,13 +34,11 @@ export const components: Partial<ComponentsToken> = {
     },
     Select: {
         selectorBg: 'transparent',
-        colorTextPlaceholder: plcColor
+        colorTextPlaceholder: plcColor,
+        multipleItemBg: prColor
     },
     DatePicker: {
         colorBgContainer: 'transparent',
         colorTextPlaceholder: plcColor,
     },
-    Upload: {
-        colorBgContainer: 'red'
-    }
 }

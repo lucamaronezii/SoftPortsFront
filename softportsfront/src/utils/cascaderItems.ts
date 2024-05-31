@@ -1,4 +1,6 @@
-interface Option {
+import { priorityItems } from "./priorityItems";
+
+export interface Option {
     value: string | number;
     label: string;
     children?: Option[];
@@ -68,26 +70,5 @@ export const cascaderItems: Option[] = [
             },
         ],
     },
-    {
-        label: 'Prioridade',
-        value: 'priority',
-        children: [
-            {
-                label: 'Crítico',
-                value: 'crit'
-            },
-            {
-                label: 'Alto',
-                value: 'big'
-            },
-            {
-                label: 'Médio',
-                value: 'mid'
-            },
-            {
-                label: 'Baixo',
-                value: 'low'
-            },
-        ]
-    },
+    ...priorityItems
 ];
