@@ -1,3 +1,4 @@
+import { MouseEventHandler } from "react";
 import { Priority } from "../../components/IssueTag/interfaces";
 import { IUser } from "../Users/interfaces";
 
@@ -14,4 +15,5 @@ export interface IIssue {
     responsibles: IUser[];
     priority: Priority;
     classification: string;
+    onClick?: () => void;
 }

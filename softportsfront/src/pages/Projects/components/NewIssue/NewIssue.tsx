@@ -14,13 +14,12 @@ import { getBase64 } from '../../../../utils/getBase64'
 import { usersList } from '../../../../mocks/Users'
 import { statusList } from '../../../../mocks/Status'
 import { classList } from '../../../../mocks/Class'
-import TitleCascader from '../../../../components/TitleCascader/TitleCascader'
 import GapColumn from '../../../../components/Column/Column'
 import { priorityItems } from '../../../../utils/priorityItems'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
+const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, loading }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -43,7 +42,8 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         <Modal
             title="Novo registro de problema"
             open={open}
-            onOk={onClose}
+            confirmLoading={loading}
+            onOk={onOk}
             onCancel={onClose}
             cancelText={'Cancelar'}
             width={1000}
@@ -70,7 +70,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                     <TitleInput text='Caminho entre telas' placeholder='Digite o caminho entre telas' />
                     <TitleDatePicker text='Data estimada para correção' placeholder='Selecione a data estimada para correção' />
                 </FieldsBox>
-
+ 
                 <FieldsBox>
                     <TitleSelect
                         text='Prioridade'

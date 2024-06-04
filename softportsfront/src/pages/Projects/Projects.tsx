@@ -10,7 +10,6 @@ const Projects = () => {
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
-    sessionStorage.setItem('teste', e.key)
   };
 
   const renderPage = () => {
@@ -34,7 +33,10 @@ const Projects = () => {
           items={menuItems}
         />
       </div>
-      <Divider orientation='center' style={{ marginTop: 0 }} />
+      <Divider
+        orientation='center'
+        style={{ marginTop: 0 }}
+      />
       {renderPage()}
     </div>
   )

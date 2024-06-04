@@ -1,6 +1,7 @@
-export const success = (messageApi: any) => {
-    messageApi.open({
-        type: 'success',
-        content: 'This is a success message',
+import { MessageInstance } from "antd/es/message/interface";
+
+export const success = (messageApi: MessageInstance, message: string) => {
+    messageApi.success({
+        content: message,
     });
 };

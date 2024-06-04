@@ -4,12 +4,12 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 export const menuItems: MenuItem[] = [
   {
-    label: 'Problemas em correção',
+    label: 'Problemas abertos',
     key: 'tofix',
     icon: <BugFilled />,
   },
   {
-    label: 'Problemas corrigidos',
+    label: 'Problemas fechados',
     key: 'fixed',
     icon: <CheckCircleOutlined />,
   },

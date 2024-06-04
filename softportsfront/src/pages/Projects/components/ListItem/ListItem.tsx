@@ -8,7 +8,7 @@ import { usersList } from '../../../../mocks/Users'
 import { prColor } from '../../../../styles/theme'
 import { darkerPr } from '../../../../utils/darkerPrimary'
 
-const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, classification }) => {
+const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, classification, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
   const getUsersInitials = () => {
@@ -24,7 +24,7 @@ const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, 
   }, [])
 
   return (
-    <StyledItem>
+    <StyledItem onClick={onClick}>
       <StyledChild gap={10} width='35%'>
         <IdIssue>[ID-{id}]</IdIssue>
         <ListText title={name}>{name}</ListText>

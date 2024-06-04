@@ -13,6 +13,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { secBgColor } from '../../../styles/theme'
 import { IIssue } from '../interfaces'
 import NewIssue from '../components/NewIssue/NewIssue'
+import IssueView from '../components/Issue/IssueView'
 
 const SortableIssue = ({ issue }: any) => {
   const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: issue.id })
@@ -47,11 +48,14 @@ const ToFixIssues = () => {
   const [seg, setSeg] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState<boolean>(false)
+  const [openIssue, setOpenIssue] = useState<boolean>(false)
+  const [issueId, setIssueId] = useState<number>(0)
 
   const success = () => {
     messageApi.open({
       type: 'success',
-      content: 'This is a success message',
+      content: 'Problema registrado com sucesso.',
     });
   };
 
@@ -66,6 +70,11 @@ const ToFixIssues = () => {
       const newIndex = issues.findIndex((issue) => issue.id == over.id)
       return arrayMove(issues, oldIndex, newIndex)
     })
+  }
+
+  const handleIssueView = (id: number) => {
+    setOpenIssue(true)
+    setIssueId(id)
   }
 
   return (
@@ -124,13 +133,14 @@ const ToFixIssues = () => {
               priority={issue.priority}
               status={issue.status}
               responsibles={issue.responsibles}
+              onClick={() => handleIssueView(issue.id)}
             />
           ))}
         </>
       )}
-      
-      RESOLVER SUCCESS MESSAGE QUE NÃO ESTÁ FUNCIONANDO
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={success}/>
+
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={success} loading={loading} />
+      <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issueId={issueId} />
     </CustomBox>
   )
 }
