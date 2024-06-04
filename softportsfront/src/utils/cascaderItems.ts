@@ -2,7 +2,7 @@ import { priorityItems } from "./priorityItems";
 
 export interface Option {
     value: string | number;
-    label: string;
+    label: string | React.ReactNode;
     children?: Option[];
     disableCheckbox?: boolean;
 }

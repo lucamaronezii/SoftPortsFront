@@ -4,13 +4,14 @@ import { ComponentsToken } from "antd/es/theme/context";
 export const prColor = "#1CAE9D"
 export const secBgColor = "#252426"
 export const plcColor = "#858585"
+export const errColor = "#FB223B"
 
 export const token: Partial<MapToken> = {
     borderRadius: 6,
     colorPrimary: prColor,
     colorBgLayout: '#000',
     colorText: '#FFF',
-    colorError: '#FB223B',
+    colorError: errColor
 }
 
 export const components: Partial<ComponentsToken> = {
@@ -18,12 +19,11 @@ export const components: Partial<ComponentsToken> = {
         colorBgContainer: 'transparent',
         colorTextPlaceholder: plcColor,
         addonBg: prColor,
+        colorIcon: '#FFF',
     },
     Menu: {
-        itemColor: '#FFF',
-        itemSelectedColor: '#FFF',
         colorPrimary: '#FFF',
-        colorBgContainer: '#000',
+        colorBgContainer: '#000'
     },
     Divider: {
         colorSplit: secBgColor

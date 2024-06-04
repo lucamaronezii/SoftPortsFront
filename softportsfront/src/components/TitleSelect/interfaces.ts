@@ -1,5 +1,6 @@
 import { SelectProps } from "antd";
 
 export interface ITitleSelect extends SelectProps {
-    text: string
+    text: string;
+    removeIcon?: boolean;
 }

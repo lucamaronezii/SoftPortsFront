@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Divider, Menu, type MenuProps } from 'antd';
 import { menuItems } from '../../utils/menuItems';
 import ToFixIssues from './ToFixIssues/ToFixIssues';
-import FixedIssues from './FIxedIssues/FixedIssues';
+import FixedIssues from './ClosedIssues/ClosedIssues';
 import Tracking from './Tracking/Tracking';
 
 const Projects = () => {

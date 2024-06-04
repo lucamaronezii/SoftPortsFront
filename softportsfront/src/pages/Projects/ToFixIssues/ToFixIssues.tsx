@@ -13,7 +13,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { secBgColor } from '../../../styles/theme'
 import { IIssue } from '../interfaces'
 import NewIssue from '../components/NewIssue/NewIssue'
-import IssueView from '../components/Issue/IssueView'
+import IssueView from '../components/IssueView/IssueView'
 
 const SortableIssue = ({ issue }: any) => {
   const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: issue.id })
@@ -139,7 +139,7 @@ const ToFixIssues = () => {
         </>
       )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={success} loading={loading} />
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => {success(); setOpenModal(false)}} loading={loading} />
       <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issueId={issueId} />
     </CustomBox>
   )

@@ -7,11 +7,11 @@
 }
  
 ::-webkit-scrollbar-thumb {
-  background: #1CAE9D; 
+  background: #ffffff; 
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #14796d; 
+  background: #ebeaea; 
 }
 
 body {
@@ -29,10 +29,10 @@ code {
     monospace;
 }
 
-.anticon {
+/* .anticon {
   color: #FFF;
 }
 
 .anticon svg {
   color: #FFF;
-}
+} */
