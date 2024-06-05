@@ -8,7 +8,7 @@ import { usersList } from '../../../../mocks/Users'
 import { prColor } from '../../../../styles/theme'
 import { darkerPr } from '../../../../utils/darkerPrimary'
 
-const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, classification, onClick }) => {
+const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, classification, fixDate, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
   const getUsersInitials = () => {
@@ -29,7 +29,7 @@ const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, 
         <IdIssue>[ID-{id}]</IdIssue>
         <ListText title={name}>{name}</ListText>
       </StyledChild>
-      <StyledChild>
+      <StyledChild width='10%'>
         <Typography>{status}</Typography>
       </StyledChild>
       <StyledChild width='10%' justify='center'>
@@ -38,7 +38,7 @@ const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, 
       <StyledChild width='15%' justify='center'>
         <Typography>{classification}</Typography>
       </StyledChild>
-      <StyledChild justify='end'>
+      <StyledChild justify='center'>
         <Avatar.Group
           maxCount={2}
           maxStyle={{ color: '#FFF', backgroundColor: darkerPr }}
@@ -52,6 +52,9 @@ const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, 
             </Avatar>
           ))}
         </Avatar.Group>
+      </StyledChild>
+      <StyledChild width='15%' justify='end'>
+        <Typography>{fixDate}</Typography>
       </StyledChild>
     </StyledItem>
   )

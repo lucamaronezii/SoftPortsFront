@@ -15,5 +15,6 @@ export interface IIssue {
     responsibles: IUser[];
     priority: Priority;
     classification: string;
+    fixDate: string;
     onClick?: () => void;
 }

@@ -133,13 +133,14 @@ const ToFixIssues = () => {
               priority={issue.priority}
               status={issue.status}
               responsibles={issue.responsibles}
+              fixDate={issue.fixDate}
               onClick={() => handleIssueView(issue.id)}
             />
           ))}
         </>
       )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => {success(); setOpenModal(false)}} loading={loading} />
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => { success(); setOpenModal(false) }} loading={loading} />
       <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issueId={issueId} />
     </CustomBox>
   )

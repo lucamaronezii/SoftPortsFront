@@ -41,4 +41,8 @@ export const components: Partial<ComponentsToken> = {
         colorBgContainer: 'transparent',
         colorTextPlaceholder: plcColor,
     },
+    Message: {
+        colorSuccess: prColor,
+        colorError: errColor
+    }
 }

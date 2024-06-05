@@ -9,6 +9,8 @@ import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import { usersList } from '../../../../mocks/Users'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
+import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
+import dayjs from 'dayjs'
 
 const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -138,10 +140,10 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
                     />
                 </CustomCol>
                 <CustomCol {...colProps}>
-                    <TitleSelect
+                    <TitleDatePicker
                         text='Data estimada para correção'
-                        value={'Bug'}
                         style={!isEditing ? { pointerEvents: "none" } : {}}
+                        value={dayjs()}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
                     />

@@ -9,6 +9,7 @@ export const issuesList: IIssue[] = [
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Crítico',
         responsibles: usersList,
+        fixDate: '23/01/2024',
         status: 'Em correção',
     },
     {
@@ -18,6 +19,7 @@ export const issuesList: IIssue[] = [
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Alto',
         responsibles: usersList,
+        fixDate: '21/05/2024',
         status: 'Em correção',
     },
     {
@@ -27,6 +29,7 @@ export const issuesList: IIssue[] = [
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Médio',
         responsibles: usersList,
+        fixDate: '02/03/2024',
         status: 'Em correção',
     },
     {
@@ -36,6 +39,7 @@ export const issuesList: IIssue[] = [
         description: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         priority: 'Baixo',
         responsibles: usersList,
+        fixDate: '11/11/2024',
         status: 'Em correção',
     },
 ];
