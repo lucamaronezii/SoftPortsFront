@@ -19,7 +19,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
 
     const getIssue = () => {
         const issue = issuesList.find((issue) => issue.id == issueId)
-        return issue?.name
+        return issue?.titulo
     }
 
     useEffect(() => {

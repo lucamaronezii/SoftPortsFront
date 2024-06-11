@@ -8,12 +8,12 @@ import { usersList } from '../../../../mocks/Users'
 import { prColor } from '../../../../styles/theme'
 import { darkerPr } from '../../../../utils/darkerPrimary'
 
-const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, classification, fixDate, onClick }) => {
+const ListItem: React.FC<IIssue> = ({ id: id, titulo: name, prioridade: priority, responsaveis: responsibles, status, classificacoes: classification, dataCorrecao: fixDate, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
   const getUsersInitials = () => {
     const newInitials = usersList.map(user => {
-      const text = user.name[0] + user.name[1]
+      const text = user.nome[0] + user.nome[1]
       return text.toUpperCase()
     })
     setInitials(newInitials)
@@ -36,7 +36,9 @@ const ListItem: React.FC<IIssue> = ({ id, name, priority, responsibles, status, 
         <IssueTag priority={priority}>{priority}</IssueTag>
       </StyledChild>
       <StyledChild width='15%' justify='center'>
-        <Typography>{classification}</Typography>
+        {classification.map((item) => (
+          <Typography key={item.classificacaoId}>{item.nome}</Typography>
+        ))}
       </StyledChild>
       <StyledChild justify='center'>
         <Avatar.Group

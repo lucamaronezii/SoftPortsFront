@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Tracking = () => {
+const TestCases = () => {
   return (
     <div>
-      tracker
+      tests
     </div>
   )
 }
 
-export default Tracking
+export default TestCases

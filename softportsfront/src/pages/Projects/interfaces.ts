@@ -1,20 +1,34 @@
-import { MouseEventHandler } from "react";
 import { Priority } from "../../components/IssueTag/interfaces";
 import { IUser } from "../Users/interfaces";
+import { ITestCase } from "./TestCases/interfaces";
 
 export interface IStyledItem extends IIssue {
     styled: any;
     ref: any
 }
 
+export interface IClassification {
+    classificacaoId: number;
+    nome: string;
+}
+
+export interface IUserTestesssssssssssssssssss {
+    usuarioId: number,
+    nome: string,
+    cargo: string
+}
+
 export interface IIssue {
     id: number;
-    name: string;
-    description: string;
+    titulo: string;
+    descricao: string;
     status: string;
-    responsibles: IUser[];
-    priority: Priority;
-    classification: string;
-    fixDate: string;
+    responsaveis: IUserTestesssssssssssssssssss[];
+    prioridade: Priority;
+    classificacoes: IClassification[];
+    screenshot?: string;
+    caminho?: string;
+    casosDeTeste?: ITestCase[];
+    dataCorrecao: string;
     onClick?: () => void;
 }

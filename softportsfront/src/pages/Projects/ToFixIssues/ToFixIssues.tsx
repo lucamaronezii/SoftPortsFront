@@ -1,10 +1,9 @@
-import { Button, Cascader, Flex, Input, Segmented, message } from 'antd'
+import { Button, Cascader, Flex, Input, Segmented, Spin, message } from 'antd'
 import { CustomBox } from './styles'
 import { cascaderItems } from '../../../utils/cascaderItems'
 import { segItems } from '../../../utils/segItems'
 import { PlusOutlined } from '@ant-design/icons'
-import { useState } from 'react'
-import { issuesList } from '../../../mocks/Issues'
+import { useEffect, useState } from 'react'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import ListItem from '../components/ListItem/ListItem'
 import { DndContext, closestCenter } from '@dnd-kit/core'
@@ -14,6 +13,7 @@ import { secBgColor } from '../../../styles/theme'
 import { IIssue } from '../interfaces'
 import NewIssue from '../components/NewIssue/NewIssue'
 import IssueView from '../components/IssueView/IssueView'
+import { getIssues } from '../../../services/IssueServices'
 
 const SortableIssue = ({ issue }: any) => {
   const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: issue.id })
@@ -43,7 +43,7 @@ const SortableIssue = ({ issue }: any) => {
 }
 
 const ToFixIssues = () => {
-  const [issues, setIssues] = useState<IIssue[]>(issuesList)
+  const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>('')
   const [seg, setSeg] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -52,7 +52,25 @@ const ToFixIssues = () => {
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<number>(0)
 
-  const success = () => {
+  const handleIssueView = (id: number) => {
+    setOpenIssue(true)
+    setIssueId(id)
+  }
+
+  const handleGetIssues = async () => {
+    try {
+      setLoading(true)
+      const response = await getIssues()
+      setIssues(response.data.conteudo)
+      console.log('Issues: ', issues)
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+      // setLoading(false)
+    }
+  }
+
+  const handleSuccessMessage = () => {
     messageApi.open({
       type: 'success',
       content: 'Problema registrado com sucesso.',
@@ -72,10 +90,9 @@ const ToFixIssues = () => {
     })
   }
 
-  const handleIssueView = (id: number) => {
-    setOpenIssue(true)
-    setIssueId(id)
-  }
+  useEffect(() => {
+    handleGetIssues()
+  }, [])
 
   return (
     <CustomBox>
@@ -85,12 +102,15 @@ const ToFixIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
+              placeholder='Pesquisar registros'
               allowClear
+              enterButton
               onChange={(e) => setInput(e.target.value)}
             />
           </div>
           <Cascader
             removeIcon
+            placeholder='Filtrar registros'
             multiple
             options={cascaderItems}
             maxTagCount={'responsive'}
@@ -123,24 +143,32 @@ const ToFixIssues = () => {
         </Flex>
       ) : (
         <>
-          {issues.map((issue, index) => (
-            <ListItem
-              key={index}
-              id={issue.id}
-              name={issue.name}
-              classification={issue.classification}
-              description={issue.description}
-              priority={issue.priority}
-              status={issue.status}
-              responsibles={issue.responsibles}
-              fixDate={issue.fixDate}
-              onClick={() => handleIssueView(issue.id)}
-            />
-          ))}
+          {loading ? (
+            <Spin size='large' style={{ marginTop: 35 }} />
+          ) : (
+            issues && issues.length > 0 ? (
+              issues.map((issue, index) => (
+                <ListItem
+                  key={index}
+                  id={issue.id}
+                  titulo={issue.titulo}
+                  classificacoes={issue.classificacoes}
+                  descricao={issue.descricao}
+                  prioridade={issue.prioridade}
+                  status={issue.status}
+                  responsaveis={issue.responsaveis}
+                  dataCorrecao={issue.dataCorrecao}
+                  onClick={() => handleIssueView(issue.id)}
+                />
+              ))
+            ) : (
+              <p>No issues found</p>
+            )
+          )}
         </>
       )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => { success(); setOpenModal(false) }} loading={loading} />
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => { handleSuccessMessage(); setOpenModal(false) }} loading={loading} />
       <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issueId={issueId} />
     </CustomBox>
   )

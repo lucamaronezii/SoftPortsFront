@@ -3,7 +3,8 @@ import { Divider, Menu, type MenuProps } from 'antd';
 import { menuItems } from '../../utils/menuItems';
 import ToFixIssues from './ToFixIssues/ToFixIssues';
 import FixedIssues from './ClosedIssues/ClosedIssues';
-import Tracking from './Tracking/Tracking';
+import Matrix from './Matrix/Matrix';
+import TestCases from './TestCases/TestCases';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
@@ -18,8 +19,10 @@ const Projects = () => {
         return <ToFixIssues />
       case "fixed":
         return <FixedIssues />
-      case "track":
-        return <Tracking />
+      case "test":
+        return <TestCases />
+      case "matrix":
+        return <Matrix />
     }
   }
 

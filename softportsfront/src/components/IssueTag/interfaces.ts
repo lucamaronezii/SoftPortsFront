@@ -1,4 +1,4 @@
-export type Priority = "Crítico" | "Alto" | "Médio" | "Baixo"
+export type Priority = "Crítica" | "Alta" | "Média" | "Baixa"
 
 export interface IIssueTag {
     priority: Priority;
