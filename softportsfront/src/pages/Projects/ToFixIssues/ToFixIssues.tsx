@@ -50,11 +50,11 @@ const ToFixIssues = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
-  const [issueId, setIssueId] = useState<number>(0)
+  const [issueId, setIssueId] = useState<IIssue>()
 
-  const handleIssueView = (id: number) => {
+  const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setIssueId(id)
+    setIssueId(issue)
   }
 
   const handleGetIssues = async () => {
@@ -158,7 +158,7 @@ const ToFixIssues = () => {
                   status={issue.status}
                   responsaveis={issue.responsaveis}
                   dataCorrecao={issue.dataCorrecao}
-                  onClick={() => handleIssueView(issue.id)}
+                  onClick={() => handleIssueView(issue)}
                 />
               ))
             ) : (
@@ -168,8 +168,8 @@ const ToFixIssues = () => {
         </>
       )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => { handleSuccessMessage(); setOpenModal(false) }} loading={loading} />
-      <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issueId={issueId} />
+      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={() => { handleSuccessMessage(); setOpenModal(false) }} />
+      <IssueView open={openIssue} onClose={() => setOpenIssue(false)} issue={issueId!}/>
     </CustomBox>
   )
 }

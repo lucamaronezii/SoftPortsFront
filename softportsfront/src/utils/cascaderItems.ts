@@ -33,32 +33,6 @@ export const cascaderItems: Option[] = [
             {
                 label: 'Bug',
                 value: 'bug',
-                children: [
-                    {
-                        label: 'Funcional',
-                        value: 'bug_func',
-                    },
-                    {
-                        label: 'Lógico',
-                        value: 'bug_integ',
-                    },
-                    {
-                        label: 'Segurança',
-                        value: 'bug_seg',
-                    },
-                    {
-                        label: 'Interface',
-                        value: 'bug_int',
-                    },
-                    {
-                        label: 'Multi-threading',
-                        value: 'bug_thr',
-                    },
-                    {
-                        label: 'Sintaxe',
-                        value: 'bug_sin',
-                    },
-                ],
             },
             {
                 label: 'Pergunta',

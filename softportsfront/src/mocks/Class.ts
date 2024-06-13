@@ -14,41 +14,15 @@ export const classList: IClass[] = [
     {
         id: 1,
         label: 'Bug',
-        value: 'Bug',
-        children: [
-            {
-                label: 'Funcional',
-                value: 'bug_func',
-            },
-            {
-                label: 'Lógico',
-                value: 'bug_integ',
-            },
-            {
-                label: 'Segurança',
-                value: 'bug_seg',
-            },
-            {
-                label: 'Interface',
-                value: 'bug_int',
-            },
-            {
-                label: 'Multi-threading',
-                value: 'bug_thr',
-            },
-            {
-                label: 'Sintaxe',
-                value: 'bug_sin',
-            },
-        ],
+        value: 'Bug'
     },
     {
-        id: 4,
+        id: 2,
         label: 'Pergunta',
         value: 'Pergunta'
     },
     {
-        id: 5,
+        id: 3,
         label: 'Melhoria',
         value: 'Melhoria'
     }

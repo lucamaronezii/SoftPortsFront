@@ -1,7 +1,6 @@
-import { Button, Flex, Modal, Row, Tooltip } from 'antd'
+import { Button, Flex, Modal, Tooltip } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { IIssueView } from './interfaces'
-import { issuesList } from '../../../../mocks/Issues'
 import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { CustomCol, CustomRow, colProps } from './styles'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
@@ -11,23 +10,36 @@ import { usersList } from '../../../../mocks/Users'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import dayjs from 'dayjs'
+import { IClassification } from '../../interfaces'
 
-const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
+const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('404 erro')
-    const [desc, setDesc] = useState<string>('Erro 404 endo exibido ao acessar a tela de documento')
-
-    const getIssue = () => {
-        const issue = issuesList.find((issue) => issue.id == issueId)
-        return issue?.titulo
-    }
+    const [title, setTitle] = useState<string>('')
+    const [desc, setDesc] = useState<string>('')
+    const [so, setSo] = useState<string>('')
+    const [classif, setClassif] = useState<IClassification[]>([])
+    const [priority, setPriority] = useState<string>('')
+    const [status, setStatus] = useState<string>('')
+    const [road, setRoad] = useState<string>('')
 
     useEffect(() => {
-        getIssue()
-    }, [])
+        if (issue) {
+            setTitle(issue.titulo)
+            setDesc(issue.descricao)
+            setSo(issue.versaoSO || '')
+            setClassif(issue.classificacoes)
+            setPriority(issue.prioridade)
+            setStatus(issue.status)
+            setRoad(issue.caminho || '')
+        }
+    }, [issue])
 
     const inputVariant = () => {
         return isEditing ? 'outlined' : 'filled'
+    }
+
+    if (!issue) {
+        return null // Ou você pode retornar um spinner ou mensagem de erro
     }
 
     return (
@@ -40,7 +52,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
             destroyOnClose
             title={
                 <Flex align='center' gap={15}>
-                    {getIssue()}
+                    {issue.titulo || null}
                     <Flex gap={10}>
                         <Tooltip placement='top' title={'Editar campos'}>
                             <Button
@@ -83,16 +95,17 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
                 <CustomCol {...colProps}>
                     <TitleSelect
                         text='Classificação'
-                        value={'Bug'}
+                        value={classif}
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
+                        mode='multiple'
                     />
                 </CustomCol>
                 <CustomCol {...colProps}>
                     <TitleSelect
                         text='Prioridade'
-                        value={'Crítica'}
+                        value={priority}
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
@@ -114,6 +127,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
                 <CustomCol {...colProps}>
                     <TitleSelect
                         text='Status'
+                        value={status}
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
@@ -122,6 +136,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
                 <CustomCol {...colProps}>
                     <TitleSelect
                         text='Caminho entre telas'
+                        value={road}
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
@@ -135,7 +150,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId }) => {
                         text='Versão do SO'
                         readOnly={!isEditing}
                         variant={inputVariant()}
-                        value={desc}
+                        value={so}
                         onChange={(e) => setDesc(e.target.value)}
                     />
                 </CustomCol>

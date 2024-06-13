@@ -6,20 +6,20 @@ export const priorityItems: Option[] = [
         value: 'priority',
         children: [
             {
-                label: 'Crítico',
-                value: 'crit'
+                label: 'Crítica',
+                value: 'Crítica'
             },
             {
-                label: 'Alto',
-                value: 'big'
+                label: 'Alta',
+                value: 'Alta'
             },
             {
-                label: 'Médio',
-                value: 'mid'
+                label: 'Média',
+                value: 'Média'
             },
             {
-                label: 'Baixo',
-                value: 'low'
+                label: 'Baixa',
+                value: 'Baixa'
             },
         ]
     },

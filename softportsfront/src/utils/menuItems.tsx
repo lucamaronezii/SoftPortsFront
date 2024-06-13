@@ -1,4 +1,4 @@
-import { BugFilled, CheckCircleOutlined, MergeOutlined, ScheduleOutlined, TableOutlined } from '@ant-design/icons';
+import { AlertOutlined, BugFilled, CheckCircleOutlined, MergeOutlined, ScheduleOutlined, SlidersOutlined, TableOutlined } from '@ant-design/icons';
 import { type MenuProps } from 'antd';
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -28,6 +28,18 @@ export const menuItems: MenuItem[] = [
         label: 'Matriz de conflitos',
         key: 'matrix',
         icon: <TableOutlined />
+      }
+    ]
+  },
+  {
+    label: 'Métricas',
+    key: 'metric',
+    icon: <SlidersOutlined />,
+    children: [
+      {
+        label: 'Defect Density',
+        key: 'defect',
+        icon: <AlertOutlined />
       }
     ]
   },

@@ -1,5 +1,4 @@
 import { Priority } from "../../components/IssueTag/interfaces";
-import { IUser } from "../Users/interfaces";
 import { ITestCase } from "./TestCases/interfaces";
 
 export interface IStyledItem extends IIssue {
@@ -30,5 +29,6 @@ export interface IIssue {
     caminho?: string;
     casosDeTeste?: ITestCase[];
     dataCorrecao: string;
+    versaoSO?: string;
     onClick?: () => void;
 }

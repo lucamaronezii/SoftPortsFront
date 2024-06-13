@@ -1,12 +1,12 @@
 export const tagColor = (priority: string) => {
     switch (priority) {
-        case "Baixo":
+        case "Baixa":
             return "cyan"
-        case "Médio":
+        case "Média":
             return "yellow"
-        case "Alto":
+        case "Alta":
             return "volcano"
-        case "Crítico":
+        case "Crítica":
             return "red"
     }
 }

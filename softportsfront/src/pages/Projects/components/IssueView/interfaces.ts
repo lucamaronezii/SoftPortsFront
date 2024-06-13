@@ -1,5 +1,7 @@
+import { IIssue } from "../../interfaces";
+
 export interface IIssueView {
-    issueId: number;
+    issue: IIssue;
     open: boolean;
     onClose: () => void;
 }

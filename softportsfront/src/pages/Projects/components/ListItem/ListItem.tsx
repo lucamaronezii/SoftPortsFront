@@ -37,7 +37,7 @@ const ListItem: React.FC<IIssue> = ({ id: id, titulo: name, prioridade: priority
       </StyledChild>
       <StyledChild width='15%' justify='center'>
         {classification.map((item) => (
-          <Typography key={item.classificacaoId}>{item.nome}</Typography>
+          <Typography key={item.classificacaoId}>{item.nome} ‎</Typography>
         ))}
       </StyledChild>
       <StyledChild justify='center'>
