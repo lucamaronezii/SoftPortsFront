@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Divider, Menu, type MenuProps } from 'antd';
 import { menuItems } from '../../utils/menuItems';
-import ToFixIssues from './ToFixIssues/ToFixIssues';
+import OpenIssues from './OpenIssues/OpenIssues';
 import FixedIssues from './ClosedIssues/ClosedIssues';
 import Matrix from './Matrix/Matrix';
 import TestCases from './TestCases/TestCases';
 import DefectDensity from './Metrics/DefectDensity/DefectDensity';
+import Requests from './Requests/Requests';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
@@ -17,7 +18,7 @@ const Projects = () => {
   const renderPage = () => {
     switch (current) {
       case "tofix":
-        return <ToFixIssues />
+        return <OpenIssues />
       case "fixed":
         return <FixedIssues />
       case "test":
@@ -26,6 +27,8 @@ const Projects = () => {
         return <Matrix />
       case "defect":
         return <DefectDensity />
+      case "requests":
+        return <Requests />
     }
   }
 

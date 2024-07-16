@@ -11,7 +11,7 @@ export interface IClassification {
     nome: string;
 }
 
-export interface IUserTestesssssssssssssssssss {
+export interface IUserTestess {
     usuarioId: number,
     nome: string,
     cargo: string
@@ -22,12 +22,12 @@ export interface IIssue {
     titulo: string;
     descricao: string;
     status: string;
-    responsaveis: IUserTestesssssssssssssssssss[];
+    responsaveis: IUserTestess[];
     prioridade: Priority;
     classificacoes: IClassification[];
     screenshot?: string;
     caminho?: string;
-    casosDeTeste?: ITestCase[];
+    casosDeTestes?: ITestCase[];
     dataCorrecao: string;
     versaoSO?: string;
     onClick?: () => void;

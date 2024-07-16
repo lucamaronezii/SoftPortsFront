@@ -11,7 +11,7 @@ export const token: Partial<MapToken> = {
     colorPrimary: prColor,
     colorBgLayout: '#000',
     colorText: '#FFF',
-    colorError: errColor
+    colorError: errColor,
 }
 
 export const components: Partial<ComponentsToken> = {
@@ -24,9 +24,6 @@ export const components: Partial<ComponentsToken> = {
     Menu: {
         colorPrimary: '#FFF',
         colorBgContainer: '#000'
-    },
-    Divider: {
-        colorSplit: secBgColor
     },
     Segmented: {
         itemSelectedBg: prColor,
@@ -44,5 +41,5 @@ export const components: Partial<ComponentsToken> = {
     Message: {
         colorSuccess: prColor,
         colorError: errColor
-    }
+    },
 }

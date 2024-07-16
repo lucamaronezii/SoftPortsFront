@@ -4,19 +4,24 @@ import Typography from 'antd/es/typography/Typography'
 import { IdIssue, ListText, StyledChild, StyledItem } from './styles'
 import IssueTag from '../../../../components/IssueTag/IssueTag'
 import { Avatar } from 'antd'
-import { usersList } from '../../../../mocks/Users'
 import { prColor } from '../../../../styles/theme'
 import { darkerPr } from '../../../../utils/darkerPrimary'
+import { format } from 'date-fns'
 
-const ListItem: React.FC<IIssue> = ({ id: id, titulo: name, prioridade: priority, responsaveis: responsibles, status, classificacoes: classification, dataCorrecao: fixDate, onClick }) => {
+const ListItem: React.FC<IIssue> = ({ id, titulo: name, prioridade: priority, responsaveis, status, classificacoes: classification, dataCorrecao: fixDate, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
   const getUsersInitials = () => {
-    const newInitials = usersList.map(user => {
+    const newInitials = responsaveis.map(user => {
       const text = user.nome[0] + user.nome[1]
       return text.toUpperCase()
     })
     setInitials(newInitials)
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return format(date, 'dd/MM/yyyy')
   }
 
   useEffect(() => {
@@ -56,7 +61,7 @@ const ListItem: React.FC<IIssue> = ({ id: id, titulo: name, prioridade: priority
         </Avatar.Group>
       </StyledChild>
       <StyledChild width='15%' justify='end'>
-        <Typography>{fixDate}</Typography>
+        <Typography>{formatDate(fixDate)}</Typography>
       </StyledChild>
     </StyledItem>
   )

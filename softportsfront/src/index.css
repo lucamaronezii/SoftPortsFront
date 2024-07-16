@@ -37,3 +37,7 @@ code {
 .anticon svg {
   color: #FFF;
 } */
+
+.ant-form-item-with-error .ant-form-item-explain-error {
+  text-align: right;
+}
