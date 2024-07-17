@@ -4,8 +4,9 @@ import { StyledCard } from './styles'
 import { DeleteOutlined, SettingFilled } from '@ant-design/icons'
 import { ReactNode, useRef, useState } from 'react'
 import { errColor } from '../../../../styles/theme'
+import { IUserCard } from './interfaces'
 
-const UserCard = () => {
+const UserCard: React.FC<IUserCard> = ({ user }) => {
 
     const actions: ReactNode[] = [
         <SettingFilled key='edit' />,
@@ -19,8 +20,8 @@ const UserCard = () => {
             onClick={() => { }}
         >
             <Card.Meta
-                title={'Luca Steyer'}
-                description="Desenvolvedor"
+                title={user.nome}
+                description={user.cargo}
             />
         </StyledCard>
     )

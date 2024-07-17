@@ -6,9 +6,12 @@ import { CustomBox } from '../Projects/styles'
 import { useState } from 'react'
 import UserCard from './components/UserCard/UserCard'
 import NewUser from './NewUser/NewUser'
+import { positionItems } from '../../utils/positionItems'
+import { IUser } from './interfaces'
 
-const Users = () => {
+const Users: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [users, setUsers] = useState<IUser[]>([])
 
   return (
     <Layout style={{ minHeight: '100vh', gap: 20, paddingLeft: 16 }}>
@@ -16,6 +19,7 @@ const Users = () => {
         <UserOutlined style={{ fontSize: 27 }} />
         <StyledTitle>Usuários</StyledTitle>
       </SubnavPad>
+
       <CustomBox mr={20}>
         <CustomRow>
           <Flex gap={15}>
@@ -28,9 +32,10 @@ const Users = () => {
             </div>
             <Cascader
               removeIcon
-              placeholder='Filtrar usuários'
+              placeholder='Filtrar por cargo'
               multiple
               maxTagCount={'responsive'}
+              options={positionItems}
             />
           </Flex>
           <Button
@@ -44,9 +49,9 @@ const Users = () => {
         </CustomRow>
 
         <Flex gap={16}>
-          <UserCard />
-          <UserCard />
-          <UserCard />
+          {users.map((user) => (
+            <UserCard user={user} />
+          ))}
         </Flex>
       </CustomBox>
 

@@ -1,6 +1,6 @@
 import { Button, Cascader, Flex, Input, Segmented, Spin, Typography, message } from 'antd'
 import { NoIssuesBox } from './styles'
-import { cascaderItems } from '../../../utils/cascaderItems'
+import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
 import { BugFilled, PlusOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
@@ -372,7 +372,7 @@ const OpenIssues = () => {
             removeIcon
             placeholder='Filtrar registros'
             multiple
-            options={cascaderItems}
+            options={issueFilterItems}
             maxTagCount={'responsive'}
           />
           <Segmented

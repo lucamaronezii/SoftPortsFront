@@ -1,4 +1,4 @@
-import { Option } from "./cascaderItems";
+import { Option } from "./issueFilterItems";
 
 export const priorityItems: Option[] = [
     {
