@@ -7,6 +7,7 @@ import Matrix from './Matrix/Matrix';
 import TestCases from './TestCases/TestCases';
 import DefectDensity from './Metrics/DefectDensity/DefectDensity';
 import Requests from './Requests/Requests';
+import { SubnavPad } from '../Users/styles';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
@@ -34,14 +35,14 @@ const Projects = () => {
 
   return (
     <div>
-      <div style={{ padding: '20px 0px 0px 20px' }}>
+      <SubnavPad>
         <Menu
           onClick={onClick}
           selectedKeys={[current]}
           mode="horizontal"
           items={menuItems}
         />
-      </div>
+      </SubnavPad>
       <Divider
         orientation='center'
         style={{ marginTop: 0 }}
