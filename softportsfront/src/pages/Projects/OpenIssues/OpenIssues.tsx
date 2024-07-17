@@ -362,7 +362,7 @@ const OpenIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              placeholder='Pesquisar registros'
+              placeholder='Pesquisar registro'
               allowClear
               enterButton
               onChange={(e) => setInput(e.target.value)}
