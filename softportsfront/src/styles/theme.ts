@@ -12,6 +12,8 @@ export const token: Partial<MapToken> = {
     colorBgLayout: '#000',
     colorText: '#FFF',
     colorError: errColor,
+    fontFamily: 'Inter',
+    fontSize: 13
 }
 
 export const components: Partial<ComponentsToken> = {
@@ -42,4 +44,7 @@ export const components: Partial<ComponentsToken> = {
         colorSuccess: prColor,
         colorError: errColor
     },
+    Typography: {
+        fontFamily: 'Inter'
+    }
 }

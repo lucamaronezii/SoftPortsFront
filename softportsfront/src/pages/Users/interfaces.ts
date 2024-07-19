@@ -1,6 +1,7 @@
 export interface IUser {
     usuarioId: number;
     nome: string;
-    cargo: string;
+    password?: string;
     value: string;
+    cargo: string;
 }

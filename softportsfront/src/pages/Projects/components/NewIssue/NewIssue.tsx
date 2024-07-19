@@ -19,8 +19,9 @@ import dayjs from 'dayjs'
 import { createIssue } from '../../../../services/IssueServices'
 import { NoticeType } from 'antd/es/message/interface'
 import { testCasesList } from '../../../../mocks/TestCases'
+import { WarningOutlined } from '@ant-design/icons'
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -168,11 +169,11 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         <>
             {contextHolder}
             <Modal
-                title="Novo registro de problema"
+                title={<Flex gap={10}><WarningOutlined /> Novo registro de problema</Flex>}
                 open={open}
                 confirmLoading={loading}
                 onOk={handleCreateIssue}
-                onCancel={() => {onClose(); handleCloseModal()}}
+                onCancel={() => { onClose(); handleCloseModal() }}
                 cancelText={'Cancelar'}
                 width={1000}
                 centered

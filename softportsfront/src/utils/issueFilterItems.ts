@@ -7,7 +7,7 @@ export interface Option {
     disableCheckbox?: boolean;
 }
 
-export const cascaderItems: Option[] = [
+export const issueFilterItems: Option[] = [
     {
         label: 'Responsáveis',
         value: 'respons',
