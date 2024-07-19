@@ -24,7 +24,6 @@ export const StyledSidebarItem = styled.div<Partial<ISidebarItemProps>>`
 
 export const StyledText = styled(Typography.Text)`
     font-weight: 500;
-    color: #fff;
     user-select: none;
     white-space: nowrap;
     text-overflow: ellipsis;

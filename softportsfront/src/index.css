@@ -12,3 +12,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.anticon {
+  color: #FFF;
+}
+
+.anticon svg {
+  color: #FFF;
+}
