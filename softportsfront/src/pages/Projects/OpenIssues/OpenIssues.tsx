@@ -1,9 +1,9 @@
-import { Button, Cascader, Flex, Input, Segmented, Spin, Typography, message } from 'antd'
+import { Button, Cascader, Flex, Input, Segmented, Skeleton, Spin, Typography, message } from 'antd'
 import { NoIssuesBox } from './styles'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
 import { BugFilled, PlusOutlined } from '@ant-design/icons'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import ListItem from '../components/ListItem/ListItem'
 import { IIssue } from '../interfaces'
@@ -33,7 +33,7 @@ const OpenIssues = () => {
   const [seg, setSeg] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<IIssue>()
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
@@ -118,10 +118,12 @@ const OpenIssues = () => {
     try {
       setLoading(true)
       await getIssues().then((response) => setIssues(response.data.conteudo))
-      setLoading(false)
     } catch (error) {
       console.error(error)
-      setLoading(false)
+    } finally {
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
     }
   }
 
@@ -440,9 +442,11 @@ const OpenIssues = () => {
           </DndContext>
         </KanbanBox>
       ) : (
-        <>
+        <Flex vertical gap={12}>
           {loading ? (
-            <Spin size='large' style={{ marginTop: 35 }} />
+              Array.from({ length: 3 }).map(() => (
+                <Skeleton.Input active style={{ width: "100%" }} />
+              ))
           ) : (
             issues && issues.length > 0 ? (
               issues.map((issue, index) => (
@@ -468,7 +472,7 @@ const OpenIssues = () => {
               </NoIssuesBox>
             )
           )}
-        </>
+        </Flex>
       )}
 
       <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={handleOkButton} />

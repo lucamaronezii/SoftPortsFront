@@ -144,7 +144,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             title={
                 <Flex align='center' gap={15}>
                     {issue.titulo || null}
-                    <Flex gap={10}>
+                    <Flex gap={10} align='center'>
                         <Tooltip placement='top' title={'Editar campos'}>
                             <Button
                                 type={isEditing ? 'primary' : 'dashed'}
@@ -165,6 +165,9 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                                 type='primary'
                             />
                         </Popdelete>
+                        <Button size='small' icon={<CheckOutlined />} iconPosition='end'>
+                            Fechar problema
+                        </Button>
                     </Flex>
                 </Flex>
             }
