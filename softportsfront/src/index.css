@@ -2,6 +2,10 @@
   width: 6px;
 }
 
+::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
 ::-webkit-scrollbar-track {
   background: #555; 
 }

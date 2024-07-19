@@ -2,8 +2,8 @@ import { Button, Cascader, Flex, Input, Segmented, Skeleton, Spin, Typography, m
 import { NoIssuesBox } from './styles'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
-import { BugFilled, PlusOutlined } from '@ant-design/icons'
-import React, { useEffect, useState } from 'react'
+import { BugFilled, PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
+import { useEffect, useMemo, useState } from 'react'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import ListItem from '../components/ListItem/ListItem'
 import { IIssue } from '../interfaces'
@@ -12,78 +12,24 @@ import IssueView from '../components/IssueView/IssueView'
 import { getIssues } from '../../../services/IssueServices'
 import { NoticeType } from 'antd/es/message/interface'
 import { CustomBox } from '../styles'
-import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
-import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
 import { DndContext, DragEndEvent, DragMoveEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
+import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
-
-type DNDType = {
-  id: UniqueIdentifier;
-  title: string;
-  items: {
-    id: UniqueIdentifier;
-    title: string;
-  }[]
-}
+import { createPortal } from 'react-dom'
+import { Column, Id } from '../components/Kanban/KanbanColumn/types'
 
 const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>('')
-  const [seg, setSeg] = useState<number>(0)
+  const [seg, setSeg] = useState<number>(1)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<IIssue>()
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [currentContainerId, setCurrentContainerId] = useState<UniqueIdentifier>()
-  const [containerName, setContainerName] = useState<string>('')
-  const [itemName, setItemName] = useState<string>('')
-  const [showAddContainerModal, setShowAddContainerModal] = useState<boolean>(false)
-  const [showAddItemModal, setShowAddItemModal] = useState<boolean>(false)
-  const [containers, setContainers] = useState<DNDType[]>([
-    {
-      id: `pending`,
-      title: 'Pendente',
-      items: [
-        {
-          id: 'item-teste-1',
-          title: 'Item de teste 1'
-        }
-      ]
-    },
-    {
-      id: `correction`,
-      title: 'Em correção',
-      items: [
-        {
-          id: 'item-teste-2',
-          title: 'Item de teste 2'
-        }
-      ]
-    },
-    {
-      id: `testing`,
-      title: 'Testes',
-      items: [
-        {
-          id: 'item-teste-3',
-          title: 'Item de teste 3'
-        }
-      ]
-    },
-    {
-      id: `waiting`,
-      title: 'Aguardando aprovação',
-      items: [
-        {
-          id: 'item-teste-4',
-          title: 'Item de teste 4'
-        }
-      ]
-    }
-  ])
+  const [testIssues, setTestIssues] = useState<IIssue[]>([])
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
@@ -131,229 +77,89 @@ const OpenIssues = () => {
     handleGetIssues()
   }, [])
 
+  const [columns, setColumns] = useState<Column[]>([])
+
+  const generateId = () => {
+    return Math.floor(Math.random() * 10001)
+  }
+
+  const createNewColumn = () => {
+    const columnToAdd: Column = {
+      id: generateId(),
+      title: `Column ${columns.length + 1}`
+    }
+
+    setColumns([...columns, columnToAdd])
+  }
+
+  const deleteColumn = (id: Id) => {
+    setColumns(columns.filter(column => column.id !== id))
+  }
+
+  const columnsId = useMemo(() => columns.map(col => col.id), [columns])
+  const [activeColumn, setActiveColumn] = useState<Column | null>(null)
+
+  const onDragStart = (event: DragStartEvent) => {
+    console.log("DRAGGING START", event)
+
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current?.column)
+      return;
+    }
+  }
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over) return
+
+    const activeColumnId = active.id
+    const overColumnId = over.id
+
+    if (activeColumnId === overColumnId) return
+
+    setColumns(columns => {
+      const activeColumnIndex = columns.findIndex(col => col.id === activeColumnId);
+      const overColumnIndex = columns.findIndex(col => col.id === overColumnId);
+      return arrayMove(columns, activeColumnIndex, overColumnIndex)
+    })
+  }
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10
+      }
     })
   )
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event
-    const { id } = active
-    setActiveId(id)
+  const updateColumn = (id: Id, text: string) => {
+    const newColumns = columns.map(col => {
+      if (col.id !== id) return col
+      return { ...col, text }
+    })
+
+    setColumns(newColumns)
   }
 
-  const findValueOfItems = (id: UniqueIdentifier | undefined, type: string) => {
-    if (type == 'container') {
-      return containers.find((container) => container.id === id)
-    } else if (type == 'item') {
-      return containers.find((container: any) =>
-        container.items.find((item: any) => item.id === id)
-      )
-    }
-  }
-
-  const findContainerItems = (id: UniqueIdentifier | undefined) => {
-    const container = findValueOfItems(id, 'container');
-    if (!container) return [];
-    return container.items;
-  };
-
-  const handleDragMove = (event: DragMoveEvent) => {
-    const { active, over } = event
-    if (
-      active.id.toString().includes("item") &&
-      over?.id.toString().includes("item") &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      const activeContainer = findValueOfItems(active.id, 'item')
-      const overContainer = findValueOfItems(over.id, 'item')
-      if (!activeContainer || !overContainer) return
-
-      const activeContainerIndex = containers.findIndex((container) => container.id === activeContainer.id)
-      const overContainerIndex = containers.findIndex((container) => container.id === overContainer.id)
-      const activeItemIndex = activeContainer.items.findIndex((item) => item.id === active.id)
-      const overItemIndex = overContainer.items.findIndex((item) => item.id === over.id)
-
-      if (activeContainer === overContainer) {
-        let newItems = { ...containers }
-        newItems[activeContainerIndex].items = arrayMove(
-          newItems[activeContainerIndex].items,
-          activeItemIndex,
-          overItemIndex
-        )
-
-        setContainers(newItems)
-      } else {
-        let newItems = { ...containers }
-        const [removedItem] = newItems[activeContainerIndex].items.splice(
-          activeItemIndex,
-          1
-        )
-        newItems[overContainerIndex].items.splice(
-          overItemIndex,
-          0,
-          removedItem
-        )
-        setContainers(newItems)
-      }
+  const addIssue = (columnId: Id) => {
+    const newIssue: IIssue = {
+      id: generateId(),
+      classificacoes: [],
+      dataCorrecao: '',
+      descricao: '',
+      prioridade: 'Crítica',
+      responsaveis: [],
+      status: '',
+      titulo: `Issue ${testIssues.length + 1}`,
+      caminho: '',
+      casosDeTestes: [],
+      screenshot: '',
+      versaoSO: '',
+      columnId: columnId
     }
 
-    // Handling Item Drop into a container
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find the active and over container
-      const activeContainer = findValueOfItems(active.id, 'item');
-      const overContainer = findValueOfItems(over.id, 'container');
-
-      // If the active or over container is undefined, return
-      if (!activeContainer || !overContainer) return;
-
-      // Find the index of the active and over container
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id
-      );
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id
-      );
-
-      const activeItemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id
-      )
-
-      let newItems = [...containers];
-      const [removedItem] = newItems[activeContainerIndex].items.splice(
-        activeItemIndex,
-        1
-      );
-      newItems[overContainerIndex].items.push(removedItem);
-      setContainers(newItems);
-
-    }
-
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    // Handling Container Sorting
-    if (
-      active.id.toString().includes('container') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find the index of the active and over container
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === active.id,
-      );
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === over.id,
-      );
-      // Swap the active and over container
-      let newItems = [...containers];
-      newItems = arrayMove(newItems, activeContainerIndex, overContainerIndex);
-      setContainers(newItems);
-    }
-
-    // Handling item Sorting
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('item') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find the active and over container
-      const activeContainer = findValueOfItems(active.id, 'item');
-      const overContainer = findValueOfItems(over.id, 'item');
-
-      // If the active or over container is not found, return
-      if (!activeContainer || !overContainer) return;
-      // Find the index of the active and over container
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
-      );
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
-      );
-      // Find the index of the active and over item
-      const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
-      );
-      const overitemIndex = overContainer.items.findIndex(
-        (item) => item.id === over.id,
-      );
-
-      // In the same container
-      if (activeContainerIndex === overContainerIndex) {
-        let newItems = [...containers];
-        newItems[activeContainerIndex].items = arrayMove(
-          newItems[activeContainerIndex].items,
-          activeitemIndex,
-          overitemIndex
-        );
-
-        setContainers(newItems);
-      } else {
-        // In different containers
-        let newItems = [...containers];
-        const [removeditem] = newItems[activeContainerIndex].items.splice(
-          activeitemIndex,
-          1,
-        );
-        newItems[overContainerIndex].items.splice(
-          overitemIndex,
-          0,
-          removeditem,
-        );
-        setContainers(newItems);
-      }
-    }
-    // Handling item dropping into Container
-    if (
-      active.id.toString().includes('item') &&
-      over?.id.toString().includes('container') &&
-      active &&
-      over &&
-      active.id !== over.id
-    ) {
-      // Find the active and over container
-      const activeContainer = findValueOfItems(active.id, 'item');
-      const overContainer = findValueOfItems(over.id, 'container');
-
-      // If the active or over container is not found, return
-      if (!activeContainer || !overContainer) return;
-      // Find the index of the active and over container
-      const activeContainerIndex = containers.findIndex(
-        (container) => container.id === activeContainer.id,
-      );
-      const overContainerIndex = containers.findIndex(
-        (container) => container.id === overContainer.id,
-      );
-      // Find the index of the active and over item
-      const activeitemIndex = activeContainer.items.findIndex(
-        (item) => item.id === active.id,
-      );
-
-      let newItems = [...containers];
-      const [removeditem] = newItems[activeContainerIndex].items.splice(
-        activeitemIndex,
-        1,
-      );
-      newItems[overContainerIndex].items.push(removeditem);
-      setContainers(newItems);
-    }
-    setActiveId(null);
+    setTestIssues([...testIssues, newIssue])
   }
 
   return (
@@ -395,58 +201,47 @@ const OpenIssues = () => {
 
       {seg ? (
         <KanbanBox>
-          {/* <KanbanColumn
-            title='Pendente'
-            onClick={() => setOpenModal(true)}
-          />
-          <KanbanColumn
-            title='Em correção'
-            onClick={() => setOpenModal(true)}
-          />
-          <KanbanColumn
-            title='Testes'
-            onClick={() => setOpenModal(true)}
-          />
-          <KanbanColumn
-            title='Aguardando fechamento'
-            onClick={() => setOpenModal(true)}
-          /> */}
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragMove={handleDragMove}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={containers.map((container) => container.id)}>
-              {containers.map((container) => (
+          <Flex vertical gap={4}>
+            <Button
+              type='primary'
+              icon={<PlusCircleFilled />}
+              iconPosition='end'
+              onClick={() => createNewColumn()}
+            >Adicionar coluna</Button>
+          </Flex>
+          <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <SortableContext items={columnsId}>
+              {columns.map((col) => (
                 <KanbanColumn
-                  key={container.id}
-                  title={container.title}
-                  id={container.id}
-                  onAddItem={() => { }}
-                >
-                  <SortableContext
-                    items={container.items.map((i) => i.id)}
-                  >
-                    <Flex gap={5}>
-                      {container.items.map((item) => (
-                        <KanbanCard id={item.id} />
-                      ))}
-                    </Flex>
-                  </SortableContext>
-                </KanbanColumn>
+                  issues={testIssues.filter(issue => issue.columnId == col.id)}
+                  addIssue={addIssue}
+                  updateColumn={updateColumn}
+                  column={col}
+                  onRemoveColumn={() => deleteColumn(col.id)}
+                />
               ))}
             </SortableContext>
+            {createPortal(
+              <DragOverlay>
+                {activeColumn &&
+                  <KanbanColumn
+                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
+                    addIssue={addIssue}
+                    updateColumn={updateColumn}
+                    column={activeColumn}
+                    onRemoveColumn={() => deleteColumn(activeColumn.id)}
+                  />
+                }
+              </DragOverlay>, document.body
+            )}
           </DndContext>
         </KanbanBox>
       ) : (
         <Flex vertical gap={12}>
           {loading ? (
-              Array.from({ length: 3 }).map(() => (
-                <Skeleton.Input active style={{ width: "100%" }} />
-              ))
+            Array.from({ length: 3 }).map(() => (
+              <Skeleton.Input active style={{ width: "100%" }} />
+            ))
           ) : (
             issues && issues.length > 0 ? (
               issues.map((issue, index) => (

@@ -1,10 +1,14 @@
-import { UniqueIdentifier } from "@dnd-kit/core";
 import { ReactNode } from "react";
+import { Column, Id } from "./types";
+import { IIssue } from "../../../interfaces";
 
 export interface IKanbanColumnProps {
-    id?: UniqueIdentifier;
+    column: Column;
     children?: ReactNode;
-    title?: string;
     onClick?: () => void;
     onAddItem?: () => void;
+    onRemoveColumn?: () => void;
+    updateColumn: (id: Id, e: string) => void;
+    addIssue: (id: Id) => void;
+    issues: IIssue[];
 }

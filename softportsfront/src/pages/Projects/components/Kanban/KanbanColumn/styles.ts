@@ -2,7 +2,7 @@ import { Flex } from "antd";
 import styled from "styled-components";
 import { secBgColor } from "../../../../../styles/theme";
 
-export const StyledKanban = styled(Flex)`
+export const StyledKColumn = styled(Flex) <{ isDragging?: boolean }>`
     background-color: ${secBgColor};
     width: 290px;
     border-radius: 6px 6px 0px 0px;
@@ -11,4 +11,7 @@ export const StyledKanban = styled(Flex)`
     padding: 13px;
     flex-direction: column;
     gap: 13px;
+    opacity: ${props => props.isDragging ? 0.6 : 1};
+    cursor: grab;
+    position: relative;
 `

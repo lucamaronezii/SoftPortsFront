@@ -1,4 +1,5 @@
 import { Priority } from "../../components/IssueTag/interfaces";
+import { Id } from "./components/Kanban/KanbanColumn/types";
 import { ITestCase } from "./TestCases/interfaces";
 
 export interface IStyledItem extends IIssue {
@@ -31,4 +32,5 @@ export interface IIssue {
     dataCorrecao: string;
     versaoSO?: string;
     onClick?: () => void;
+    columnId?: Id;
 }
