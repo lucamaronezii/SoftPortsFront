@@ -14,7 +14,7 @@ export const StyledItem = styled(Flex)`
     transition: background-color 0.3s;
     &:hover {
         background-color: ${darken(0.04, secBgColor)}
-    }
+    };
 `
 
 export const StyledChild = styled(Flex) <{ width?: string }>`
