@@ -22,16 +22,14 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
             setIsOpen(!isOpen)
         } else {
             navigate(to)
+            setProjectName('')
         }
     }
 
     return (
         <>
             <StyledSidebarItem
-                onClick={() => {
-                    handleClick()
-                    setProjectName('')
-                }}
+                onClick={handleClick}
                 selected={verify}
                 hasChild={hasChild}
                 dropOpen={isOpen}

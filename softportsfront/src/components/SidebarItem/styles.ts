@@ -23,7 +23,7 @@ export const StyledSidebarItem = styled.div<Partial<ISidebarItemProps>>`
 `
 
 export const StyledText = styled(Typography.Text)`
-    font-weight: 500;
+    font-weight: 600;
     user-select: none;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -34,7 +34,7 @@ export const LogoBox = styled.div`
     display: flex;
     padding: 0px 10px 10px 10px;
     align-items: center;
-    gap: 10px;
+    gap: 7px;
 `
 
 export const ImageBox = styled.div`
@@ -47,6 +47,7 @@ export const ImageBox = styled.div`
 
 export const LogoText = styled(StyledText)`
     font-size: 20px;
+    font-weight: 500;
 `
 
 export const ArrowDown = styled(CaretDownFilled) <{ isRotated: boolean }>`
