@@ -1,10 +1,8 @@
 import { Flex } from "antd";
 import styled from "styled-components";
-import { darkerPr } from "../../../../../utils/darkerPrimary";
 
 export const StyledKBox = styled(Flex)`
     height: 100%;
-    background-color: ${darkerPr};
     overflow-x: auto;
     position: relative;
     margin-right: -36px;

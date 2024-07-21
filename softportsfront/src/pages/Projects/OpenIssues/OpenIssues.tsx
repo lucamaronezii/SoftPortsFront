@@ -12,8 +12,8 @@ import IssueView from '../components/IssueView/IssueView'
 import { getIssues } from '../../../services/IssueServices'
 import { NoticeType } from 'antd/es/message/interface'
 import { CustomBox } from '../styles'
-import { DndContext, DragEndEvent, DragMoveEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
 import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
@@ -94,35 +94,86 @@ const OpenIssues = () => {
 
   const deleteColumn = (id: Id) => {
     setColumns(columns.filter(column => column.id !== id))
+    setTestIssues(testIssues.filter(issue => issue.columnId !== id))
   }
 
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
+  const [activeIssue, setActiveIssue] = useState<IIssue | null>(null)
 
   const onDragStart = (event: DragStartEvent) => {
     console.log("DRAGGING START", event)
 
     if (event.active.data.current?.type === "Column") {
-      setActiveColumn(event.active.data.current?.column)
+      setActiveColumn(event.active.data.current.column)
+      return;
+    }
+
+    if (event.active.data.current?.type === "IIssue") {
+      setActiveIssue(event.active.data.current.issue)
       return;
     }
   }
 
   const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveColumn(null);
+      setActiveIssue(null);
+      return;
+    }
+
+    const activeColumnId = active.id;
+    const overColumnId = over.id;
+
+    if (active.data.current?.type === "Column" && activeColumnId !== overColumnId) {
+      setColumns(columns => {
+        const activeColumnIndex = columns.findIndex(col => col.id === activeColumnId);
+        const overColumnIndex = columns.findIndex(col => col.id === overColumnId);
+        return arrayMove(columns, activeColumnIndex, overColumnIndex);
+      });
+    }
+
+    setActiveColumn(null);
+    setActiveIssue(null);
+  };
+
+  const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event
 
     if (!over) return
 
-    const activeColumnId = active.id
-    const overColumnId = over.id
+    const activeId = active.id
+    const overId = over.id
 
-    if (activeColumnId === overColumnId) return
+    if (activeId === overId) return
 
-    setColumns(columns => {
-      const activeColumnIndex = columns.findIndex(col => col.id === activeColumnId);
-      const overColumnIndex = columns.findIndex(col => col.id === overColumnId);
-      return arrayMove(columns, activeColumnIndex, overColumnIndex)
-    })
+    const isActiveIssue = active.data.current?.type == "IIssue"
+    const isOverIssue = over.data.current?.type == "IIssue"
+
+    if (!isActiveIssue) return
+
+    if (isActiveIssue && isOverIssue) {
+      setTestIssues(testIssues => {
+        const activeIndex = testIssues.findIndex(t => t.id == activeId)
+        const overIndex = testIssues.findIndex(t => t.id == overId)
+
+        testIssues[activeIndex].columnId = testIssues[overIndex].columnId
+
+        return arrayMove(testIssues, activeIndex, overIndex)
+      })
+    }
+
+    const isOverAColumn = over.data.current?.type === "Column"
+
+    if (isActiveIssue && isOverAColumn) {
+      const activeIndex = testIssues.findIndex(t => t.id == activeId)
+
+      testIssues[activeIndex].columnId = overId
+
+      return arrayMove(testIssues, activeIndex, activeIndex)
+    }
   }
 
   const sensors = useSensors(
@@ -160,6 +211,13 @@ const OpenIssues = () => {
     }
 
     setTestIssues([...testIssues, newIssue])
+  }
+
+  const deleteIssue = (id: Id) => {
+    const newIssues = testIssues.filter(issue => issue.id !== id)
+    console.log(id)
+    console.log(newIssues)
+    setTestIssues(newIssues)
   }
 
   return (
@@ -209,7 +267,12 @@ const OpenIssues = () => {
               onClick={() => createNewColumn()}
             >Adicionar coluna</Button>
           </Flex>
-          <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <DndContext
+            sensors={sensors}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={onDragOver}
+          >
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
@@ -218,18 +281,26 @@ const OpenIssues = () => {
                   updateColumn={updateColumn}
                   column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
+                  deleteIssue={deleteIssue}
                 />
               ))}
             </SortableContext>
             {createPortal(
               <DragOverlay>
-                {activeColumn &&
+                {activeColumn && (
                   <KanbanColumn
                     issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
                     addIssue={addIssue}
                     updateColumn={updateColumn}
                     column={activeColumn}
                     onRemoveColumn={() => deleteColumn(activeColumn.id)}
+                    deleteIssue={deleteIssue}
+                  />
+                )}
+                {activeIssue &&
+                  <KanbanCard
+                    issue={activeIssue}
+                    deleteIssue={deleteIssue}
                   />
                 }
               </DragOverlay>, document.body

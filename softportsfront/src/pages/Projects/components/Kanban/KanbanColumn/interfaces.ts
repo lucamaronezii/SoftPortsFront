@@ -11,4 +11,5 @@ export interface IKanbanColumnProps {
     updateColumn: (id: Id, e: string) => void;
     addIssue: (id: Id) => void;
     issues: IIssue[];
+    deleteIssue: (id: Id) => void
 }

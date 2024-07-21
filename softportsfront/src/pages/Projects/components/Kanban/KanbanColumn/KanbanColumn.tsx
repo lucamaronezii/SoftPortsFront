@@ -1,14 +1,21 @@
 import { Button, Divider, Flex, Input, Typography } from 'antd'
 import { IKanbanColumnProps } from './interfaces'
-import { StyledKColumn } from './styles'
+import { StyledCardsBox, StyledKColumn } from './styles'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { useSortable } from '@dnd-kit/sortable'
+import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import KanbanCard from '../KanbanCard/KanbanCard'
+import { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
+import { IIssue } from '../../../interfaces'
 
-const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddItem, onClick, onRemoveColumn, updateColumn, addIssue, issues }) => {
+const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddItem, onClick, onRemoveColumn,
+  updateColumn, addIssue, issues, deleteIssue }) => {
   const [editMode, setEditMode] = useState<boolean>(false)
+
+  const issuesId = useMemo(() => {
+    return issues.map((issue) => issue.id)
+  }, [issues])
 
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: column.id,
@@ -28,17 +35,12 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
     return (
       <StyledKColumn
         ref={setNodeRef}
+        style={style}
         isDragging
       >
         <Flex justify='space-between' align='center'>
-          <Typography>{column.title}</Typography>
-          <Flex align='center' gap={8}>
-            <Flex>0</Flex>
-            <Button type='primary' danger icon={<DeleteOutlined />} onClick={onRemoveColumn} />
-          </Flex>
+          <></>
         </Flex>
-        <Divider style={{ marginTop: 0 }} />
-        {children}
       </StyledKColumn>
     )
   }
@@ -47,10 +49,14 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
     <StyledKColumn
       ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
     >
-      <Flex justify='space-between' align='center'>
+      <Flex
+        justify='space-between'
+        align='center'
+        {...listeners}
+        {...attributes}
+        style={{ cursor: 'grab' }}
+      >
         {!editMode &&
           <Typography onClick={() => setEditMode(true)}>{column.title}</Typography>
         }
@@ -78,9 +84,17 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
         </Flex>
       </Flex>
       <Divider style={{ marginTop: 0 }} />
-      {issues.map((issue) => (
-        <KanbanCard issue={issue}/>
-      ))}
+      <StyledCardsBox vertical>
+        <SortableContext items={issuesId}>
+          {issues.map((issue) => (
+            <KanbanCard
+              key={issue.id}
+              issue={issue}
+              deleteIssue={deleteIssue}
+            />
+          ))}
+        </SortableContext>
+      </StyledCardsBox>
       <Button
         style={{ position: 'absolute', bottom: 13 }}
         icon={<PlusOutlined />}

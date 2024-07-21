@@ -1,6 +1,6 @@
 import { Flex } from "antd";
 import styled from "styled-components";
-import { secBgColor } from "../../../../../styles/theme";
+import { prColor, secBgColor } from "../../../../../styles/theme";
 
 export const StyledKColumn = styled(Flex) <{ isDragging?: boolean }>`
     background-color: ${secBgColor};
@@ -10,8 +10,18 @@ export const StyledKColumn = styled(Flex) <{ isDragging?: boolean }>`
     box-sizing: border-box;
     padding: 13px;
     flex-direction: column;
-    gap: 13px;
     opacity: ${props => props.isDragging ? 0.6 : 1};
-    cursor: grab;
+    border: ${props => props.isDragging ? `1px ${prColor} solid` : "none"};
     position: relative;
+    overflow-y: hidden;
+`
+
+export const StyledCardsBox = styled(Flex)`
+    gap: 13px;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: calc(100% - 100px);
+    padding-right: 3px;
+    scrollbar-color: #FFF transparent;
+    scrollbar-width: thin;
 `
