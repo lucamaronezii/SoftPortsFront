@@ -8,9 +8,6 @@ export const StyledKCard = styled.div<{ isDragging?: boolean }>`
     border-radius: 6px;
     padding: 6px;
     cursor: pointer;
-    &:active {
-        cursor: grabbing;
-    };
     position: relative;
     box-sizing: border-box;
     opacity: ${props => props.isDragging ? 0.6 : 1};
