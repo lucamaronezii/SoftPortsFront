@@ -19,7 +19,6 @@ const Users: React.FC = () => {
         {/* <UserOutlined style={{ fontSize: 27 }} /> */}
         <StyledTitle>Usuários</StyledTitle>
       </SubnavPad>
-
       <CustomBox mr={20}>
         <CustomRow>
           <Flex gap={15}>

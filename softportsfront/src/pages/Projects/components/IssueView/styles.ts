@@ -7,7 +7,6 @@ export const CustomCol = styled(Col)`
 `
 
 export const CustomRow = styled(Row)`
-    margin-top: 15px;
     gap: 5px;
 `
 

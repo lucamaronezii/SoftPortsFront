@@ -1,4 +1,4 @@
-import { Cascader, Flex, Input, Spin, Typography } from 'antd'
+import { Cascader, DatePicker, Flex, Input, Spin, Typography } from 'antd'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { useState } from 'react'
 import { CustomRow } from '../../../components/CustomRow/styles'
@@ -15,7 +15,7 @@ const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>(issuesList)
 
   return (
-    <CustomBox style={{ height: '85vh' }}>
+    <CustomBox>
       <CustomRow>
         <Flex gap={15}>
           <div style={{ maxWidth: '300px' }}>
@@ -34,6 +34,7 @@ const OpenIssues = () => {
             options={issueFilterItems}
             maxTagCount={'responsive'}
           />
+          <DatePicker.RangePicker format={'DD/MM/YYYY'} />
         </Flex>
       </CustomRow>
 
@@ -42,7 +43,7 @@ const OpenIssues = () => {
       ) : (
         issues && issues.length > 0 ? (
           issues.map((issue, index) => (
-            <ClosedIssue 
+            <ClosedIssue
               key={index}
               id={issue.id}
               classificacoes={issue.classificacoes}

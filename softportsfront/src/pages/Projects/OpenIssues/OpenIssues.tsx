@@ -221,7 +221,7 @@ const OpenIssues = () => {
   }
 
   return (
-    <CustomBox style={{ height: '85vh' }}>
+    <CustomBox>
       {contextHolder}
       <CustomRow>
         <Flex gap={15}>

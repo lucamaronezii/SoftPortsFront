@@ -1,4 +1,4 @@
-import { Flex, Layout } from "antd";
+import { Flex } from "antd";
 import styled from "styled-components";
 
 export const NoIssuesBox = styled(Flex)`

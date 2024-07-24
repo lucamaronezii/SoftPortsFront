@@ -1,78 +1,68 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CustomBox } from '../styles';
-import { Table, Input } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Table, Input, Flex, Cascader, Button, TableColumnsType } from 'antd';
+import { CustomRow } from '../components/IssueView/styles';
+import { issueFilterItems } from '../../../utils/issueFilterItems';
+import { DataType, matrixData } from '../../../mocks/Matrix';
 
-interface DataType {
-  key: string;
-  issue: string;
-  conflicted: string;
-  [key: string]: string;
-}
+const columnsMap: TableColumnsType<DataType> = Array.from({ length: 15 }, (_, index) => ({
+  title: `Requisito ${index + 1}`,
+  dataIndex: `address`,
+  key: `${index + 1}`,
+  align: "center",
+  width: 150,
+}));
 
-const initialData: DataType[] = [
+columnsMap.splice(
+  0,
+  0,
   {
-    key: '1',
-    issue: 'Problema 1',
-    conflicted: 'New York No. 1 Lake Park',
-    req1: 'X', req2: '', req3: 'X', req4: '', req5: '', req6: 'X', req7: ''
+    title: 'Full Name',
+    dataIndex: 'name',
+    key: 'name',
+    fixed: 'left',
+    width: 180
   },
-  {
-    key: '2',
-    issue: 'Problema 2',
-    conflicted: 'London No. 1 Lake Park',
-    req1: '', req2: 'X', req3: '', req4: 'X', req5: '', req6: '', req7: 'X'
-  },
-  {
-    key: '3',
-    issue: 'Problema 3',
-    conflicted: 'Sydney No. 1 Lake Park',
-    req1: 'X', req2: 'X', req3: 'X', req4: 'X', req5: 'X', req6: 'X', req7: 'X'
-  },
-];
+)
 
 const Matrix = () => {
-  const [data, setData] = useState<DataType[]>(initialData);
-
-  const handleCellChange = (value: string, key: string, column: string) => {
-    const newData = data.map(item => {
-      if (item.key === key) {
-        return { ...item, [column]: value };
-      }
-      return item;
-    });
-    setData(newData);
-  };
-
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'Problema',
-      dataIndex: 'issue',
-      key: 'issue',
-    },
-    ...Array.from({ length: 7 }, (_, i) => ({
-      title: `REQ-${i + 1}`,
-      dataIndex: `req${i + 1}`,
-      key: `req${i + 1}`,
-      render: (text:any, record:any) => (
-        <Input
-          variant='borderless'
-          style={{ textAlign: 'center' }}
-          value={record[`req${i + 1}`]}
-          onChange={e => handleCellChange(e.target.value, record.key, `req${i + 1}`)}
-        />
-      ),
-    })),
-  ];
+  const [data, setData] = useState<DataType[]>(matrixData);
 
   return (
     <CustomBox>
-      <Table<DataType>
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        bordered
-      />
+      <CustomRow justify={'space-between'}>
+        <Flex gap={15}>
+          <div style={{ maxWidth: '300px' }}>
+            <Input.Search
+              placeholder='Pesquisar registro'
+              allowClear
+              enterButton
+            />
+          </div>
+          <Cascader
+            removeIcon
+            placeholder='Filtrar registros'
+            multiple
+            options={issueFilterItems}
+            maxTagCount={'responsive'}
+          />
+        </Flex>
+        <Flex gap={8}>
+          <Button type='primary'>
+            Salvar
+          </Button>
+        </Flex>
+      </CustomRow>
+      <div style={{ position: 'relative', overflowX: 'auto', overflowY: 'auto', height: '100%' }}>
+        <div style={{ position: 'absolute' }}>
+          <Table
+            columns={columnsMap}
+            dataSource={data}
+            pagination={false}
+            scroll={{ x: 'max-content' }}
+          />
+        </div>
+      </div>
     </CustomBox>
   );
 };
