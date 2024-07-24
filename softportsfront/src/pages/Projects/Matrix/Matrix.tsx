@@ -17,7 +17,7 @@ columnsMap.splice(
   0,
   0,
   {
-    title: 'Full Name',
+    title: 'Issue',
     dataIndex: 'name',
     key: 'name',
     fixed: 'left',
