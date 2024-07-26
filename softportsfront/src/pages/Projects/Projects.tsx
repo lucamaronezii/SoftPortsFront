@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Divider, Menu, type MenuProps } from 'antd';
-import { menuItems } from '../../utils/menuItems';
+import { OpenIssuesMenu } from '../../utils/menuItems';
 import OpenIssues from './OpenIssues/OpenIssues';
 import FixedIssues from './ClosedIssues/ClosedIssues';
 import Matrix from './Matrix/Matrix';
@@ -40,7 +40,7 @@ const Projects = () => {
           onClick={onClick}
           selectedKeys={[current]}
           mode="horizontal"
-          items={menuItems}
+          items={OpenIssuesMenu}
         />
       </SubnavPad>
       <Divider

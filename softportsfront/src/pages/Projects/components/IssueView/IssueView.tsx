@@ -1,4 +1,4 @@
-import { Button, Flex, GetProp, Image, Modal, Tooltip, UploadProps } from 'antd'
+import { Button, Flex, GetProp, Image, Menu, Modal, Tooltip, UploadProps } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { IIssueView } from './interfaces'
 import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
@@ -19,6 +19,7 @@ import { UploadFile } from 'antd/lib'
 import { getBase64 } from '../../../../utils/getBase64'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
 import { testCasesList } from '../../../../mocks/TestCases'
+import { IssueMenu } from '../../../../utils/menuItems'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -159,10 +160,10 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             onConfirm={() => handleDeleteIssue(issue.id)}
                         >
                             <Button
+                                type='primary'
                                 icon={<DeleteOutlined />}
                                 size='small'
                                 danger
-                                type='primary'
                             />
                         </Popdelete>
                         <Button size='small' icon={<CheckOutlined />} iconPosition='end'>
@@ -180,6 +181,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 </Button>
             ]}
         >
+            <Menu
+                mode='horizontal'
+                items={IssueMenu}
+                style={{ marginBottom: '16px' }}
+            />
             <CustomRow>
                 <CustomCol {...colProps}>
                     <TitleInput

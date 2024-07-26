@@ -6,7 +6,7 @@ import { type MenuProps } from 'antd';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-export const menuItems: MenuItem[] = [
+export const OpenIssuesMenu: MenuItem[] = [
   {
     label: 'Problemas abertos',
     key: 'tofix',
@@ -52,3 +52,21 @@ export const menuItems: MenuItem[] = [
     icon: <MailOutlined />,
   },
 ];
+
+export const IssueMenu: MenuItem[] = [
+  {
+    label: 'Detalhes',
+    key: 'details',
+    style: {
+      marginLeft: "-16px",
+    }
+  },
+  {
+    label: 'Comentários',
+    key: 'comments',
+  },
+  {
+    label: 'Logs',
+    key: 'logs',
+  },
+] 

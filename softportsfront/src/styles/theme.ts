@@ -25,7 +25,7 @@ export const components: Partial<ComponentsToken> = {
     },
     Menu: {
         colorPrimary: '#FFF',
-        colorBgContainer: '#000'
+        colorBgContainer: 'transparent'
     },
     Segmented: {
         itemSelectedBg: prColor,
