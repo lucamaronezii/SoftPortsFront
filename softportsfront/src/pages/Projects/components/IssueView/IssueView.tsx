@@ -20,10 +20,13 @@ import { getBase64 } from '../../../../utils/getBase64'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
 import { testCasesList } from '../../../../mocks/TestCases'
 import { IssueMenu } from '../../../../utils/menuItems'
+import IssueComments from './components/IssueComments'
+import IssueLogs from './components/IssueLogs'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
+    const [selected, setSelected] = useState<string>('details')
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [title, setTitle] = useState<string>('')
     const [desc, setDesc] = useState<string>('')
@@ -131,6 +134,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             onClose('updated')
         } catch (error) {
             console.error(error)
+        } finally {
             setLoading(false)
         }
     }
@@ -173,159 +177,173 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 </Flex>
             }
             footer={[
-                <Button
-                    type="primary"
-                    onClick={handleUpdateIssue}
-                >
-                    Salvar
-                </Button>
+                <div style={{ backgroundColor: '' }}>
+                    <Button
+                        type="primary"
+                        onClick={handleUpdateIssue}
+                    >
+                        Salvar
+                    </Button>
+                </div>
             ]}
         >
             <Menu
                 mode='horizontal'
                 items={IssueMenu}
                 style={{ marginBottom: '16px' }}
+                defaultSelectedKeys={['details']}
+                onClick={(event) => setSelected(event.key)}
             />
-            <CustomRow>
-                <CustomCol {...colProps}>
-                    <TitleInput
-                        text='Título'
-                        readOnly={!isEditing}
-                        variant={inputVariant()}
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleSelect
-                        text='Classificação'
-                        value={classif}
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        variant={inputVariant()}
-                        removeIcon={!isEditing}
-                        options={classList}
-                        onChange={(e) => setClassif(e)}
-                        mode='multiple'
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleSelect
-                        text='Prioridade'
-                        value={priority}
-                        onChange={(e) => setPriority(e)}
-                        options={priorityItems[0].children}
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        variant={inputVariant()}
-                        removeIcon={!isEditing}
-                    />
-                </CustomCol>
-            </CustomRow>
+            <div style={{ minHeight: "335px" }}>
+                {selected === 'details' ? (
+                    <>
+                        <CustomRow>
+                            <CustomCol {...colProps}>
+                                <TitleInput
+                                    text='Título'
+                                    readOnly={!isEditing}
+                                    variant={inputVariant()}
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleSelect
+                                    text='Classificação'
+                                    value={classif}
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    variant={inputVariant()}
+                                    removeIcon={!isEditing}
+                                    options={classList}
+                                    onChange={(e) => setClassif(e)}
+                                    mode='multiple'
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleSelect
+                                    text='Prioridade'
+                                    value={priority}
+                                    onChange={(e) => setPriority(e)}
+                                    options={priorityItems[0].children}
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    variant={inputVariant()}
+                                    removeIcon={!isEditing}
+                                />
+                            </CustomCol>
+                        </CustomRow>
 
-            <CustomRow>
-                <CustomCol {...colProps}>
-                    <TitleTextArea
-                        text='Descrição'
-                        rows={3}
-                        readOnly={!isEditing}
-                        variant={inputVariant()}
-                        value={desc}
-                        onChange={(e) => setDesc(e.target.value)}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleSelect
-                        text='Status'
-                        value={status}
-                        onChange={(e) => setStatus(e)}
-                        options={statusList}
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        variant={inputVariant()}
-                        removeIcon={!isEditing}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleInput
-                        text='Caminho entre telas'
-                        value={road}
-                        onChange={(e) => setRoad(e.target.value)}
-                        variant={inputVariant()}
-                    />
-                </CustomCol>
-            </CustomRow>
+                        <CustomRow>
+                            <CustomCol {...colProps}>
+                                <TitleTextArea
+                                    text='Descrição'
+                                    rows={3}
+                                    readOnly={!isEditing}
+                                    variant={inputVariant()}
+                                    value={desc}
+                                    onChange={(e) => setDesc(e.target.value)}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleSelect
+                                    text='Status'
+                                    value={status}
+                                    onChange={(e) => setStatus(e)}
+                                    options={statusList}
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    variant={inputVariant()}
+                                    removeIcon={!isEditing}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleInput
+                                    text='Caminho entre telas'
+                                    value={road}
+                                    onChange={(e) => setRoad(e.target.value)}
+                                    variant={inputVariant()}
+                                />
+                            </CustomCol>
+                        </CustomRow>
 
-            <CustomRow>
-                <CustomCol {...colProps}>
-                    <TitleInput
-                        text='Versão do SO'
-                        readOnly={!isEditing}
-                        variant={inputVariant()}
-                        value={so}
-                        onChange={(e) => setSo(e.target.value)}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleDatePicker
-                        text='Data estimada para correção'
-                        value={correctionDate}
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        variant={inputVariant()}
-                        removeIcon={!isEditing}
-                        onChange={(date) => setCorrectionDate(date)}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleSelect
-                        text='Responsáveis'
-                        value={responsaveis}
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        variant={inputVariant()}
-                        removeIcon={!isEditing}
-                        options={usersList}
-                        mode='multiple'
-                        onChange={(value) => setResponsaveis(value)}
-                    />
-                </CustomCol>
-            </CustomRow>
+                        <CustomRow>
+                            <CustomCol {...colProps}>
+                                <TitleInput
+                                    text='Versão do SO'
+                                    readOnly={!isEditing}
+                                    variant={inputVariant()}
+                                    value={so}
+                                    onChange={(e) => setSo(e.target.value)}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleDatePicker
+                                    text='Data estimada para correção'
+                                    value={correctionDate}
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    variant={inputVariant()}
+                                    removeIcon={!isEditing}
+                                    onChange={(date) => setCorrectionDate(date)}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleSelect
+                                    text='Responsáveis'
+                                    value={responsaveis}
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    variant={inputVariant()}
+                                    removeIcon={!isEditing}
+                                    options={usersList}
+                                    mode='multiple'
+                                    onChange={(value) => setResponsaveis(value)}
+                                />
+                            </CustomCol>
+                        </CustomRow>
 
-            <CustomRow justify={'start'}>
-                <CustomCol {...colProps}>
-                    <TitleSelect
-                        text='Caso de teste'
-                        style={!isEditing ? { pointerEvents: "none" } : {}}
-                        removeIcon={!isEditing}
-                        variant={inputVariant()}
-                        value={testCase}
-                        options={testCasesList}
-                        onChange={(e) => setTestCase(e)}
-                    />
-                </CustomCol>
-                <CustomCol {...colProps}>
-                    <TitleUpload
-                        text='Screenshots'
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
-                        multiple
-                        beforeUpload={beforeUpload}
-                        accept='.jpg, .png, .jpeg'
-                        maxCount={3}
-                        showUploadList
-                        uploadButton={isEditing}
-                    />
-                    {previewImage && (
-                        <Image
-                            wrapperStyle={{ display: 'none' }}
-                            preview={{
-                                visible: previewOpen,
-                                onVisibleChange: (visible) => setPreviewOpen(visible),
-                                afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                            }}
-                            src={previewImage}
-                        />
-                    )}
-                </CustomCol>
-            </CustomRow>
+                        <CustomRow justify={'start'}>
+                            <CustomCol {...colProps}>
+                                <TitleSelect
+                                    text='Caso de teste'
+                                    style={!isEditing ? { pointerEvents: "none" } : {}}
+                                    removeIcon={!isEditing}
+                                    variant={inputVariant()}
+                                    value={testCase}
+                                    options={testCasesList}
+                                    onChange={(e) => setTestCase(e)}
+                                />
+                            </CustomCol>
+                            <CustomCol {...colProps}>
+                                <TitleUpload
+                                    text='Screenshots'
+                                    listType="picture-card"
+                                    fileList={fileList}
+                                    onPreview={handlePreview}
+                                    onChange={handleChange}
+                                    multiple
+                                    beforeUpload={beforeUpload}
+                                    accept='.jpg, .png, .jpeg'
+                                    maxCount={3}
+                                    showUploadList
+                                    uploadButton={isEditing}
+                                />
+                                {previewImage && (
+                                    <Image
+                                        wrapperStyle={{ display: 'none' }}
+                                        preview={{
+                                            visible: previewOpen,
+                                            onVisibleChange: (visible) => setPreviewOpen(visible),
+                                            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+                                        }}
+                                        src={previewImage}
+                                    />
+                                )}
+                            </CustomCol>
+                        </CustomRow>
+                    </>
+                ) : selected === 'comments' ? (
+                    <IssueComments />
+                ) : (
+                    <IssueLogs />
+                )}
+            </div>
         </Modal>
     )
 }
