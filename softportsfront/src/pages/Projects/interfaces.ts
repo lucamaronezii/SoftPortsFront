@@ -18,6 +18,13 @@ export interface IUserTestess {
     cargo: string
 }
 
+export interface IIssueComment {
+    photo?: string;
+    username: string;
+    time: string;
+    description: string;
+}
+
 export interface IIssue {
     id: number;
     titulo: string;
@@ -33,4 +40,5 @@ export interface IIssue {
     versaoSO?: string;
     onClick?: () => void;
     columnId?: Id;
+    comments?: IIssueComment[];
 }

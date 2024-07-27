@@ -18,3 +18,8 @@ export const colProps: ColProps = {
     lg: { flex: '45%' },
     xl: { flex: '33%' }
 }
+
+export const ChildBox = styled.div`
+    height: 335px;
+    overflow-y: auto;
+`

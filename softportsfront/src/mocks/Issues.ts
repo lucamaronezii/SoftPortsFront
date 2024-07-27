@@ -63,3 +63,53 @@ export const issuesList: IIssue[] = [
         status: 'Em correção',
     },
 ];
+
+export const issuesListTest: IIssue[] = [
+    {
+        id: 4,
+        titulo: 'Cálculo incorreto',
+        descricao: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
+        status: 'Pendente',
+        prioridade: 'Baixa',
+        classificacoes: [{ classificacaoId: 1, nome: "Bug" }],
+        responsaveis: usersList,
+        dataCorrecao: '11/11/2024',
+        comments: [
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+            {
+                username: 'Luis Gonzaga',
+                description: 'Descrição do comentário!',
+                time: 'há 5 horas',
+            },
+        ]
+    }
+]
