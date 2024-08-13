@@ -7,15 +7,15 @@ import Projects from '../pages/Projects/Projects'
 import Users from '../pages/Users/Users'
 import Configurations from '../pages/Configurations/Configurations'
 import Login from '../pages/Login/Login'
-import useAuth from '../hooks/useAuth'
+import { useKeycloak } from '@react-keycloak/web'
 
 const Router = () => {
-    const isLogged = useAuth()
+    const { keycloak } = useKeycloak();
 
     const router = createBrowserRouter([
         {
             path: '/',
-            element: isLogged ? <MainLayout /> : <Navigate to={'/login'} />,
+            element: keycloak.authenticated ? <MainLayout /> : <Navigate to={'/login'} />,
             errorElement: <NotFound />,
             children: [
                 { path: '/', element: <Dashboard /> },

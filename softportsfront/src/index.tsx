@@ -1,23 +1,28 @@
-import React from 'react';
+import { ReactKeycloakProvider } from '@react-keycloak/web';
 import ReactDOM from 'react-dom/client';
-import reportWebVitals from './reportWebVitals';
-import './index.css';
-import Router from './routes/Router';
 import ConfigProvider from './config/ConfigProvider';
 import GlobalContext from './context/GlobalContext';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
+import Router from './routes/Router';
+import { keycloak } from './auth/Keycloak';
+import React from 'react';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
-  <React.StrictMode>
-    <ConfigProvider>
-      <GlobalContext>
-        <Router />
-      </GlobalContext>
-    </ConfigProvider>
-  </React.StrictMode>
+  <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: "login-required" }}>
+    <React.StrictMode>
+      <ConfigProvider>
+        <GlobalContext>
+          <Router />
+        </GlobalContext>
+      </ConfigProvider>
+    </React.StrictMode>
+  </ReactKeycloakProvider>
+
 );
 
 reportWebVitals();

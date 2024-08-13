@@ -5,9 +5,11 @@ import SidebarItem from '../components/SidebarItem/SidebarItem'
 import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, UserOutlined } from '@ant-design/icons'
 import logo from '../assets/SoftPortsLogo.png'
 import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
+import { useKeycloak } from '@react-keycloak/web'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)
+  const { keycloak } = useKeycloak()
 
   return (
     <CustomSidebar vertical open={open}>
@@ -48,7 +50,7 @@ const LeftSidebar = () => {
         text='Logout'
         icFilled={<LogoutOutlined />}
         icOutlined={<LogoutOutlined />}
-        to='/login'
+        onLogout={() => keycloak.logout()}
       />
     </CustomSidebar>
   )

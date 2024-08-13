@@ -8,7 +8,7 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import useGlobal from '../../hooks/useGlobal'
 import { projects } from '../../mocks/Projects'
 
-const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, dropOpen, nameProject, selProject }) => {
+const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, dropOpen, nameProject, selProject, onLogout }) => {
     const navigate = useNavigate()
     const location = useLocation()
     const verify = location.pathname == to
@@ -21,15 +21,18 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
         if (hasChild) {
             setIsOpen(!isOpen)
         } else {
-            navigate(to)
+            navigate(to!)
             setProjectName('')
         }
     }
 
     return (
-        <>
+        <React.Fragment>
             <StyledSidebarItem
-                onClick={handleClick}
+                onClick={() => {
+                    handleClick();
+                    if (onLogout) onLogout()
+                }}
                 selected={verify}
                 hasChild={hasChild}
                 dropOpen={isOpen}
@@ -68,7 +71,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                     </StyledOption>
                 </OptionsBox>
             }
-        </>
+        </React.Fragment>
     )
 }
 

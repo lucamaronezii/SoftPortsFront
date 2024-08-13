@@ -1,7 +1,7 @@
 import React from "react";
 
 export interface ISidebarItemProps {
-    to: string;
+    to?: string;
     text: string;
     selected?: boolean;
     icFilled: React.ReactNode;
@@ -10,4 +10,5 @@ export interface ISidebarItemProps {
     dropOpen?: boolean;
     selProject?: string;
     nameProject?: string;
+    onLogout?: () => void;
 }
