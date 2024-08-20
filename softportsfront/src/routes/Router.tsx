@@ -6,8 +6,8 @@ import NotFound from '../pages/NotFound/NotFound'
 import Projects from '../pages/Projects/Projects'
 import Users from '../pages/Users/Users'
 import Configurations from '../pages/Configurations/Configurations'
-import Login from '../pages/Login/Login'
 import { useKeycloak } from '@react-keycloak/web'
+import Backroom from '../pages/Backroom/Backroom'
 
 const Router = () => {
     const { keycloak } = useKeycloak();
@@ -15,7 +15,7 @@ const Router = () => {
     const router = createBrowserRouter([
         {
             path: '/',
-            element: keycloak.authenticated ? <MainLayout /> : <Navigate to={'/login'} />,
+            element: keycloak.authenticated ? <MainLayout /> : <Navigate to={'/antessala'} />,
             errorElement: <NotFound />,
             children: [
                 { path: '/', element: <Dashboard /> },
@@ -25,8 +25,8 @@ const Router = () => {
             ],
         },
         {
-            path: '/login',
-            element: <Login />
+            path: '/antessala',
+            element: !keycloak.authenticated ? <Backroom /> : <Navigate to={'/'} />
         }
     ])
 

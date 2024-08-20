@@ -19,7 +19,7 @@ export const colProps: ColProps = {
     xl: { flex: '33%' }
 }
 
-export const ChildBox = styled.div`
-    height: 335px;
+export const ChildBox = styled.div<{ menuitem: string }>`
+    height: ${props => props.menuitem === 'details' ? 'auto' : '335px'};
     overflow-y: auto;
 `

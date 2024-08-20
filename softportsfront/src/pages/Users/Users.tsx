@@ -16,7 +16,6 @@ const Users: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh', gap: 20, paddingLeft: 16 }}>
       <SubnavPad gap={16}>
-        {/* <UserOutlined style={{ fontSize: 27 }} /> */}
         <StyledTitle>Usuários</StyledTitle>
       </SubnavPad>
       <CustomBox mr={20}>

@@ -12,6 +12,14 @@ export interface IIssueDetails {
 }
 
 export interface IModalFooter {
+    loading: boolean;
+    selected: SelectedOptions;
     onSave: () => void;
-    selected: SelectedOptions
+    onCloseIssue: () => void;
+}
+
+export interface IFeedbackModal {
+    open: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
 }

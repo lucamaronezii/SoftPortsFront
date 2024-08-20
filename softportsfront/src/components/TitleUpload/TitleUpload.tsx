@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { ITitleUpload } from './interfaces'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { Flex, Tooltip, Typography, Upload } from 'antd'
+import React from 'react'
 import GapColumn from '../Column/Column'
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import UploadButton from '../UploadButton/UploadButton'
+import { ITitleUpload } from './interfaces'
 
 const TitleUpload: React.FC<ITitleUpload> = ({ text, tooltip, uploadButton, ...uploadProps }) => {
     const { Text } = Typography
@@ -21,12 +22,7 @@ const TitleUpload: React.FC<ITitleUpload> = ({ text, tooltip, uploadButton, ...u
             <Upload
                 {...uploadProps}
             >
-                {uploadButton ??
-                    <Flex vertical align='center' gap={10}>
-                        <PlusOutlined />
-                        <Text>Upload</Text>
-                    </Flex>
-                }
+                {uploadProps.fileList?.length === 3 ? null : <UploadButton disabled={uploadProps.disabled!}/>}
             </Upload>
         </GapColumn>
     )

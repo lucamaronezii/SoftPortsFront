@@ -1,25 +1,25 @@
-import { Flex, Form, Image, Modal, Steps, message } from 'antd'
-import React, { useState } from 'react'
-import { INewIssue } from './interfaces'
-import { stepperItems } from '../../../../utils/stepperItems'
-import TitleInput from '../../../../components/TitleInput/TitleInput'
-import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
-import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
-import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
-import { FieldsBox } from './styles'
-import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import type { GetProp, UploadProps } from 'antd';
-import { UploadFile } from 'antd/lib'
-import { getBase64 } from '../../../../utils/getBase64'
-import { usersList } from '../../../../mocks/Users'
-import { statusList } from '../../../../mocks/Status'
-import { classList } from '../../../../mocks/Class'
-import { priorityItems } from '../../../../utils/priorityItems'
-import dayjs from 'dayjs'
-import { createIssue } from '../../../../services/IssueServices'
-import { NoticeType } from 'antd/es/message/interface'
-import { testCasesList } from '../../../../mocks/TestCases'
 import { WarningOutlined } from '@ant-design/icons'
+import type { GetProp, UploadProps } from 'antd'
+import { Flex, Image, Modal, Steps, message } from 'antd'
+import { NoticeType } from 'antd/es/message/interface'
+import { UploadFile } from 'antd/lib'
+import dayjs from 'dayjs'
+import React, { useState } from 'react'
+import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
+import TitleInput from '../../../../components/TitleInput/TitleInput'
+import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
+import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
+import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
+import { classList } from '../../../../mocks/Class'
+import { statusList } from '../../../../mocks/Status'
+import { testCasesList } from '../../../../mocks/TestCases'
+import { usersList } from '../../../../mocks/Users'
+import { createIssue } from '../../../../services/IssueServices'
+import { getBase64 } from '../../../../utils/getBase64'
+import { priorityItems } from '../../../../utils/priorityItems'
+import { stepperItems } from '../../../../utils/stepperItems'
+import { INewIssue } from './interfaces'
+import { FieldsBox } from './styles'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -256,7 +256,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                             status={statusError ? 'error' : undefined}
                         />
                         <TitleUpload
-                            tooltip={'Máximo: 3 imagens.'}
+                            tooltip={'Limite: 3 arquivos de imagens'}
                             text='Screenshots'
                             listType="picture-card"
                             fileList={fileList}
