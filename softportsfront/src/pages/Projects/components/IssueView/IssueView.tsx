@@ -11,7 +11,6 @@ import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
 import { classList } from '../../../../mocks/Class'
 import { statusList } from '../../../../mocks/Status'
-import { testCasesList } from '../../../../mocks/TestCases'
 import { usersList } from '../../../../mocks/Users'
 import { deleteIssue, editIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
@@ -47,7 +46,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [base64Images, setBase64Images] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
-    const [modalKey, setModalKey] = useState<number>(Date.now());
+    const [resolved, setResolved] = useState<boolean>(false)
 
     useEffect(() => {
         if (issue) {
@@ -61,6 +60,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             setCorrectionDate(dayjs(issue.dataCorrecao))
             setResponsaveis(issue.responsaveis.map(responsavel => responsavel.nome))
             setTestCase(issue.casosDeTestes![0].casoDeTesteId)
+            setResolved(resolved)
         }
     }, [issue, onClose])
 
@@ -191,6 +191,8 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 onCloseIssue={handleCloseIssue}
                 onSave={handleUpdateIssue}
                 selected={selected}
+                setResolved={setResolved}
+                resolved={resolved}
                 loading={loading} />]
             }
         >
@@ -202,7 +204,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 onClick={(event) => setSelected(event.key)}
             />
             {selected === 'details' ? (
-                <ChildBox menuitem={selected}>
+                <ChildBox>
                     <CustomRow>
                         <CustomCol {...colProps}>
                             <TitleInput
@@ -306,17 +308,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
 
                     <CustomRow justify={'start'}>
                         <CustomCol {...colProps}>
-                            <TitleSelect
-                                text='Caso de teste'
-                                style={!isEditing ? { pointerEvents: "none" } : {}}
-                                removeIcon={!isEditing}
-                                variant={inputVariant()}
-                                value={testCase}
-                                options={testCasesList}
-                                onChange={(e) => setTestCase(e)}
-                            />
-                        </CustomCol>
-                        <CustomCol {...colProps}>
                             <TitleUpload
                                 text='Screenshots'
                                 listType="picture-card"
@@ -346,11 +337,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                     </CustomRow>
                 </ChildBox>
             ) : selected === 'comments' ? (
-                <ChildBox menuitem={selected}>
+                <ChildBox>
                     <IssueComments issue={issue} />
                 </ChildBox>
             ) : (
-                <ChildBox menuitem={selected}>
+                <ChildBox>
                     <IssueLogs />
                 </ChildBox>
             )

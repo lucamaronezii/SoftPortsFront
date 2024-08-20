@@ -38,6 +38,7 @@ export interface IIssue {
     casosDeTestes?: ITestCase[];
     dataCorrecao: string;
     versaoSO?: string;
+    checked?: boolean;
     onClick?: () => void;
     columnId?: Id;
     comments?: IIssueComment[];

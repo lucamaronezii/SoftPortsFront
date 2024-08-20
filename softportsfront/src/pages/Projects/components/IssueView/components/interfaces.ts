@@ -1,4 +1,4 @@
-import { Dispatch } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { IIssue } from "../../../interfaces";
 
 export type SelectedOptions = 'details' | 'comments' | 'logs'
@@ -14,6 +14,8 @@ export interface IIssueDetails {
 export interface IModalFooter {
     loading: boolean;
     selected: SelectedOptions;
+    resolved: boolean;
+    setResolved: Dispatch<SetStateAction<boolean>>
     onSave: () => void;
     onCloseIssue: () => void;
 }
