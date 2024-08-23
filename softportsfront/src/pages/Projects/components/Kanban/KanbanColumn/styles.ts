@@ -6,7 +6,7 @@ export const StyledKColumn = styled(Flex) <{ isDragging?: boolean }>`
     background-color: ${secBgColor};
     width: 290px;
     border-radius: 6px 6px 0px 0px;
-    height: 100%;
+    height: 98%;
     box-sizing: border-box;
     padding: 13px;
     flex-direction: column;

@@ -94,7 +94,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             return file.preview as string;
         }));
         setBase64Images(base64List);
-        console.log(fileList)
     };
 
     const beforeUpload = (file: FileType) => {

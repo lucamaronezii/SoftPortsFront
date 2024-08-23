@@ -3,6 +3,7 @@ import { Flex, Modal } from 'antd'
 import React from 'react'
 import { IFeedbackModal } from './interfaces'
 import TextArea from 'antd/es/input/TextArea'
+import { TitleModal } from '../../../../../components/CustomRow/styles'
 
 const feedbackPlaceholderText = 'Digite um feedback para o fechamento do problema. ' +
     'Isso aumenta a transparência e facilita a compreensão do histórico do projeto ' +
@@ -11,7 +12,7 @@ const feedbackPlaceholderText = 'Digite um feedback para o fechamento do problem
 const FeedbackModal: React.FC<IFeedbackModal> = ({ open, onConfirm, onCancel }) => {
     return (
         <Modal
-            title={<Flex gap={10}><IssuesCloseOutlined />Fechar problema - Feedback</Flex>}
+            title={<TitleModal><IssuesCloseOutlined />Fechar problema - Feedback</TitleModal>}
             open={open}
             closable
             onCancel={onCancel}

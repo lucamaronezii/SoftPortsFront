@@ -4,18 +4,20 @@ import { ISidebarItemProps } from './interfaces'
 import { prColor } from '../../styles/theme'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Flex } from 'antd'
-import { PlusCircleOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import useGlobal from '../../hooks/useGlobal'
 import { projects } from '../../mocks/Projects'
+import NewProjectModal from '../NewProjectModal/NewProjectModal'
 
-const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, dropOpen, nameProject, selProject, onLogout }) => {
+const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, onLogout }) => {
     const navigate = useNavigate()
     const location = useLocation()
+    const { projectName, setProjectName } = useGlobal()
+    const [isOpen, setIsOpen] = useState(false)
+    const [openModal, setOpenModal] = useState<boolean>(false)
     const verify = location.pathname == to
     const selIcon = cloneElement(icFilled as React.ReactElement, { style: { color: '#FFF', fontSize: '19px' } })
     const unsIcon = cloneElement(icOutlined as React.ReactElement, { style: { color: prColor, fontSize: '19px' } })
-    const [isOpen, setIsOpen] = useState(false)
-    const { projectName, setProjectName } = useGlobal()
 
     const handleClick = () => {
         if (hasChild) {
@@ -50,6 +52,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                 <OptionsBox vertical style={{ marginTop: '-8px' }}>
                     {projects.map((project, index) => (
                         <StyledOption
+                            key={index}
                             onClick={() => {
                                 navigate('/projetos')
                                 setProjectName(project.name)
@@ -63,14 +66,15 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                             </Flex>
                         </StyledOption>
                     ))}
-                    <StyledOption>
+                    <StyledOption onClick={() => setOpenModal(true)}>
                         <Flex align='center' gap={12}>
-                            <PlusCircleOutlined />
+                            <PlusOutlined />
                             <StyledText>Novo projeto</StyledText>
                         </Flex>
                     </StyledOption>
                 </OptionsBox>
             }
+            <NewProjectModal open={openModal} onClose={() => setOpenModal(false)}/>
         </React.Fragment>
     )
 }

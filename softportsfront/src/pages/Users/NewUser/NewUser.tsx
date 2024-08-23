@@ -7,6 +7,7 @@ import TitleSelect from '../../../components/TitleSelect/TitleSelect'
 import { getBase64 } from '../../../utils/getBase64'
 import { FileType } from '../../Projects/components/NewIssue/NewIssue'
 import { INewUser } from './interfaces'
+import { TitleModal } from '../../../components/CustomRow/styles'
 
 const NewUser: React.FC<INewUser> = ({ open, onClose, onOk }) => {
     const [name, setName] = useState<string>()
@@ -39,7 +40,7 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onOk }) => {
 
     return (
         <Modal
-            title={<Flex gap={10}><UserAddOutlined /> Novo usuário</Flex>}
+            title={<TitleModal><UserAddOutlined /> Novo usuário</TitleModal>}
             open={open}
             centered
             onCancel={onClose}

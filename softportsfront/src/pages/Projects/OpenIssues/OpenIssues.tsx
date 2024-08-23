@@ -1,29 +1,32 @@
-import { Button, Cascader, Flex, Input, Segmented, Skeleton, Spin, Typography, message } from 'antd'
-import { NoIssuesBox } from './styles'
-import { issueFilterItems } from '../../../utils/issueFilterItems'
-import { segItems } from '../../../utils/segItems'
-import { BugFilled, PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
-import { useEffect, useMemo, useState } from 'react'
-import { CustomRow } from '../../../components/CustomRow/styles'
-import ListItem from '../components/ListItem/ListItem'
-import { IIssue } from '../interfaces'
-import NewIssue from '../components/NewIssue/NewIssue'
-import IssueView from '../components/IssueView/IssueView'
-import { getIssues } from '../../../services/IssueServices'
-import { NoticeType } from 'antd/es/message/interface'
-import { CustomBox } from '../styles'
+import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
-import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
-import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
+import { Button, Cascader, Flex, Input, Segmented, Skeleton, Typography, message } from 'antd'
+import { NoticeType } from 'antd/es/message/interface'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import teste from '../../../assets/empty.svg'
+import { CustomRow } from '../../../components/CustomRow/styles'
+import { getIssues } from '../../../services/IssueServices'
+import { issueFilterItems } from '../../../utils/issueFilterItems'
+import { segItems } from '../../../utils/segItems'
+import IssueView from '../components/IssueView/IssueView'
+import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
+import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
+import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
+import ListItem from '../components/ListItem/ListItem'
+import NewIssue from '../components/NewIssue/NewIssue'
+import { IIssue } from '../interfaces'
+import { CustomBox } from '../styles'
+import { IssuesBox, NoIssuesBox } from './styles'
+import { useKeycloak } from '@react-keycloak/web'
+import { jwtDecode } from 'jwt-decode'
 
 const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>('')
-  const [seg, setSeg] = useState<number>(1)
+  const [seg, setSeg] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
@@ -42,6 +45,8 @@ const OpenIssues = () => {
       content: content,
     });
   };
+
+  const { keycloak } = useKeycloak()
 
   const handleOkButton = (status?: string | undefined) => {
     if (status == "close" || !status) {
@@ -215,8 +220,6 @@ const OpenIssues = () => {
 
   const deleteIssue = (id: Id) => {
     const newIssues = testIssues.filter(issue => issue.id !== id)
-    console.log(id)
-    console.log(newIssues)
     setTestIssues(newIssues)
   }
 
@@ -308,7 +311,7 @@ const OpenIssues = () => {
           </DndContext>
         </KanbanBox>
       ) : (
-        <Flex vertical gap={12}>
+        <IssuesBox>
           {loading ? (
             Array.from({ length: 3 }).map(() => (
               <Skeleton.Input active style={{ width: "100%" }} />
@@ -331,19 +334,20 @@ const OpenIssues = () => {
               ))
             ) : (
               <NoIssuesBox>
-                <BugFilled style={{ fontSize: 40 }} />
+                <img src={teste} width={500} />
                 <Typography.Title level={4}>
                   Nenhum problema encontrado. Abra novos problemas para visualizá-los
                 </Typography.Title>
               </NoIssuesBox>
             )
           )}
-        </Flex>
-      )}
+        </IssuesBox>
+      )
+      }
 
       <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={handleOkButton} />
       <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
-    </CustomBox>
+    </CustomBox >
   )
 }
 

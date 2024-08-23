@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Flex } from 'antd'
 import { CustomSidebar } from './styles'
 import SidebarItem from '../components/SidebarItem/SidebarItem'
@@ -6,6 +6,7 @@ import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartO
 import logo from '../assets/SoftPortsLogo.png'
 import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
 import { useKeycloak } from '@react-keycloak/web'
+import { getAllProjects } from '../services/ProjectsServices'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)

@@ -1,12 +1,12 @@
 import { ReactKeycloakProvider } from '@react-keycloak/web';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { keycloak } from './auth/Keycloak';
 import ConfigProvider from './config/ConfigProvider';
 import GlobalContext from './context/GlobalContext';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Router from './routes/Router';
-import { keycloak } from './auth/Keycloak';
-import React from 'react';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

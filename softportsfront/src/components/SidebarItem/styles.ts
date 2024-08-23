@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { prColor } from "../../styles/theme";
-import { Flex, Typography } from "antd";
+import { Button, Flex, Typography } from "antd";
 import { CaretDownFilled } from "@ant-design/icons";
 import { ISidebarItemProps } from "./interfaces";
 import { darkerPr } from "../../utils/darkerPrimary";

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Divider, Menu, type MenuProps } from 'antd';
+import React, { useState } from 'react'
+import { Divider, Flex, Menu, type MenuProps } from 'antd';
 import { OpenIssuesMenu } from '../../utils/menuItems';
 import OpenIssues from './OpenIssues/OpenIssues';
 import FixedIssues from './ClosedIssues/ClosedIssues';
@@ -34,7 +34,7 @@ const Projects = () => {
   }
 
   return (
-    <div>
+    <Flex vertical style={{ height: '100vh' }}>
       <SubnavPad>
         <Menu
           onClick={onClick}
@@ -48,7 +48,7 @@ const Projects = () => {
         style={{ marginTop: 0 }}
       />
       {renderPage()}
-    </div>
+    </Flex>
   )
 }
 

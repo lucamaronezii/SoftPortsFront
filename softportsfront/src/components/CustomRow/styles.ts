@@ -6,3 +6,7 @@ export const CustomRow = styled(Flex)`
     align-items: center;
     justify-content: space-between;
 `
+
+export const TitleModal = styled(Flex)`
+    gap: 10px;
+`

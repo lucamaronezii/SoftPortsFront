@@ -20,6 +20,7 @@ import { priorityItems } from '../../../../utils/priorityItems'
 import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
+import { TitleModal } from '../../../../components/CustomRow/styles'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -169,7 +170,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         <>
             {contextHolder}
             <Modal
-                title={<Flex gap={10}><WarningOutlined /> Novo registro de problema</Flex>}
+                title={<TitleModal><WarningOutlined /> Novo registro de problema</TitleModal>}
                 open={open}
                 confirmLoading={loading}
                 onOk={handleCreateIssue}
