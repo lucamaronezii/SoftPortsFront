@@ -1,40 +1,45 @@
-import React, { cloneElement, useState } from 'react'
-import { ArrowDown, OptionsBox, StyledOption, StyledSidebarItem, StyledText } from './styles'
-import { ISidebarItemProps } from './interfaces'
-import { prColor } from '../../styles/theme'
+import { PlusOutlined } from '@ant-design/icons'
+import { Flex, Spin } from 'antd'
+import React, { cloneElement, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Flex } from 'antd'
-import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import useGlobal from '../../hooks/useGlobal'
-import { projects } from '../../mocks/Projects'
-import NewProjectModal from '../NewProjectModal/NewProjectModal'
+import { IProject } from '../../layouts/interfaces'
+import { prColor } from '../../styles/theme'
+import NewProjectModal from '../../layouts/components/NewProjectModal/NewProjectModal'
+import { ISidebarItemProps } from './interfaces'
+import { ArrowDown, OptionsBox, PjtsContainer, StyledOption, StyledSidebarItem, StyledText } from './styles'
 
-const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, onLogout }) => {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const { projectName, setProjectName } = useGlobal()
+const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, projects, loadingPjts, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
-    const verify = location.pathname == to
+    const { selectedProject, setSelectedProject } = useGlobal()
+    const navigate = useNavigate()
+    const location = useLocation()
     const selIcon = cloneElement(icFilled as React.ReactElement, { style: { color: '#FFF', fontSize: '19px' } })
     const unsIcon = cloneElement(icOutlined as React.ReactElement, { style: { color: prColor, fontSize: '19px' } })
+    const verify = location.pathname == to
 
     const handleClick = () => {
+        if (onLogout) onLogout()
         if (hasChild) {
             setIsOpen(!isOpen)
         } else {
             navigate(to!)
-            setProjectName('')
         }
     }
+
+    const handleProject = (project: IProject) => {
+        navigate('/projetos')
+        setSelectedProject(project)
+    }
+
+    useEffect(() => {
+    }, [projects])
 
     return (
         <React.Fragment>
             <StyledSidebarItem
-                onClick={() => {
-                    handleClick();
-                    if (onLogout) onLogout()
-                }}
+                onClick={handleClick}
                 selected={verify}
                 hasChild={hasChild}
                 dropOpen={isOpen}
@@ -49,23 +54,22 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
             </StyledSidebarItem>
 
             {hasChild && isOpen &&
-                <OptionsBox vertical style={{ marginTop: '-8px' }}>
-                    {projects.map((project, index) => (
-                        <StyledOption
-                            key={index}
-                            onClick={() => {
-                                navigate('/projetos')
-                                setProjectName(project.name)
-                                console.log(`selProject: ${projectName}; nameProject: ${project.name}`)
-                            }}
-                            selProject={projectName}
-                            nameProject={project.name}
-                        >
-                            <Flex align='center'>
-                                <StyledText>{project.name}</StyledText>
-                            </Flex>
-                        </StyledOption>
-                    ))}
+                <OptionsBox style={{ marginTop: '-8px' }}>
+                    {loadingPjts && <Spin style={{ marginBottom: '8px' }} />}
+                    <PjtsContainer>
+                        {projects!.map((project, index) => (
+                            <StyledOption
+                                key={index}
+                                onClick={() => handleProject(project)}
+                                selProject={selectedProject!.id}
+                                idProject={project.id}
+                            >
+                                <Flex align='center'>
+                                    <StyledText>{project.nome}</StyledText>
+                                </Flex>
+                            </StyledOption>
+                        ))}
+                    </PjtsContainer>
                     <StyledOption onClick={() => setOpenModal(true)}>
                         <Flex align='center' gap={12}>
                             <PlusOutlined />
@@ -74,7 +78,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                     </StyledOption>
                 </OptionsBox>
             }
-            <NewProjectModal open={openModal} onClose={() => setOpenModal(false)}/>
+            <NewProjectModal open={openModal} onClose={() => setOpenModal(false)} />
         </React.Fragment>
     )
 }

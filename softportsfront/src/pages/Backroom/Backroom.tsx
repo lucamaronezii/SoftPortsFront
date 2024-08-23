@@ -1,11 +1,10 @@
-import React from 'react'
-import { StyledBackroom } from './styles'
 import { Spin } from 'antd'
+import { StyledBackroom } from './styles'
 
 const Backroom = () => {
     return (
         <StyledBackroom>
-            <Spin size='large'/>
+            <Spin size='large' />
         </StyledBackroom>
     )
 }

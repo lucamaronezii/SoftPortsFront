@@ -11,7 +11,6 @@ import Users from '../pages/Users/Users'
 const Router = () => {
     const { keycloak } = useKeycloak();
 
-    console.log(keycloak.token)
     const router = createBrowserRouter([
         {
             path: '/',

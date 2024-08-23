@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Divider, Flex, Menu, type MenuProps } from 'antd';
 import { OpenIssuesMenu } from '../../utils/menuItems';
 import OpenIssues from './OpenIssues/OpenIssues';
@@ -8,9 +8,11 @@ import TestCases from './TestCases/TestCases';
 import DefectDensity from './Metrics/DefectDensity/DefectDensity';
 import Requests from './Requests/Requests';
 import { SubnavPad } from '../Users/styles';
+import useGlobal from '../../hooks/useGlobal';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
+  const { selectedProject } = useGlobal()
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
@@ -32,6 +34,10 @@ const Projects = () => {
         return <Requests />
     }
   }
+
+  useEffect(() => {
+    setCurrent('tofix')
+  }, [selectedProject])
 
   return (
     <Flex vertical style={{ height: '100vh' }}>

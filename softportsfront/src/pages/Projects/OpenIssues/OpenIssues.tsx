@@ -1,12 +1,13 @@
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import { Button, Cascader, Flex, Input, Segmented, Skeleton, Typography, message } from 'antd'
+import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import teste from '../../../assets/empty.svg'
 import { CustomRow } from '../../../components/CustomRow/styles'
+import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import { getIssues } from '../../../services/IssueServices'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
@@ -20,8 +21,7 @@ import NewIssue from '../components/NewIssue/NewIssue'
 import { IIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
-import { useKeycloak } from '@react-keycloak/web'
-import { jwtDecode } from 'jwt-decode'
+import useGlobal from '../../../hooks/useGlobal'
 
 const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>([])
@@ -33,6 +33,7 @@ const OpenIssues = () => {
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<IIssue>()
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
+  const { selectedProject } = useGlobal()
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
@@ -45,8 +46,6 @@ const OpenIssues = () => {
       content: content,
     });
   };
-
-  const { keycloak } = useKeycloak()
 
   const handleOkButton = (status?: string | undefined) => {
     if (status == "close" || !status) {
@@ -80,7 +79,7 @@ const OpenIssues = () => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [])
+  }, [selectedProject])
 
   const [columns, setColumns] = useState<Column[]>([])
 
@@ -313,9 +312,7 @@ const OpenIssues = () => {
       ) : (
         <IssuesBox>
           {loading ? (
-            Array.from({ length: 3 }).map(() => (
-              <Skeleton.Input active style={{ width: "100%" }} />
-            ))
+            <SkeletonGroup total={3} />
           ) : (
             issues && issues.length > 0 ? (
               issues.map((issue, index) => (

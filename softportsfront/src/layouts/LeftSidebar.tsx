@@ -1,16 +1,33 @@
-import { useEffect, useState } from 'react'
-import { Flex } from 'antd'
-import { CustomSidebar } from './styles'
-import SidebarItem from '../components/SidebarItem/SidebarItem'
 import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, UserOutlined } from '@ant-design/icons'
-import logo from '../assets/SoftPortsLogo.png'
-import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
 import { useKeycloak } from '@react-keycloak/web'
-import { getAllProjects } from '../services/ProjectsServices'
+import { Flex } from 'antd'
+import { useEffect, useState } from 'react'
+import logo from '../assets/SoftPortsLogo.png'
+import { useAxios } from '../auth/useAxios'
+import SidebarItem from '../components/SidebarItem/SidebarItem'
+import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
+import useGlobal from '../hooks/useGlobal'
+import { CustomSidebar } from './styles'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const { keycloak } = useKeycloak()
+  const { projects, setProjects } = useGlobal()
+  const axios = useAxios()
+
+  const getProjects = async () => {
+    await axios.get('/projeto')
+      .then(res => setProjects(res.data.conteudo))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      getProjects()
+    }, 2000)
+  }, [])
 
   return (
     <CustomSidebar vertical open={open}>
@@ -33,6 +50,8 @@ const LeftSidebar = () => {
           icOutlined={<FolderOutlined />}
           to='/projetos'
           hasChild
+          projects={projects}
+          loadingPjts={loading}
         />
         <SidebarItem
           text='Usuários'

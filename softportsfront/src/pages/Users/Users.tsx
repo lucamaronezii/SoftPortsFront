@@ -14,8 +14,8 @@ const Users: React.FC = () => {
   const [users, setUsers] = useState<IUser[]>([])
   
   return (
-    <Layout style={{ minHeight: '100vh', gap: 20, paddingLeft: 16 }}>
-      <SubnavPad gap={16}>
+    <Layout style={{ minHeight: '100vh', gap: 27, paddingLeft: 16 }}>
+      <SubnavPad>
         <StyledTitle>Usuários</StyledTitle>
       </SubnavPad>
       <CustomBox mr={20}>
