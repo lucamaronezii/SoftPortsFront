@@ -21,7 +21,7 @@ const OpenIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              placeholder='Pesquisar registro'
+              placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
               onChange={(e) => setInput(e.target.value)}
@@ -29,7 +29,7 @@ const OpenIssues = () => {
           </div>
           <Cascader
             removeIcon
-            placeholder='Filtrar registros'
+            placeholder='Filtrar ocorrências'
             multiple
             options={issueFilterItems}
             maxTagCount={'responsive'}

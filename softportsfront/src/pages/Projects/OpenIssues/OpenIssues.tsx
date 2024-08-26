@@ -1,4 +1,4 @@
-import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
@@ -8,6 +8,8 @@ import { createPortal } from 'react-dom'
 import teste from '../../../assets/empty.svg'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import useProjects from '../../../hooks/useProjects'
+import { statusList } from '../../../mocks/Status'
 import { getIssues } from '../../../services/IssueServices'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
@@ -21,19 +23,19 @@ import NewIssue from '../components/NewIssue/NewIssue'
 import { IIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
-import useGlobal from '../../../hooks/useGlobal'
 
 const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>('')
   const [seg, setSeg] = useState<number>(0)
-  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<IIssue>()
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
-  const { selectedProject } = useGlobal()
+  const [selectedKanban, setSelectedKanban] = useState<number>()
+  const { selectedProject } = useProjects()
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
@@ -51,16 +53,16 @@ const OpenIssues = () => {
     if (status == "close" || !status) {
       // pass
     } else if (status == "success") {
-      handleMessage('success', 'Problema aberto com sucesso.')
+      handleMessage('success', 'Ocorrência aberta com sucesso.')
       handleGetIssues()
     } else if (status == "deleted") {
-      handleMessage('success', 'Problema excluído com sucesso.')
+      handleMessage('success', 'Ocorrência excluída com sucesso.')
       handleGetIssues()
     } else if (status == "updated") {
-      handleMessage('success', 'Problema atualizado com sucesso.')
+      handleMessage('success', 'Ocorrência atualizada com sucesso.')
       handleGetIssues()
     }
-    setOpenModal(false)
+    setOpenForm(false)
     setOpenIssue(false)
   }
 
@@ -81,7 +83,7 @@ const OpenIssues = () => {
     handleGetIssues()
   }, [selectedProject])
 
-  const [columns, setColumns] = useState<Column[]>([])
+  const [columns, setColumns] = useState<Column[]>(statusList)
 
   const generateId = () => {
     return Math.floor(Math.random() * 10001)
@@ -222,6 +224,12 @@ const OpenIssues = () => {
     setTestIssues(newIssues)
   }
 
+  const handleOpenForm = (col?: Column) => {
+    col ? setSelectedKanban(Number(col.id)) : setSelectedKanban(undefined)
+    console.log('sk:', selectedKanban)
+    setOpenForm(true)
+  }
+
   return (
     <CustomBox>
       {contextHolder}
@@ -230,7 +238,7 @@ const OpenIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              placeholder='Pesquisar registro'
+              placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
               onChange={(e) => setInput(e.target.value)}
@@ -238,7 +246,7 @@ const OpenIssues = () => {
           </div>
           <Cascader
             removeIcon
-            placeholder='Filtrar registros'
+            placeholder='Filtrar ocorrências'
             multiple
             options={issueFilterItems}
             maxTagCount={'responsive'}
@@ -253,22 +261,14 @@ const OpenIssues = () => {
           type='primary'
           icon={<PlusOutlined />}
           iconPosition='end'
-          onClick={() => setOpenModal(true)}
+          onClick={() => handleOpenForm()}
         >
-          Novo problema
+          Nova ocorrência
         </Button>
       </CustomRow>
 
       {seg ? (
         <KanbanBox>
-          <Flex vertical gap={4}>
-            <Button
-              type='primary'
-              icon={<PlusCircleFilled />}
-              iconPosition='end'
-              onClick={() => createNewColumn()}
-            >Adicionar coluna</Button>
-          </Flex>
           <DndContext
             sensors={sensors}
             onDragStart={onDragStart}
@@ -284,6 +284,7 @@ const OpenIssues = () => {
                   column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
                   deleteIssue={deleteIssue}
+                  onAdd={() => handleOpenForm(col)}
                 />
               ))}
             </SortableContext>
@@ -297,6 +298,7 @@ const OpenIssues = () => {
                     column={activeColumn}
                     onRemoveColumn={() => deleteColumn(activeColumn.id)}
                     deleteIssue={deleteIssue}
+                    onAdd={() => { }}
                   />
                 )}
                 {activeIssue &&
@@ -333,16 +335,15 @@ const OpenIssues = () => {
               <NoIssuesBox>
                 <img src={teste} width={500} />
                 <Typography.Title level={4}>
-                  Nenhum problema encontrado. Abra novos problemas para visualizá-los
+                  Nenhuma ocorrência encontrado. Abra novas ocorrências para visualizá-las
                 </Typography.Title>
               </NoIssuesBox>
             )
           )}
         </IssuesBox>
-      )
-      }
+      )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={handleOkButton} />
+      <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
       <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
     </CustomBox >
   )

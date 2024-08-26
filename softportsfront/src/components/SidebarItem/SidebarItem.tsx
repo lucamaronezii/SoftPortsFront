@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { Flex, Spin } from 'antd'
 import React, { cloneElement, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import useGlobal from '../../hooks/useGlobal'
+import useProjects from '../../hooks/useProjects'
 import { IProject } from '../../layouts/interfaces'
 import { prColor } from '../../styles/theme'
 import NewProjectModal from '../../layouts/components/NewProjectModal/NewProjectModal'
@@ -12,7 +12,7 @@ import { ArrowDown, OptionsBox, PjtsContainer, StyledOption, StyledSidebarItem, 
 const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, projects, loadingPjts, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
-    const { selectedProject, setSelectedProject } = useGlobal()
+    const { selectedProject, setSelectedProject } = useProjects()
     const navigate = useNavigate()
     const location = useLocation()
     const selIcon = cloneElement(icFilled as React.ReactElement, { style: { color: '#FFF', fontSize: '19px' } })
@@ -20,6 +20,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
     const verify = location.pathname == to
 
     const handleClick = () => {
+        console.log(location.pathname)
         if (onLogout) onLogout()
         if (hasChild) {
             setIsOpen(!isOpen)
@@ -63,6 +64,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                                 onClick={() => handleProject(project)}
                                 selProject={selectedProject!.id}
                                 idProject={project.id}
+                                location={location.pathname}
                             >
                                 <Flex align='center'>
                                     <StyledText>{project.nome}</StyledText>

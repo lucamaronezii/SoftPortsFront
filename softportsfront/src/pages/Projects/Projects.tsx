@@ -8,11 +8,11 @@ import TestCases from './TestCases/TestCases';
 import DefectDensity from './Metrics/DefectDensity/DefectDensity';
 import Requests from './Requests/Requests';
 import { SubnavPad } from '../Users/styles';
-import useGlobal from '../../hooks/useGlobal';
+import useProjects from '../../hooks/useProjects';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
-  const { selectedProject } = useGlobal()
+  const { selectedProject } = useProjects()
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);

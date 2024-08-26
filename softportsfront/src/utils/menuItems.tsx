@@ -8,12 +8,12 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 export const OpenIssuesMenu: MenuItem[] = [
   {
-    label: 'Problemas abertos',
+    label: 'Ocorrências abertas',
     key: 'tofix',
     icon: <BugOutlined />,
   },
   {
-    label: 'Problemas fechados',
+    label: 'Ocorrências fechadas',
     key: 'fixed',
     icon: <CheckCircleOutlined />,
   },

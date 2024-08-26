@@ -172,8 +172,8 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             </Tooltip>
                         }
                         <Popdelete
-                            title={'Excluir problema'}
-                            description={'Tem certeza que deseja excluir o problema?'}
+                            title={'Excluir ocorrência'}
+                            description={'Tem certeza que deseja excluir a ocorrência?'}
                             onConfirm={() => handleDeleteIssue(issue.id)}
                         >
                             <Button

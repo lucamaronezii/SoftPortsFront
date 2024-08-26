@@ -14,4 +14,5 @@ export interface ISidebarItemProps {
     onLogout?: () => void;
     projects?: IProject[];
     loadingPjts?: boolean;
+    location?: string;
 }

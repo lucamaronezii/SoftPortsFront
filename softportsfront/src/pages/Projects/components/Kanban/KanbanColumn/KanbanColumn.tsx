@@ -1,16 +1,14 @@
-import { Button, Divider, Flex, Input, Typography } from 'antd'
-import { IKanbanColumnProps } from './interfaces'
-import { StyledCardsBox, StyledKColumn } from './styles'
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { Button, Divider, Flex, Input } from 'antd'
 import { useMemo, useState } from 'react'
 import KanbanCard from '../KanbanCard/KanbanCard'
-import { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
-import { IIssue } from '../../../interfaces'
+import { IKanbanColumnProps } from './interfaces'
+import { ColumnTitle, StyledCardsBox, StyledKColumn } from './styles'
 
 const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddItem, onClick, onRemoveColumn,
-  updateColumn, addIssue, issues, deleteIssue }) => {
+  updateColumn, addIssue, issues, deleteIssue, onAdd }) => {
   const [editMode, setEditMode] = useState<boolean>(false)
 
   const issuesId = useMemo(() => {
@@ -58,7 +56,7 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
         style={{ cursor: 'grab' }}
       >
         {!editMode &&
-          <Typography onClick={() => setEditMode(true)}>{column.title}</Typography>
+          <ColumnTitle onClick={() => setEditMode(true)}>{column.title}</ColumnTitle>
         }
         {editMode &&
           <Input
@@ -73,15 +71,6 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
             }}
           />
         }
-        <Flex align='center' gap={8}>
-          <Flex>0</Flex>
-          <Button
-            type='primary'
-            danger
-            icon={<DeleteOutlined />}
-            onClick={onRemoveColumn}
-          />
-        </Flex>
       </Flex>
       <Divider style={{ marginTop: 0 }} />
       <StyledCardsBox vertical>
@@ -99,7 +88,8 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
         style={{ position: 'absolute', bottom: 13 }}
         icon={<PlusOutlined />}
         shape='circle'
-        onClick={() => addIssue(column.id)}
+        // onClick={() => addIssue(column.id)}
+        onClick={() => onAdd()}
       />
     </StyledKColumn>
   )

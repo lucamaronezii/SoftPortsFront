@@ -85,7 +85,7 @@ export const PjtsContainer = styled(Flex)`
 `
 
 export const StyledOption = styled(StyledSidebarItem)`
-    background-color: ${props => props.selProject == props.idProject ? prColor : darkerPr};
+    background-color: ${props => (props.selProject == props.idProject) && props.location == '/projetos' ? prColor : darkerPr};
     width: 150px;
     margin-inline: 3px;
     &:hover {

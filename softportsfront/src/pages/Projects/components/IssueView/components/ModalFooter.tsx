@@ -29,7 +29,7 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
                     icon={<CheckOutlined />}
                     iconPosition='end'
                     onClick={onCloseIssue}>
-                    Fechar problema
+                    Fechar ocorrência
                 </Button>
                 <Button
                     type="primary"

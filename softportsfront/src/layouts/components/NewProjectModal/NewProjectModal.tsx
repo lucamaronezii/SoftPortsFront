@@ -9,7 +9,7 @@ import TitleSelect from '../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../components/TitleTextArea/TitleTextArea'
 import { INewProjectModalProps } from './interfaces'
 import { StyledFieldsContainer } from './styles'
-import useGlobal from '../../../hooks/useGlobal'
+import useProjects from '../../../hooks/useProjects'
 import { IProject } from '../../interfaces'
 
 const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => {
@@ -17,7 +17,7 @@ const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => 
     const [description, setDescription] = useState<string>()
     const [loading, setLoading] = useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage();
-    const { projects, setProjects } = useGlobal()
+    const { projects, setProjects } = useProjects()
 
     const axios = useAxios()
 

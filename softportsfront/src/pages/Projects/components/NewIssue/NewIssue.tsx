@@ -4,7 +4,7 @@ import { Flex, Image, Modal, Steps, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
 import { UploadFile } from 'antd/lib'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
@@ -24,26 +24,22 @@ import { TitleModal } from '../../../../components/CustomRow/styles'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
+const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) => {
+    console.log(selectedKanban)
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [title, setTitle] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
-    const [systemVersion, setSystemVersion] = useState<string>('')
+    const [title, setTitle] = useState<string>()
+    const [description, setDescription] = useState<string>()
+    const [systemVersion, setSystemVersion] = useState<string>()
     const [classification, setClassification] = useState<string[]>([]);
-    const [priority, setPriority] = useState<string>('')
-    const [status, setStatus] = useState<string>('')
-    const [road, setRoad] = useState<string>('')
-    const [estimatedCorrectionDate, setEstimatedCorrectionDate] = useState<string>('')
+    const [priority, setPriority] = useState<string>()
+    const [status, setStatus] = useState<number | undefined>(undefined)
+    const [road, setRoad] = useState<string>()
+    const [estimatedCorrectionDate, setEstimatedCorrectionDate] = useState<string>()
     const [base64Images, setBase64Images] = useState<string[]>([]);
     const [responsibles, setResponsibles] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
-    const [titleError, setTitleError] = useState(false);
-    const [descriptionError, setDescriptionError] = useState(false);
-    const [priorityError, setPriorityError] = useState(false);
-    const [classificationError, setClassificationError] = useState(false);
-    const [statusError, setStatusError] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [testCase, setTestCase] = useState<number | null>(0);
 
@@ -78,53 +74,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         });
     };
 
-    const handleCloseModal = () => {
-        setTitleError(false);
-        setDescriptionError(false);
-        setPriorityError(false);
-        setClassificationError(false);
-        setStatusError(false);
-    }
-
     const handleCreateIssue = async () => {
-        setTitleError(false);
-        setDescriptionError(false);
-        setPriorityError(false);
-        setClassificationError(false);
-        setStatusError(false);
-
-        let hasError = false;
-
-        if (!title) {
-            setTitleError(true);
-            hasError = true;
-        }
-
-        if (!description) {
-            setDescriptionError(true);
-            hasError = true;
-        }
-
-        if (!priority) {
-            setPriorityError(true);
-            hasError = true;
-        }
-
-        if (classification.length === 0) {
-            setClassificationError(true);
-            hasError = true;
-        }
-
-        if (!status) {
-            setStatusError(true);
-            hasError = true;
-        }
-
-        if (hasError) {
-            handleMessage('error', 'Preencha todos os campos obrigatórios antes de prosseguir.')
-            return;
-        }
-
         const formattedDate = dayjs(estimatedCorrectionDate).format('YYYY-MM-DD HH:mm:ss');
         if (!formattedDate || formattedDate === 'Invalid Date') {
             message.error('Por favor, selecione uma data válida para correção.');
@@ -166,24 +116,27 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         }
     }
 
+    useEffect(() => {
+        selectedKanban
+            ? setStatus(selectedKanban)
+            : setStatus(undefined)
+    }, [selectedKanban]);
+
     return (
         <>
             {contextHolder}
             <Modal
-                title={<TitleModal><WarningOutlined /> Novo registro de problema</TitleModal>}
+                title={<TitleModal><WarningOutlined /> Novo registro de ocorrência</TitleModal>}
                 open={open}
                 confirmLoading={loading}
                 onOk={handleCreateIssue}
-                onCancel={() => { onClose(); handleCloseModal() }}
+                onCancel={onClose}
                 cancelText={'Cancelar'}
                 width={1000}
                 centered
                 destroyOnClose
             >
-                <Flex
-                    gap={10}
-                    style={{ marginTop: 20 }}
-                >
+                <Flex gap={10} style={{ marginTop: 20 }}>
                     <Flex>
                         <Steps
                             direction='vertical'
@@ -194,18 +147,16 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                     <FieldsBox>
                         <TitleInput
                             text='Título'
-                            placeholder='Digite o título do problema'
+                            placeholder='Digite o título da ocorrência'
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            status={titleError ? 'error' : undefined}
                         />
                         <TitleTextArea
                             text={`Descrição`}
                             rows={4}
-                            placeholder='Digite a descrição do problema'
+                            placeholder='Digite a descrição da ocorrência'
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            status={descriptionError ? 'error' : undefined}
                         />
                         <TitleInput
                             text='Versão do Sistema Operacional'
@@ -238,23 +189,22 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                             placeholder='Selecione a prioridade de correção'
                             options={priorityItems[0].children}
                             onChange={(value) => setPriority(value)}
-                            status={priorityError ? 'error' : undefined}
                         />
                         <TitleSelect
                             text='Classificação'
-                            placeholder='Selecione a classificação do problema'
+                            placeholder='Selecione a classificação da ocorrência'
                             options={classList}
                             mode='multiple'
                             value={classification}
                             onChange={(e) => setClassification(e)}
-                            status={classificationError ? 'error' : undefined}
                         />
                         <TitleSelect
                             text='Status'
-                            placeholder='Selecione o status do problema'
+                            placeholder='Selecione o status da ocorrência'
+                            fieldNames={{ label: "title", value: "id" }}
                             options={statusList}
+                            value={status}
                             onChange={(e) => setStatus(e)}
-                            status={statusError ? 'error' : undefined}
                         />
                         <TitleUpload
                             tooltip={'Limite: 3 arquivos de imagens'}

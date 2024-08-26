@@ -1,4 +1,4 @@
-import { Flex } from "antd";
+import { Flex, Typography } from "antd";
 import styled from "styled-components";
 import { prColor, secBgColor } from "../../../../../styles/theme";
 
@@ -24,4 +24,8 @@ export const StyledCardsBox = styled(Flex)`
     padding-right: 3px;
     scrollbar-color: #FFF transparent;
     scrollbar-width: thin;
+`
+
+export const ColumnTitle = styled(Typography)`
+    margin: 4px 0px 10px 0px;
 `

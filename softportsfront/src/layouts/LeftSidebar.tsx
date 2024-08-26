@@ -6,14 +6,14 @@ import logo from '../assets/SoftPortsLogo.png'
 import { useAxios } from '../auth/useAxios'
 import SidebarItem from '../components/SidebarItem/SidebarItem'
 import { ImageBox, LogoBox, LogoText } from '../components/SidebarItem/styles'
-import useGlobal from '../hooks/useGlobal'
+import useProjects from '../hooks/useProjects'
 import { CustomSidebar } from './styles'
 
 const LeftSidebar = () => {
   const [open, setOpen] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(true)
   const { keycloak } = useKeycloak()
-  const { projects, setProjects } = useGlobal()
+  const { projects, setProjects } = useProjects()
   const axios = useAxios()
 
   const getProjects = async () => {

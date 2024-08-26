@@ -1,23 +1,27 @@
 interface IStatus {
     id: number;
-    value: string;
+    title: string;
 }
 
 export const statusList: IStatus[] = [
     {
         id: 1,
-        value: 'Pendente'
+        title: 'Novo'
     },
     {
-        id: 1,
-        value: 'Em correção'
+        id: 2,
+        title: 'Em análise'
     },
     {
-        id: 1,
-        value: 'Testes'
+        id: 3,
+        title: 'Em correção'
     },
     {
-        id: 1,
-        value: 'Aguardando aprovação'
+        id: 4,
+        title: 'Em validação'
+    },
+    {
+        id: 5,
+        title: 'Resolvido'
     }
 ]
