@@ -33,7 +33,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [title, setTitle] = useState<string>('')
     const [desc, setDesc] = useState<string>('')
     const [so, setSo] = useState<string>('')
-    const [classif, setClassif] = useState<string[]>([])
+    const [classif, setClassif] = useState<number[]>([])
     const [priority, setPriority] = useState<string>('')
     const [status, setStatus] = useState<string>('')
     const [road, setRoad] = useState<string>('')
@@ -53,7 +53,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             setTitle(issue.titulo)
             setDesc(issue.descricao)
             setSo(issue.versaoSO || '')
-            setClassif(issue.classificacoes.map((c: IClassification) => c.nome))
+            // setClassif(issue.classificacoes.map((c: IClassification) => c.nome))
             setPriority(issue.prioridade)
             setStatus(issue.status)
             setRoad(issue.caminho || '')
@@ -103,11 +103,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const handleUpdateIssue = async () => {
         const formattedDate = correctionDate ? correctionDate.format('YYYY-MM-DD HH:mm:ss') : '';
 
-        const classificationIds = classif.map(c => {
-            const selectedClass = classList.find(cls => cls.value === c);
-            return selectedClass ? selectedClass.id : null;
-        }).filter(id => id !== null);
-
         const responsiblesIds = responsaveis.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
             return selectedUser ? selectedUser.usuarioId : null;
@@ -124,7 +119,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 status: status,
                 screenshot: base64Images,
                 descricao: desc,
-                classificacoes: classificationIds,
+                classificacoes: 1,
                 responsaveis: responsiblesIds,
                 casoDeTeste: [testCase]
             }

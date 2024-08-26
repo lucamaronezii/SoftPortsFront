@@ -226,7 +226,6 @@ const OpenIssues = () => {
 
   const handleOpenForm = (col?: Column) => {
     col ? setSelectedKanban(Number(col.id)) : setSelectedKanban(undefined)
-    console.log('sk:', selectedKanban)
     setOpenForm(true)
   }
 
@@ -335,7 +334,7 @@ const OpenIssues = () => {
               <NoIssuesBox>
                 <img src={teste} width={500} />
                 <Typography.Title level={4}>
-                  Nenhuma ocorrência encontrado. Abra novas ocorrências para visualizá-las
+                  Nenhuma ocorrência encontrada. Abra novas ocorrências para visualizá-las
                 </Typography.Title>
               </NoIssuesBox>
             )
@@ -345,7 +344,7 @@ const OpenIssues = () => {
 
       <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
       <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
-    </CustomBox >
+    </CustomBox>
   )
 }
 

@@ -8,7 +8,7 @@ import { IClassification, IIssue } from '../../../interfaces'
 import dayjs from 'dayjs'
 import { IIssueDetails } from './interfaces'
 import { UploadFile } from 'antd/lib'
-import { classList } from '../../../../../mocks/Class'
+import { old_classList } from '../../../../../mocks/Class'
 import { priorityItems } from '../../../../../utils/priorityItems'
 import { statusList } from '../../../../../mocks/Status'
 import TitleDatePicker from '../../../../../components/TitleDatePicker/TitleDatePicker'
@@ -84,11 +84,6 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
     const handleSave = () => {
         const formattedDate = correctionDate ? correctionDate.format('YYYY-MM-DD HH:mm:ss') : '';
 
-        const classificationIds = classif.map(c => {
-            const selectedClass = classList.find(cls => cls.value === c);
-            return selectedClass ? selectedClass.id : null;
-        }).filter(id => id !== null);
-
         const responsiblesIds = responsaveis.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
             return selectedUser ? selectedUser.usuarioId : null;
@@ -103,7 +98,7 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
             status: status,
             screenshot: base64Images,
             descricao: desc,
-            classificacoes: classificationIds,
+            classificacoes: 1,
             responsaveis: responsiblesIds,
             casoDeTeste: [testCase]
         };
@@ -130,7 +125,7 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
-                        options={classList}
+                        options={old_classList}
                         onChange={(e) => setClassif(e)}
                         mode='multiple'
                     />

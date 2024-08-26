@@ -1,6 +1,6 @@
 import { WarningOutlined } from '@ant-design/icons'
 import type { GetProp, UploadProps } from 'antd'
-import { Flex, Image, Modal, Steps, message } from 'antd'
+import { Cascader, Flex, Image, Modal, Steps, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
 import { UploadFile } from 'antd/lib'
 import dayjs from 'dayjs'
@@ -10,7 +10,7 @@ import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { classList } from '../../../../mocks/Class'
+import { classList, old_classList } from '../../../../mocks/Class'
 import { statusList } from '../../../../mocks/Status'
 import { testCasesList } from '../../../../mocks/TestCases'
 import { usersList } from '../../../../mocks/Users'
@@ -21,6 +21,7 @@ import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
 import { TitleModal } from '../../../../components/CustomRow/styles'
+import GapColumn from '../../../../components/Column/Column'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -81,11 +82,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
             return;
         }
 
-        const classificationIds = classification.map(c => {
-            const selectedClass = classList.find(cls => cls.value === c);
-            return selectedClass ? selectedClass.id : null;
-        }).filter(id => id !== null);
-
         const responsiblesIds = responsibles.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
             return selectedUser ? selectedUser.usuarioId : null;
@@ -103,7 +99,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                 status: status,
                 screenshots: base64Images[0],
                 descricao: description,
-                classificacoes: classificationIds,
+                classificacoes: 1,
                 responsaveis: responsiblesIds,
                 casoDeTeste: [testCase]
             }
@@ -174,13 +170,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                             placeholder='Selecione a data estimada para correção'
                             onChange={(date) => setEstimatedCorrectionDate(date ? date.format() : '')}
                         />
-                        <TitleSelect
-                            text='Caso de teste'
-                            allowClear
-                            placeholder='Selecione o caso de teste executado'
-                            options={testCasesList}
-                            onChange={(e) => setTestCase(e)}
-                        />
                     </FieldsBox>
 
                     <FieldsBox>
@@ -190,14 +179,15 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                             options={priorityItems[0].children}
                             onChange={(value) => setPriority(value)}
                         />
-                        <TitleSelect
-                            text='Classificação'
-                            placeholder='Selecione a classificação da ocorrência'
-                            options={classList}
-                            mode='multiple'
-                            value={classification}
-                            onChange={(e) => setClassification(e)}
-                        />
+                        <GapColumn>
+                            <Typography.Text>Classificação</Typography.Text>
+                            <Cascader
+                                placeholder='Selecione a classificação da ocorrência'
+                                options={classList}
+                                style={{ width: '100%' }}
+                                onChange={e => console.log(e)}
+                            />
+                        </GapColumn>
                         <TitleSelect
                             text='Status'
                             placeholder='Selecione o status da ocorrência'
@@ -233,13 +223,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                         <TitleSelect
                             text='Responsáveis'
                             placeholder='Selecione os responsáveis para correção'
-                            options={usersList}
-                            mode='multiple'
-                            onChange={(value) => setResponsibles(value)}
-                        />
-                        <TitleSelect
-                            text='Commit'
-                            disabled
                             options={usersList}
                             mode='multiple'
                             onChange={(value) => setResponsibles(value)}

@@ -1,6 +1,7 @@
 import {
   AlertOutlined, BugOutlined, CheckCircleOutlined, MailOutlined,
-  MergeOutlined, ScheduleOutlined, SlidersOutlined, TableOutlined
+  MergeOutlined, ScheduleOutlined, SlidersOutlined, TableOutlined,
+  WarningOutlined
 } from '@ant-design/icons';
 import { type MenuProps } from 'antd';
 
@@ -10,7 +11,7 @@ export const OpenIssuesMenu: MenuItem[] = [
   {
     label: 'Ocorrências abertas',
     key: 'tofix',
-    icon: <BugOutlined />,
+    icon: <WarningOutlined />,
   },
   {
     label: 'Ocorrências fechadas',
