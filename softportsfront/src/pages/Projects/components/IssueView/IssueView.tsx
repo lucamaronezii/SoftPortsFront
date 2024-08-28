@@ -1,7 +1,6 @@
 import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { Button, Flex, GetProp, Image, Menu, Modal, Tooltip, UploadProps } from 'antd'
 import { UploadFile } from 'antd/lib'
-import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
@@ -9,14 +8,13 @@ import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { classList } from '../../../../mocks/Class'
+import { classList } from '../../../../utils/getClass' 
 import { statusList } from '../../../../mocks/Status'
 import { usersList } from '../../../../mocks/Users'
 import { deleteIssue, editIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
 import { IssueMenu } from '../../../../utils/menuItems'
-import { priorityItems } from '../../../../utils/priorityItems'
-import { IClassification } from '../../interfaces'
+import { priorityItems } from '../../../../utils/getPriority'
 import FeedbackModal from './components/FeedbackModal'
 import IssueComments from './components/IssueComments'
 import IssueLogs from './components/IssueLogs'
@@ -24,6 +22,7 @@ import ModalFooter from './components/ModalFooter'
 import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
 import { ChildBox, CustomCol, CustomRow, colProps } from './styles'
+import dayjs from 'dayjs'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -34,10 +33,10 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [desc, setDesc] = useState<string>('')
     const [so, setSo] = useState<string>('')
     const [classif, setClassif] = useState<number[]>([])
-    const [priority, setPriority] = useState<string>('')
-    const [status, setStatus] = useState<string>('')
+    const [priority, setPriority] = useState<number>()
+    const [status, setStatus] = useState<number>()
     const [road, setRoad] = useState<string>('')
-    const [correctionDate, setCorrectionDate] = useState<dayjs.Dayjs | null>(null)
+    const [correctionDate, setCorrectionDate] = useState<number>()
     const [testCase, setTestCase] = useState<number>();
     const [responsaveis, setResponsaveis] = useState<string[]>([])
     const [previewImage, setPreviewImage] = useState('');
@@ -57,9 +56,8 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             setPriority(issue.prioridade)
             setStatus(issue.status)
             setRoad(issue.caminho || '')
-            setCorrectionDate(dayjs(issue.dataCorrecao))
-            setResponsaveis(issue.responsaveis.map(responsavel => responsavel.nome))
-            setTestCase(issue.casosDeTestes![0].casoDeTesteId)
+            setCorrectionDate(issue.dataEstimada)
+            setResponsaveis(issue.usuarios.map(responsavel => responsavel.nome))
             setResolved(resolved)
         }
     }, [issue, onClose])
@@ -101,7 +99,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     };
 
     const handleUpdateIssue = async () => {
-        const formattedDate = correctionDate ? correctionDate.format('YYYY-MM-DD HH:mm:ss') : '';
 
         const responsiblesIds = responsaveis.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
@@ -114,7 +111,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 titulo: title,
                 versaoSO: so,
                 caminho: road,
-                dataCorrecao: formattedDate,
+                dataEstimada: correctionDate,
                 prioridade: priority,
                 status: status,
                 screenshot: base64Images,
@@ -279,11 +276,10 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                         <CustomCol {...colProps}>
                             <TitleDatePicker
                                 text='Data estimada para correção'
-                                value={correctionDate}
+                                value={dayjs()}
                                 style={!isEditing ? { pointerEvents: "none" } : {}}
                                 variant={inputVariant()}
                                 removeIcon={!isEditing}
-                                onChange={(date) => setCorrectionDate(date)}
                             />
                         </CustomCol>
                         <CustomCol {...colProps}>

@@ -1,8 +1,8 @@
-import { priorityItems } from "./priorityItems";
+import { priorityItems } from "./getPriority";
 
 export interface Option {
-    value: string | number;
     label: string | React.ReactNode;
+    value: string | number;
     children?: Option[];
     disableCheckbox?: boolean;
 }

@@ -10,13 +10,14 @@ import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { classList, old_classList } from '../../../../mocks/Class'
+import { old_classList } from '../../../../mocks/Class'
+import { classList } from '../../../../utils/getClass' 
 import { statusList } from '../../../../mocks/Status'
 import { testCasesList } from '../../../../mocks/TestCases'
 import { usersList } from '../../../../mocks/Users'
 import { createIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
-import { priorityItems } from '../../../../utils/priorityItems'
+import { priorityItems } from '../../../../utils/getPriority'
 import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
@@ -61,7 +62,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
             return file.preview as string;
         }));
         setBase64Images(base64List);
-        console.log(base64Images)
     };
 
     const beforeUpload = (file: FileType) => {

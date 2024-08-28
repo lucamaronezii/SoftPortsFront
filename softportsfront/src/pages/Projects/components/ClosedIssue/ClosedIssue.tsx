@@ -5,7 +5,7 @@ import { Button, Tooltip } from 'antd'
 import { format } from 'date-fns'
 import { RollbackOutlined } from '@ant-design/icons'
 
-const ClosedIssue: React.FC<IIssue> = ({ id, titulo: name, responsaveis, descricao, onClick }) => {
+const ClosedIssue: React.FC<IIssue> = ({ id, titulo: name, usuarios: responsaveis, descricao, onClick }) => {
     const [initials, setInitials] = useState<string[]>([])
 
     const getUsersInitials = () => {

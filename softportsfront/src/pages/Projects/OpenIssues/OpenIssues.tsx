@@ -3,14 +3,14 @@ import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, P
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
-import { useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import teste from '../../../assets/empty.svg'
+import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import useProjects from '../../../hooks/useProjects'
 import { statusList } from '../../../mocks/Status'
-import { getIssues } from '../../../services/IssueServices'
 import { issueFilterItems } from '../../../utils/issueFilterItems'
 import { segItems } from '../../../utils/segItems'
 import IssueView from '../components/IssueView/IssueView'
@@ -23,10 +23,13 @@ import NewIssue from '../components/NewIssue/NewIssue'
 import { IIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
+import { useDebounce } from 'use-debounce'
 
 const OpenIssues = () => {
   const [issues, setIssues] = useState<IIssue[]>([])
-  const [input, setInput] = useState<string>('')
+  const [input, setInput] = useState<string>()
+  const [debounce] = useDebounce(input, 500)
+  const [priority, setPriority] = useState<number[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
@@ -36,6 +39,7 @@ const OpenIssues = () => {
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
   const [selectedKanban, setSelectedKanban] = useState<number>()
   const { selectedProject } = useProjects()
+  const axios = useAxios()
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
@@ -69,7 +73,9 @@ const OpenIssues = () => {
   const handleGetIssues = async () => {
     try {
       setLoading(true)
-      await getIssues().then((response) => setIssues(response.data.conteudo))
+      let params = `projetoId=${selectedProject.id}&prioridade=1`
+      input && (params += `&titulo=${input}`)
+      await axios.get(`tarefa?${params}`).then(res => setIssues(res.data.conteudo))
     } catch (error) {
       console.error(error)
     } finally {
@@ -81,7 +87,7 @@ const OpenIssues = () => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [selectedProject])
+  }, [selectedProject, debounce])
 
   const [columns, setColumns] = useState<Column[]>(statusList)
 
@@ -202,16 +208,15 @@ const OpenIssues = () => {
   const addIssue = (columnId: Id) => {
     const newIssue: IIssue = {
       id: generateId(),
-      classificacoes: [],
-      dataCorrecao: '',
+      classificacao: 1,
+      dataEstimada: 1,
       descricao: '',
-      prioridade: 'Crítica',
-      responsaveis: [],
-      status: '',
+      prioridade: 1,
+      usuarios: [],
+      status: 1,
       titulo: `Issue ${testIssues.length + 1}`,
       caminho: '',
-      casosDeTestes: [],
-      screenshot: '',
+      screenshots: [],
       versaoSO: '',
       columnId: columnId
     }
@@ -229,6 +234,27 @@ const OpenIssues = () => {
     setOpenForm(true)
   }
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+  }
+
+  const handlePriorityChange = (e: (string | number)[][]) => {
+    if (!e.length) return
+    let arrayId = [];
+    for (let i = 0; i <= e.length - 1; i++) {
+      arrayId.push(Number(e[i][1]))
+    }
+    console.log(e)
+    console.log('arrayId: ', arrayId)
+    return e[0].length !== 1
+      ? setPriority([...arrayId])
+      : setPriority([1, 2, 3, 4])
+  }
+
+  const handleClear = () => {
+    setPriority([])
+  }
+
   return (
     <CustomBox>
       {contextHolder}
@@ -240,13 +266,15 @@ const OpenIssues = () => {
               placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
             />
           </div>
           <Cascader
             removeIcon
             placeholder='Filtrar ocorrências'
+            onClear={handleClear}
             multiple
+            onChange={handlePriorityChange}
             options={issueFilterItems}
             maxTagCount={'responsive'}
           />
@@ -277,7 +305,7 @@ const OpenIssues = () => {
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
-                  issues={testIssues.filter(issue => issue.columnId == col.id)}
+                  issues={issues.filter(issue => issue.status == col.id)}
                   addIssue={addIssue}
                   updateColumn={updateColumn}
                   column={col}
@@ -291,7 +319,7 @@ const OpenIssues = () => {
               <DragOverlay>
                 {activeColumn && (
                   <KanbanColumn
-                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
+                    issues={issues.filter(issue => issue.columnId == activeColumn.id)}
                     addIssue={addIssue}
                     updateColumn={updateColumn}
                     column={activeColumn}
@@ -321,12 +349,12 @@ const OpenIssues = () => {
                   key={index}
                   id={issue.id}
                   titulo={issue.titulo}
-                  classificacoes={issue.classificacoes}
+                  classificacao={issue.classificacao}
                   descricao={issue.descricao}
                   prioridade={issue.prioridade}
                   status={issue.status}
-                  responsaveis={issue.responsaveis}
-                  dataCorrecao={issue.dataCorrecao}
+                  usuarios={issue.usuarios}
+                  dataEstimada={issue.dataEstimada}
                   onClick={() => handleIssueView(issue)}
                 />
               ))

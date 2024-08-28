@@ -7,7 +7,7 @@ import { issuesListTest } from '../../../../../mocks/Issues'
 
 const IssueComments: React.FC<{ issue: IIssue }> = ({ issue }) => {
   const { Text } = Typography
-  const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comments || [])
+  const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comentarios || [])
 
   return (
     <Flex vertical gap={15} style={{ overflowY: 'auto' }}>

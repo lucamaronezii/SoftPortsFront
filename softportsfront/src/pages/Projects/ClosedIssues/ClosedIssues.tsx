@@ -46,15 +46,14 @@ const OpenIssues = () => {
             <ClosedIssue
               key={index}
               id={issue.id}
-              classificacoes={issue.classificacoes}
-              dataCorrecao={issue.dataCorrecao}
+              classificacao={issue.classificacao}
+              dataEstimada={issue.dataEstimada}
               descricao={issue.descricao}
               prioridade={issue.prioridade}
-              responsaveis={issue.responsaveis}
+              usuarios={issue.usuarios}
               status={issue.status}
               titulo={issue.titulo}
               caminho={issue.caminho}
-              casosDeTestes={issue.casosDeTestes}
             />
           ))
         ) : (

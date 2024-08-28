@@ -20,7 +20,6 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
     const verify = location.pathname == to
 
     const handleClick = () => {
-        console.log(location.pathname)
         if (onLogout) onLogout()
         if (hasChild) {
             setIsOpen(!isOpen)

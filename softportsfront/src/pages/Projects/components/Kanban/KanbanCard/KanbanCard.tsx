@@ -28,7 +28,6 @@ const KanbanCard: React.FC<IKanbanCard> = ({ issue, deleteIssue }) => {
                 style={style}
                 isDragging
             />
-            
         )
     }
 

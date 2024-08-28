@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { colProps, CustomCol, CustomRow } from '../styles'
+import { GetProp, Image, UploadProps } from 'antd'
+import { UploadFile } from 'antd/lib'
+import dayjs from 'dayjs'
+import React, { useState } from 'react'
+import TitleDatePicker from '../../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../../components/TitleTextArea/TitleTextArea'
-import { GetProp, Image, UploadProps } from 'antd'
-import { IClassification, IIssue } from '../../../interfaces'
-import dayjs from 'dayjs'
-import { IIssueDetails } from './interfaces'
-import { UploadFile } from 'antd/lib'
-import { old_classList } from '../../../../../mocks/Class'
-import { priorityItems } from '../../../../../utils/priorityItems'
-import { statusList } from '../../../../../mocks/Status'
-import TitleDatePicker from '../../../../../components/TitleDatePicker/TitleDatePicker'
-import { usersList } from '../../../../../mocks/Users'
-import { testCasesList } from '../../../../../mocks/TestCases'
 import TitleUpload from '../../../../../components/TitleUpload/TitleUpload'
+import { old_classList } from '../../../../../mocks/Class'
+import { statusList } from '../../../../../mocks/Status'
+import { testCasesList } from '../../../../../mocks/TestCases'
+import { usersList } from '../../../../../mocks/Users'
 import { getBase64 } from '../../../../../utils/getBase64'
-import { editIssue } from '../../../../../services/IssueServices'
+import { priorityItems } from '../../../../../utils/getPriority'
+import { colProps, CustomCol, CustomRow } from '../styles'
+import { IIssueDetails } from './interfaces'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -37,21 +35,6 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [base64Images, setBase64Images] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>()
-
-    useEffect(() => {
-        if (issue) {
-            setTitle(issue.titulo)
-            setDesc(issue.descricao)
-            setSo(issue.versaoSO || '')
-            setClassif(issue.classificacoes.map((c: IClassification) => c.nome))
-            setPriority(issue.prioridade)
-            setStatus(issue.status)
-            setRoad(issue.caminho || '')
-            setCorrectionDate(dayjs(issue.dataCorrecao))
-            setResponsaveis(issue.responsaveis.map(responsavel => responsavel.nome))
-            setTestCase(issue.casosDeTestes![0].casoDeTesteId)
-        }
-    }, [issue, onClose])
 
     const inputVariant = () => {
         return isEditing ? 'outlined' : 'filled'

@@ -1,11 +1,11 @@
 import { Tag } from 'antd'
-import { tagColor } from '../../utils/tagColor'
 import React from 'react'
 import { IIssueTag } from './interfaces'
+import { getPriority, tagColor } from '../../utils/getPriority'
 
-const IssueTag: React.FC<IIssueTag> = ({ priority, children }) => {
+const IssueTag: React.FC<IIssueTag> = ({ priority, children }) => {    
     return (
-        <Tag color={tagColor(priority)}>
+        <Tag color={tagColor(getPriority(priority)!)}>
             {children}
         </Tag>
     )

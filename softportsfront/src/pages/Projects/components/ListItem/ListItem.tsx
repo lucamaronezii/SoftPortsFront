@@ -7,12 +7,13 @@ import { Avatar } from 'antd'
 import { prColor } from '../../../../styles/theme'
 import { darkerPr } from '../../../../utils/darkerPrimary'
 import { format } from 'date-fns'
+import { getPriority } from '../../../../utils/getPriority'
 
-const ListItem: React.FC<IIssue> = ({ id, titulo: name, prioridade: priority, responsaveis, status, classificacoes: classification, dataCorrecao: fixDate, onClick }) => {
+const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, classificacao, dataEstimada, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
   const getUsersInitials = () => {
-    const newInitials = responsaveis.map(user => {
+    const newInitials = usuarios.map(user => {
       const text = user.nome[0] + user.nome[1]
       return text.toUpperCase()
     })
@@ -32,18 +33,16 @@ const ListItem: React.FC<IIssue> = ({ id, titulo: name, prioridade: priority, re
     <StyledItem onClick={onClick}>
       <StyledChild gap={10} width='35%'>
         <IdIssue>[ID-{id}]</IdIssue>
-        <ListText title={name}>{name}</ListText>
+        <ListText title={titulo}>{titulo}</ListText>
       </StyledChild>
       <StyledChild width='10%'>
         <Typography>{status}</Typography>
       </StyledChild>
       <StyledChild width='10%' justify='center'>
-        <IssueTag priority={priority}>{priority}</IssueTag>
+        <IssueTag priority={prioridade}>{getPriority(prioridade)}</IssueTag>
       </StyledChild>
       <StyledChild width='15%' justify='center'>
-        {classification.map((item) => (
-          <Typography key={item.classificacaoId}>{item.nome} ‎</Typography>
-        ))}
+        <Typography>{classificacao} ‎</Typography>
       </StyledChild>
       <StyledChild justify='center'>
         <Avatar.Group
@@ -52,6 +51,7 @@ const ListItem: React.FC<IIssue> = ({ id, titulo: name, prioridade: priority, re
         >
           {initials.map((user, index) => (
             <Avatar
+              key={index}
               size={'default'}
               style={{ backgroundColor: prColor }}
             >
@@ -61,7 +61,7 @@ const ListItem: React.FC<IIssue> = ({ id, titulo: name, prioridade: priority, re
         </Avatar.Group>
       </StyledChild>
       <StyledChild width='15%' justify='end'>
-        <Typography>{formatDate(fixDate)}</Typography>
+        <Typography>{dataEstimada}</Typography>
       </StyledChild>
     </StyledItem>
   )
