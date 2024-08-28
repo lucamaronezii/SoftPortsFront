@@ -5,24 +5,22 @@ import { NoticeType } from 'antd/es/message/interface'
 import { UploadFile } from 'antd/lib'
 import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
+import GapColumn from '../../../../components/Column/Column'
+import { TitleModal } from '../../../../components/CustomRow/styles'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { old_classList } from '../../../../mocks/Class'
-import { classList } from '../../../../utils/getClass' 
 import { statusList } from '../../../../mocks/Status'
-import { testCasesList } from '../../../../mocks/TestCases'
 import { usersList } from '../../../../mocks/Users'
 import { createIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
+import { classList } from '../../../../utils/getClass'
 import { priorityItems } from '../../../../utils/getPriority'
 import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
-import { TitleModal } from '../../../../components/CustomRow/styles'
-import GapColumn from '../../../../components/Column/Column'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -84,7 +82,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
 
         const responsiblesIds = responsibles.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.usuarioId : null;
+            return selectedUser ? selectedUser.id : null;
         }).filter(id => id !== null);
 
         try {

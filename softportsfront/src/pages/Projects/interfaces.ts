@@ -1,14 +1,9 @@
+import { IUser } from "../Users/interfaces";
 import { Id } from "./components/Kanban/KanbanColumn/types";
 
 export interface IStyledItem extends IIssue {
     styled: any;
     ref: any
-}
-
-export interface IUserTestess {
-    usuarioId: number,
-    nome: string,
-    cargo: string
 }
 
 export interface IIssueComment {
@@ -23,7 +18,7 @@ export interface IIssue {
     titulo: string;
     descricao: string;
     status: number;
-    usuarios: IUserTestess[];
+    usuarios: IUser[];
     prioridade: number;
     classificacao: number;
     screenshots?: string[];
@@ -33,4 +28,9 @@ export interface IIssue {
     onClick?: () => void;
     columnId?: Id;
     comentarios?: IIssueComment[];
+}
+
+export interface IPage {
+    loadingUsers: boolean,
+    users: IUser[]
 }

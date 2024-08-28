@@ -1,6 +1,6 @@
-import { Option } from "./issueFilterItems";
+import { IOption } from "./getClass";
 
-export const priorityItems: Option[] = [
+export const priorityItems: IOption[] = [
     {
         label: 'Prioridade',
         value: 'priority',

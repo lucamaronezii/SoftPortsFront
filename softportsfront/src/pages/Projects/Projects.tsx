@@ -9,10 +9,15 @@ import DefectDensity from './Metrics/DefectDensity/DefectDensity';
 import Requests from './Requests/Requests';
 import { SubnavPad } from '../Users/styles';
 import useProjects from '../../hooks/useProjects';
+import { IUser } from '../Users/interfaces';
+import { useAxios } from '../../auth/useAxios';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(true)
+  const [users, setUsers] = useState<IUser[]>([])
   const { selectedProject } = useProjects()
+  const axios = useAxios()
 
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
@@ -21,7 +26,7 @@ const Projects = () => {
   const renderPage = () => {
     switch (current) {
       case "tofix":
-        return <OpenIssues />
+        return <OpenIssues loadingUsers={loadingUsers} users={users} />
       case "fixed":
         return <FixedIssues />
       case "test":
@@ -34,6 +39,17 @@ const Projects = () => {
         return <Requests />
     }
   }
+
+  const handleGetUsers = async () => {
+    await axios.get(`usuario?projetoId=${selectedProject.id}`)
+      .then(res => setUsers(res.data.conteudo))
+      .catch(err => console.error(err))
+      .finally(() => setTimeout(() => { setLoadingUsers(false) }, 1000))
+  }
+
+  useEffect(() => {
+    handleGetUsers()
+  }, [])
 
   useEffect(() => {
     setCurrent('tofix')

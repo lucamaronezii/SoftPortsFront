@@ -1,6 +1,6 @@
-import { Option } from "./issueFilterItems";
+import { IOption } from "./getClass";
 
-export const positionItems: Option[] = [
+export const positionItems: IOption[] = [
     {
         label: "Desenvolvedor",
         value: "dev"

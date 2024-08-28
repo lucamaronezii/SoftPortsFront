@@ -7,7 +7,6 @@ import TitleInput from '../../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../../components/TitleUpload/TitleUpload'
-import { old_classList } from '../../../../../mocks/Class'
 import { statusList } from '../../../../../mocks/Status'
 import { testCasesList } from '../../../../../mocks/TestCases'
 import { usersList } from '../../../../../mocks/Users'
@@ -69,7 +68,7 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
 
         const responsiblesIds = responsaveis.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.usuarioId : null;
+            return selectedUser ? selectedUser.id : null;
         }).filter(id => id !== null);
 
         const updatedIssue = {
@@ -108,7 +107,6 @@ const IssueDetails: React.FC<IIssueDetails> = ({ issue, onClose, isEditing, setI
                         style={!isEditing ? { pointerEvents: "none" } : {}}
                         variant={inputVariant()}
                         removeIcon={!isEditing}
-                        options={old_classList}
                         onChange={(e) => setClassif(e)}
                         mode='multiple'
                     />

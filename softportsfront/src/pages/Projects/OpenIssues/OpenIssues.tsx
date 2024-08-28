@@ -5,14 +5,18 @@ import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'a
 import { NoticeType } from 'antd/es/message/interface'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useDebounce } from 'use-debounce'
 import teste from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import useProjects from '../../../hooks/useProjects'
 import { statusList } from '../../../mocks/Status'
-import { issueFilterItems } from '../../../utils/issueFilterItems'
+import { classList } from '../../../utils/getClass'
+import { priorityItems } from '../../../utils/getPriority'
+import { usersList } from '../../../utils/getUsers'
 import { segItems } from '../../../utils/segItems'
+import { IUser } from '../../Users/interfaces'
 import IssueView from '../components/IssueView/IssueView'
 import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
 import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
@@ -20,16 +24,16 @@ import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
 import ListItem from '../components/ListItem/ListItem'
 import NewIssue from '../components/NewIssue/NewIssue'
-import { IIssue } from '../interfaces'
+import { IIssue, IPage } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
-import { useDebounce } from 'use-debounce'
 
-const OpenIssues = () => {
+const OpenIssues: React.FC<IPage> = ({loadingUsers, users}) => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>()
   const [debounce] = useDebounce(input, 500)
   const [priority, setPriority] = useState<number[]>([])
+  const [_users, _setUsers] = useState<IUser[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
@@ -71,18 +75,17 @@ const OpenIssues = () => {
   }
 
   const handleGetIssues = async () => {
-    try {
-      setLoading(true)
-      let params = `projetoId=${selectedProject.id}&prioridade=1`
-      input && (params += `&titulo=${input}`)
-      await axios.get(`tarefa?${params}`).then(res => setIssues(res.data.conteudo))
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setTimeout(() => {
-        setLoading(false)
-      }, 1000)
-    }
+    setLoading(true)
+    let params = `projetoId=${selectedProject.id}&prioridade=1`
+    input && (params += `&titulo=${input}`)
+    await axios.get(`tarefa?${params}`).
+      then(res => setIssues(res.data.conteudo))
+      .catch(err => console.error(err))
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false)
+        }, 700)
+      })
   }
 
   useEffect(() => {
@@ -238,17 +241,31 @@ const OpenIssues = () => {
     setInput(e.target.value)
   }
 
-  const handlePriorityChange = (e: (string | number)[][]) => {
+  const handlePriority = (array: any[]) => {
+    return array.includes('priority')
+      ? setPriority([1, 2, 3, 4])
+      : setPriority(array)
+  }
+
+  const handleClass = () => { }
+
+  const handleUsers = () => { }
+
+  const handleCascaderChange = (e: (string | number)[][]) => {
+    // TODO
     if (!e.length) return
-    let arrayId = [];
-    for (let i = 0; i <= e.length - 1; i++) {
-      arrayId.push(Number(e[i][1]))
-    }
-    console.log(e)
-    console.log('arrayId: ', arrayId)
-    return e[0].length !== 1
-      ? setPriority([...arrayId])
-      : setPriority([1, 2, 3, 4])
+    let priorityArray: (string | number)[] = []
+    let classArray = []
+    let usersArray = []
+
+    e.map(valor => {
+      const selectedAll = valor.length == 1
+      if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
+      if (valor[0] == 'class') { }
+      if (valor[0] == 'users') { }
+    })
+
+    priorityArray.length && handlePriority(priorityArray)
   }
 
   const handleClear = () => {
@@ -263,32 +280,34 @@ const OpenIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
+              onChange={handleInputChange}
               placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
-              onChange={handleInputChange}
             />
           </div>
           <Cascader
-            removeIcon
-            placeholder='Filtrar ocorrências'
+            disabled={loadingUsers}
+            loading={loadingUsers}
+            options={[...classList, ...priorityItems, usersList(users)]}
             onClear={handleClear}
-            multiple
-            onChange={handlePriorityChange}
-            options={issueFilterItems}
+            onChange={handleCascaderChange}
+            placeholder='Filtrar ocorrências'
             maxTagCount={'responsive'}
+            multiple
+            removeIcon
           />
           <Segmented
-            options={segItems}
             value={seg}
+            options={segItems}
             onChange={(e) => setSeg(e)}
           />
         </Flex>
         <Button
-          type='primary'
-          icon={<PlusOutlined />}
-          iconPosition='end'
           onClick={() => handleOpenForm()}
+          icon={<PlusOutlined />}
+          type='primary'
+          iconPosition='end'
         >
           Nova ocorrência
         </Button>
@@ -308,10 +327,10 @@ const OpenIssues = () => {
                   issues={issues.filter(issue => issue.status == col.id)}
                   addIssue={addIssue}
                   updateColumn={updateColumn}
-                  column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
                   deleteIssue={deleteIssue}
                   onAdd={() => handleOpenForm(col)}
+                  column={col}
                 />
               ))}
             </SortableContext>

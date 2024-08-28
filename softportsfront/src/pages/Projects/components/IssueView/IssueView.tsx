@@ -102,7 +102,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
 
         const responsiblesIds = responsaveis.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.usuarioId : null;
+            return selectedUser ? selectedUser.id : null;
         }).filter(id => id !== null);
 
         try {

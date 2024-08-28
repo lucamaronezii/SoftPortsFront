@@ -1,4 +1,10 @@
-import { IClass, IOption } from "../mocks/Class"
+import { IUser } from "../pages/Users/interfaces";
+
+export interface IOption {
+    label: string;
+    value?: number | string;
+    children?: IOption[] | IUser[]
+}
 
 const categories: IOption[] = [
     {
@@ -23,32 +29,38 @@ const categories: IOption[] = [
     },
 ]
 
-export const classList: IClass[] = [
+export const classList: IOption[] = [
     {
-        value: 1,
-        label: 'Incidente',
-        children: [
-            ...categories
-        ]
-    },
-    {
-        value: 5,
-        label: 'Problema',
-        children: [
-            ...categories
-        ]
-    },
-    {
-        value: 10,
-        label: 'Mudança',
+        value: 0,
+        label: 'Classificação',
         children: [
             {
-                label: 'Normal',
-                value: 12
+                value: 1,
+                label: 'Incidente',
+                children: [
+                    ...categories
+                ]
             },
             {
-                label: 'Emergencial',
-                value: 13
+                value: 5,
+                label: 'Problema',
+                children: [
+                    ...categories
+                ]
+            },
+            {
+                value: 10,
+                label: 'Mudança',
+                children: [
+                    {
+                        label: 'Normal',
+                        value: 12
+                    },
+                    {
+                        label: 'Emergencial',
+                        value: 13
+                    }
+                ]
             }
         ]
     }
