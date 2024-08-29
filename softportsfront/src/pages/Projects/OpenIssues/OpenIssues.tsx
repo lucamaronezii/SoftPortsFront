@@ -11,9 +11,9 @@ import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import useProjects from '../../../hooks/useProjects'
-import { statusList } from '../../../utils/getStatus'
 import { classList } from '../../../utils/getClass'
 import { priorityList } from '../../../utils/getPriority'
+import { statusList } from '../../../utils/getStatus'
 import { manipulateUsers } from '../../../utils/getUsers'
 import { segItems } from '../../../utils/segItems'
 import { IUser } from '../../Users/interfaces'
@@ -239,10 +239,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setOpenForm(true)
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
-  }
-
   const handlePriority = (array: any[]) => {
     return array.includes('priority')
       ? setFilterPriority([1, 2, 3, 4])
@@ -294,7 +290,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              onChange={handleInputChange}
+              onChange={(e) => setInput(e.target.value)}
               placeholder='Pesquisar ocorrência'
               allowClear
               enterButton

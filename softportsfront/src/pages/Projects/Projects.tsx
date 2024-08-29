@@ -39,7 +39,7 @@ const Projects = () => {
       case "requests":
         return <Requests />
       case "config":
-        return <ProjectConfig />
+        return <ProjectConfig loadingUsers={loadingUsers} users={users} />
     }
   }
 

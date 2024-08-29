@@ -35,7 +35,7 @@ const ClosedIssue: React.FC<IIssue> = ({ id, titulo, usuarios, descricao, onClic
                 <ListText title={descricao}>{descricao}</ListText>
             </StyledChild>
             <StyledChild width='10%' justify='end'>
-                <Tooltip title={"Reabrir issue"} mouseEnterDelay={0.9}>
+                <Tooltip title={"Reabrir ocorrência"} mouseEnterDelay={0.9}>
                     <Button icon={<RollbackOutlined />} type='primary' />
                 </Tooltip>
             </StyledChild>

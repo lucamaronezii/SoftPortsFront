@@ -1,6 +1,6 @@
 import { ProjectFilled } from '@ant-design/icons'
 import { message, Modal } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAxios } from '../../../auth/useAxios'
 import { usersList } from '../../../mocks/Users'
 import { TitleModal } from '../../../components/CustomRow/styles'
@@ -11,11 +11,14 @@ import { INewProjectModalProps } from './interfaces'
 import { StyledFieldsContainer } from './styles'
 import useProjects from '../../../hooks/useProjects'
 import { IProject } from '../../interfaces'
+import { IUser } from '../../../pages/Users/interfaces'
 
 const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => {
     const [title, setTitle] = useState<string>()
     const [description, setDescription] = useState<string>()
     const [loading, setLoading] = useState<boolean>(false)
+    const [loadingUsers, setLoadingUsers] = useState<boolean>(true)
+    const [users, setUsers] = useState<IUser[]>([])
     const [messageApi, contextHolder] = message.useMessage();
     const { projects, setProjects } = useProjects()
 
@@ -33,6 +36,13 @@ const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => 
         } else return true
     }
 
+    const handleGetAllUsers = async () => {
+        await axios.get('usuario')
+            .then(res => setUsers(res.data.conteudo))
+            .catch(err => console.error(err))
+            .finally(() => setLoadingUsers(false))
+    }
+
     const createProject = async () => {
         if (!handleForm()) return
         setLoading(true)
@@ -45,6 +55,10 @@ const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => 
             .catch(_ => message.error("Erro. Tente novamente"))
             .finally(() => setLoading(false))
     }
+
+    useEffect(() => {
+        handleGetAllUsers()
+    }, [])
 
     return (
         <React.Fragment>
@@ -75,7 +89,8 @@ const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => 
                     <TitleSelect
                         text='Usuários'
                         mode='multiple'
-                        options={usersList}
+                        options={users}
+                        fieldNames={{ label: "nome", value: "id" }}
                         placeholder={'Selecione os usuários relacionados ao projeto'}
                     />
                 </StyledFieldsContainer>

@@ -37,6 +37,6 @@ export interface IIssue {
 }
 
 export interface IProjectPage {
-    loadingUsers: boolean,
     users: IUser[]
+    loadingUsers: boolean,
 }
