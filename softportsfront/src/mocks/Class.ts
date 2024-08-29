@@ -1,29 +1,22 @@
-interface IClass {
-    id: number;
+import { IOption } from "../utils/getClass";
+
+export interface IClass {
     label: string;
-    value: string;
+    value: number;
     children?: IOption[]
 }
 
-interface IOption {
-    label: string;
-    value: string;
-}
-
-export const classList: IClass[] = [
+export const old_classList: IClass[] = [
     {
-        id: 1,
         label: 'Bug',
-        value: 'Bug'
+        value: 1
     },
     {
-        id: 2,
         label: 'Pergunta',
-        value: 'Pergunta'
+        value: 2
     },
     {
-        id: 3,
         label: 'Melhoria',
-        value: 'Melhoria'
+        value: 3
     }
 ]

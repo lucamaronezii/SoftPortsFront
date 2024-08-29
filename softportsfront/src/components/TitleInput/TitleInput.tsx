@@ -2,8 +2,9 @@ import { Input, Typography } from 'antd'
 import React from 'react'
 import { ITitleInput } from './interfaces'
 import GapColumn from '../Column/Column'
+import { errColor } from '../../styles/theme'
 
-const TitleInput: React.FC<ITitleInput> = ({ text, ...inputProps }) => {
+const TitleInput: React.FC<ITitleInput> = ({ text, error, ...inputProps }) => {
     const { Text } = Typography
 
     return (
@@ -15,6 +16,7 @@ const TitleInput: React.FC<ITitleInput> = ({ text, ...inputProps }) => {
                 />
             ) : (
                 <Input
+                    style={{ borderColor: error ? errColor : undefined}}
                     {...inputProps}
                 />
             )}

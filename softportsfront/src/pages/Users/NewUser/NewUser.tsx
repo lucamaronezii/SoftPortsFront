@@ -1,12 +1,13 @@
+import { PlusOutlined, UserAddOutlined } from '@ant-design/icons'
 import { Button, Flex, Image, Modal, Typography, Upload, UploadProps } from 'antd'
-import React, { RefAttributes, useEffect, useRef, useState } from 'react'
-import { INewUser } from './interfaces'
+import { UploadFile } from 'antd/lib'
+import React, { useState } from 'react'
 import TitleInput from '../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../components/TitleSelect/TitleSelect'
-import { UploadFile } from 'antd/lib'
-import { FileType } from '../../Projects/components/NewIssue/NewIssue'
 import { getBase64 } from '../../../utils/getBase64'
-import { PlusOutlined, UserAddOutlined } from '@ant-design/icons'
+import { FileType } from '../../Projects/components/NewIssue/NewIssue'
+import { INewUser } from './interfaces'
+import { TitleModal } from '../../../components/CustomRow/styles'
 
 const NewUser: React.FC<INewUser> = ({ open, onClose, onOk }) => {
     const [name, setName] = useState<string>()
@@ -39,13 +40,13 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onOk }) => {
 
     return (
         <Modal
-            title={<Flex gap={10}><UserAddOutlined /> Novo usuário</Flex>}
+            title={<TitleModal><UserAddOutlined /> Novo usuário</TitleModal>}
             open={open}
             centered
             onCancel={onClose}
             destroyOnClose
             footer={[
-                <Button type='primary' onClick={() => console.log(fileList)}>
+                <Button type='primary' onClick={onOk}>
                     Salvar
                 </Button>,
             ]}

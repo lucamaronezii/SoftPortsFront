@@ -1,48 +1,45 @@
-import { Flex, Form, Image, Modal, Steps, message } from 'antd'
-import React, { useState } from 'react'
-import { INewIssue } from './interfaces'
-import { stepperItems } from '../../../../utils/stepperItems'
-import TitleInput from '../../../../components/TitleInput/TitleInput'
-import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
-import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
-import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
-import { FieldsBox } from './styles'
-import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import type { GetProp, UploadProps } from 'antd';
-import { UploadFile } from 'antd/lib'
-import { getBase64 } from '../../../../utils/getBase64'
-import { usersList } from '../../../../mocks/Users'
-import { statusList } from '../../../../mocks/Status'
-import { classList } from '../../../../mocks/Class'
-import { priorityItems } from '../../../../utils/priorityItems'
-import dayjs from 'dayjs'
-import { createIssue } from '../../../../services/IssueServices'
-import { NoticeType } from 'antd/es/message/interface'
-import { testCasesList } from '../../../../mocks/TestCases'
 import { WarningOutlined } from '@ant-design/icons'
+import type { GetProp, UploadProps } from 'antd'
+import { Cascader, Flex, Image, Modal, Steps, Typography, message } from 'antd'
+import { NoticeType } from 'antd/es/message/interface'
+import { UploadFile } from 'antd/lib'
+import dayjs from 'dayjs'
+import React, { useEffect, useState } from 'react'
+import GapColumn from '../../../../components/Column/Column'
+import { TitleModal } from '../../../../components/CustomRow/styles'
+import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
+import TitleInput from '../../../../components/TitleInput/TitleInput'
+import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
+import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
+import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
+import { statusList } from '../../../../utils/getStatus'
+import { usersList } from '../../../../mocks/Users'
+import { createIssue } from '../../../../services/IssueServices'
+import { getBase64 } from '../../../../utils/getBase64'
+import { classList } from '../../../../utils/getClass'
+import { priorityList } from '../../../../utils/getPriority'
+import { stepperItems } from '../../../../utils/stepperItems'
+import { INewIssue } from './interfaces'
+import { FieldsBox } from './styles'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
+const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) => {
+    console.log(selectedKanban)
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
-    const [title, setTitle] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
-    const [systemVersion, setSystemVersion] = useState<string>('')
+    const [title, setTitle] = useState<string>()
+    const [description, setDescription] = useState<string>()
+    const [systemVersion, setSystemVersion] = useState<string>()
     const [classification, setClassification] = useState<string[]>([]);
-    const [priority, setPriority] = useState<string>('')
-    const [status, setStatus] = useState<string>('')
-    const [road, setRoad] = useState<string>('')
-    const [estimatedCorrectionDate, setEstimatedCorrectionDate] = useState<string>('')
+    const [priority, setPriority] = useState<string>()
+    const [status, setStatus] = useState<number | undefined>(undefined)
+    const [road, setRoad] = useState<string>()
+    const [estimatedCorrectionDate, setEstimatedCorrectionDate] = useState<string>()
     const [base64Images, setBase64Images] = useState<string[]>([]);
     const [responsibles, setResponsibles] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
-    const [titleError, setTitleError] = useState(false);
-    const [descriptionError, setDescriptionError] = useState(false);
-    const [priorityError, setPriorityError] = useState(false);
-    const [classificationError, setClassificationError] = useState(false);
-    const [statusError, setStatusError] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [testCase, setTestCase] = useState<number | null>(0);
 
@@ -63,7 +60,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
             return file.preview as string;
         }));
         setBase64Images(base64List);
-        console.log(base64Images)
     };
 
     const beforeUpload = (file: FileType) => {
@@ -77,67 +73,16 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         });
     };
 
-    const handleCloseModal = () => {
-        setTitleError(false);
-        setDescriptionError(false);
-        setPriorityError(false);
-        setClassificationError(false);
-        setStatusError(false);
-    }
-
     const handleCreateIssue = async () => {
-        setTitleError(false);
-        setDescriptionError(false);
-        setPriorityError(false);
-        setClassificationError(false);
-        setStatusError(false);
-
-        let hasError = false;
-
-        if (!title) {
-            setTitleError(true);
-            hasError = true;
-        }
-
-        if (!description) {
-            setDescriptionError(true);
-            hasError = true;
-        }
-
-        if (!priority) {
-            setPriorityError(true);
-            hasError = true;
-        }
-
-        if (classification.length === 0) {
-            setClassificationError(true);
-            hasError = true;
-        }
-
-        if (!status) {
-            setStatusError(true);
-            hasError = true;
-        }
-
-        if (hasError) {
-            handleMessage('error', 'Preencha todos os campos obrigatórios antes de prosseguir.')
-            return;
-        }
-
         const formattedDate = dayjs(estimatedCorrectionDate).format('YYYY-MM-DD HH:mm:ss');
         if (!formattedDate || formattedDate === 'Invalid Date') {
             message.error('Por favor, selecione uma data válida para correção.');
             return;
         }
 
-        const classificationIds = classification.map(c => {
-            const selectedClass = classList.find(cls => cls.value === c);
-            return selectedClass ? selectedClass.id : null;
-        }).filter(id => id !== null);
-
         const responsiblesIds = responsibles.map(r => {
             const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.usuarioId : null;
+            return selectedUser ? selectedUser.id : null;
         }).filter(id => id !== null);
 
         try {
@@ -152,7 +97,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                 status: status,
                 screenshots: base64Images[0],
                 descricao: description,
-                classificacoes: classificationIds,
+                classificacoes: 1,
                 responsaveis: responsiblesIds,
                 casoDeTeste: [testCase]
             }
@@ -165,24 +110,27 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
         }
     }
 
+    useEffect(() => {
+        selectedKanban
+            ? setStatus(selectedKanban)
+            : setStatus(undefined)
+    }, [selectedKanban]);
+
     return (
         <>
             {contextHolder}
             <Modal
-                title={<Flex gap={10}><WarningOutlined /> Novo registro de problema</Flex>}
+                title={<TitleModal><WarningOutlined /> Novo registro de ocorrência</TitleModal>}
                 open={open}
                 confirmLoading={loading}
                 onOk={handleCreateIssue}
-                onCancel={() => { onClose(); handleCloseModal() }}
+                onCancel={onClose}
                 cancelText={'Cancelar'}
                 width={1000}
                 centered
                 destroyOnClose
             >
-                <Flex
-                    gap={10}
-                    style={{ marginTop: 20 }}
-                >
+                <Flex gap={10} style={{ marginTop: 20 }}>
                     <Flex>
                         <Steps
                             direction='vertical'
@@ -193,18 +141,16 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                     <FieldsBox>
                         <TitleInput
                             text='Título'
-                            placeholder='Digite o título do problema'
+                            placeholder='Digite o título da ocorrência'
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            status={titleError ? 'error' : undefined}
                         />
                         <TitleTextArea
                             text={`Descrição`}
                             rows={4}
-                            placeholder='Digite a descrição do problema'
+                            placeholder='Digite a descrição da ocorrência'
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            status={descriptionError ? 'error' : undefined}
                         />
                         <TitleInput
                             text='Versão do Sistema Operacional'
@@ -222,41 +168,34 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                             placeholder='Selecione a data estimada para correção'
                             onChange={(date) => setEstimatedCorrectionDate(date ? date.format() : '')}
                         />
-                        <TitleSelect
-                            text='Caso de teste'
-                            allowClear
-                            placeholder='Selecione o caso de teste executado'
-                            options={testCasesList}
-                            onChange={(e) => setTestCase(e)}
-                        />
                     </FieldsBox>
 
                     <FieldsBox>
                         <TitleSelect
                             text='Prioridade'
                             placeholder='Selecione a prioridade de correção'
-                            options={priorityItems[0].children}
+                            options={priorityList[0].children}
                             onChange={(value) => setPriority(value)}
-                            status={priorityError ? 'error' : undefined}
                         />
-                        <TitleSelect
-                            text='Classificação'
-                            placeholder='Selecione a classificação do problema'
-                            options={classList}
-                            mode='multiple'
-                            value={classification}
-                            onChange={(e) => setClassification(e)}
-                            status={classificationError ? 'error' : undefined}
-                        />
+                        <GapColumn>
+                            <Typography.Text>Classificação</Typography.Text>
+                            <Cascader
+                                placeholder='Selecione a classificação da ocorrência'
+                                options={classList}
+                                style={{ width: '100%' }}
+                                onChange={e => console.log(e)}
+                            />
+                        </GapColumn>
                         <TitleSelect
                             text='Status'
-                            placeholder='Selecione o status do problema'
+                            placeholder='Selecione o status da ocorrência'
+                            fieldNames={{ label: "title", value: "id" }}
                             options={statusList}
+                            value={status}
                             onChange={(e) => setStatus(e)}
-                            status={statusError ? 'error' : undefined}
                         />
                         <TitleUpload
-                            tooltip={'Máximo: 3 imagens.'}
+                            tooltip={'Limite: 3 arquivos de imagens'}
                             text='Screenshots'
                             listType="picture-card"
                             fileList={fileList}
@@ -282,13 +221,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk }) => {
                         <TitleSelect
                             text='Responsáveis'
                             placeholder='Selecione os responsáveis para correção'
-                            options={usersList}
-                            mode='multiple'
-                            onChange={(value) => setResponsibles(value)}
-                        />
-                        <TitleSelect
-                            text='Commit'
-                            disabled
                             options={usersList}
                             mode='multiple'
                             onChange={(value) => setResponsibles(value)}

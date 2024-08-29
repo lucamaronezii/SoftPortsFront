@@ -1,19 +1,20 @@
 import {
   AlertOutlined, BugOutlined, CheckCircleOutlined, MailOutlined,
-  MergeOutlined, ScheduleOutlined, SlidersOutlined, TableOutlined
+  MergeOutlined, ScheduleOutlined, SettingOutlined, SlidersOutlined, TableOutlined,
+  WarningOutlined
 } from '@ant-design/icons';
 import { type MenuProps } from 'antd';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-export const menuItems: MenuItem[] = [
+export const OpenIssuesMenu: MenuItem[] = [
   {
-    label: 'Problemas abertos',
+    label: 'Ocorrências abertas',
     key: 'tofix',
-    icon: <BugOutlined />,
+    icon: <WarningOutlined />,
   },
   {
-    label: 'Problemas fechados',
+    label: 'Ocorrências fechadas',
     key: 'fixed',
     icon: <CheckCircleOutlined />,
   },
@@ -51,4 +52,27 @@ export const menuItems: MenuItem[] = [
     key: 'requests',
     icon: <MailOutlined />,
   },
+  {
+    label: 'Configurações',
+    key: 'config',
+    icon: <SettingOutlined />,
+  },
 ];
+
+export const IssueMenu: MenuItem[] = [
+  {
+    label: 'Detalhes',
+    key: 'details',
+    style: {
+      marginLeft: "-16px",
+    }
+  },
+  {
+    label: 'Comentários',
+    key: 'comments',
+  },
+  {
+    label: 'Logs',
+    key: 'logs',
+  },
+]

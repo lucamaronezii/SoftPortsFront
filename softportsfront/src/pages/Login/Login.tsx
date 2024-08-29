@@ -7,6 +7,7 @@ import TitleInput from '../../components/TitleInput/TitleInput'
 const Login = () => {
   const navigate = useNavigate()
   const { Text } = Typography
+
   return (
     <Layout style={{ minHeight: '100vh', flexDirection: 'row' }}>
       <ImageLogin />

@@ -1,35 +1,49 @@
-import { Button, Cascader, Flex, Input, Segmented, Skeleton, Spin, Typography, message } from 'antd'
-import { NoIssuesBox } from './styles'
-import { issueFilterItems } from '../../../utils/issueFilterItems'
-import { segItems } from '../../../utils/segItems'
-import { BugFilled, PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
-import { useEffect, useMemo, useState } from 'react'
-import { CustomRow } from '../../../components/CustomRow/styles'
-import ListItem from '../components/ListItem/ListItem'
-import { IIssue } from '../interfaces'
-import NewIssue from '../components/NewIssue/NewIssue'
-import IssueView from '../components/IssueView/IssueView'
-import { getIssues } from '../../../services/IssueServices'
-import { NoticeType } from 'antd/es/message/interface'
-import { CustomBox } from '../styles'
+import { PlusOutlined } from '@ant-design/icons'
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
-import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
-import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
+import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
+import { NoticeType } from 'antd/es/message/interface'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useDebounce } from 'use-debounce'
+import teste from '../../../assets/empty.svg'
+import { useAxios } from '../../../auth/useAxios'
+import { CustomRow } from '../../../components/CustomRow/styles'
+import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import useProjects from '../../../hooks/useProjects'
+import { statusList } from '../../../utils/getStatus'
+import { classList } from '../../../utils/getClass'
+import { priorityList } from '../../../utils/getPriority'
+import { manipulateUsers } from '../../../utils/getUsers'
+import { segItems } from '../../../utils/segItems'
+import { IUser } from '../../Users/interfaces'
+import IssueView from '../components/IssueView/IssueView'
+import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
+import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
+import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
+import ListItem from '../components/ListItem/ListItem'
+import NewIssue from '../components/NewIssue/NewIssue'
+import { IIssue, IProjectPage } from '../interfaces'
+import { CustomBox } from '../styles'
+import { IssuesBox, NoIssuesBox } from './styles'
 
-const OpenIssues = () => {
+const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
-  const [input, setInput] = useState<string>('')
-  const [seg, setSeg] = useState<number>(1)
-  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [input, setInput] = useState<string>()
+  const [debounce] = useDebounce(input, 500)
+  const [priority, setPriority] = useState<number[]>([])
+  const [_users, _setUsers] = useState<IUser[]>(users)
+  const [seg, setSeg] = useState<number>(0)
+  const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [issueId, setIssueId] = useState<IIssue>()
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
+  const [selectedKanban, setSelectedKanban] = useState<number>()
+  const { selectedProject } = useProjects()
+  const axios = useAxios()
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
@@ -47,37 +61,39 @@ const OpenIssues = () => {
     if (status == "close" || !status) {
       // pass
     } else if (status == "success") {
-      handleMessage('success', 'Problema aberto com sucesso.')
+      handleMessage('success', 'Ocorrência aberta com sucesso.')
       handleGetIssues()
     } else if (status == "deleted") {
-      handleMessage('success', 'Problema excluído com sucesso.')
+      handleMessage('success', 'Ocorrência excluída com sucesso.')
       handleGetIssues()
     } else if (status == "updated") {
-      handleMessage('success', 'Problema atualizado com sucesso.')
+      handleMessage('success', 'Ocorrência atualizada com sucesso.')
       handleGetIssues()
     }
-    setOpenModal(false)
+    setOpenForm(false)
     setOpenIssue(false)
   }
 
   const handleGetIssues = async () => {
-    try {
-      setLoading(true)
-      await getIssues().then((response) => setIssues(response.data.conteudo))
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setTimeout(() => {
-        setLoading(false)
-      }, 1000)
-    }
+    setLoading(true)
+    let params = `projetoId=${selectedProject.id}&fechada=false`
+    input && (params += `&titulo=${input}`)
+    priority && (params += `&prioridade=${priority}`)
+    await axios.get(`tarefa?${params}`)
+      .then(res => setIssues(res.data.conteudo))
+      .catch(err => console.error(err))
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false)
+        }, 700)
+      })
   }
 
   useEffect(() => {
     handleGetIssues()
-  }, [])
+  }, [selectedProject, debounce, priority])
 
-  const [columns, setColumns] = useState<Column[]>([])
+  const [columns, setColumns] = useState<Column[]>(statusList)
 
   const generateId = () => {
     return Math.floor(Math.random() * 10001)
@@ -197,15 +213,14 @@ const OpenIssues = () => {
     const newIssue: IIssue = {
       id: generateId(),
       classificacoes: [],
-      dataCorrecao: '',
+      dataEstimada: 1,
       descricao: '',
-      prioridade: 'Crítica',
-      responsaveis: [],
-      status: '',
+      prioridade: 1,
+      usuarios: [],
+      status: 1,
       titulo: `Issue ${testIssues.length + 1}`,
       caminho: '',
-      casosDeTestes: [],
-      screenshot: '',
+      screenshots: [],
       versaoSO: '',
       columnId: columnId
     }
@@ -215,9 +230,48 @@ const OpenIssues = () => {
 
   const deleteIssue = (id: Id) => {
     const newIssues = testIssues.filter(issue => issue.id !== id)
-    console.log(id)
-    console.log(newIssues)
     setTestIssues(newIssues)
+  }
+
+  const handleOpenForm = (col?: Column) => {
+    col ? setSelectedKanban(Number(col.id)) : setSelectedKanban(undefined)
+    setOpenForm(true)
+  }
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+  }
+
+  const handlePriority = (array: any[]) => {
+    return array.includes('priority')
+      ? setPriority([1, 2, 3, 4])
+      : setPriority(array)
+  }
+
+  const handleClass = () => { }
+
+  const handleUsers = () => { }
+
+  const handleCascaderChange = (e: (string | number)[][]) => {
+    if (!e.length) {
+      handleClear()
+    }
+    let priorityArray: (string | number)[] = []
+    let classArray = []
+    let usersArray = []
+
+    e.map(valor => {
+      const selectedAll = valor.length == 1
+      if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
+      if (valor[0] == 'class') { }
+      if (valor[0] == 'users') { }
+    })
+
+    priorityArray.length && handlePriority(priorityArray)
+  }
+
+  const handleClear = () => {
+    setPriority([])
   }
 
   return (
@@ -228,45 +282,41 @@ const OpenIssues = () => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              placeholder='Pesquisar registro'
+              onChange={handleInputChange}
+              placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
-              onChange={(e) => setInput(e.target.value)}
             />
           </div>
           <Cascader
-            removeIcon
-            placeholder='Filtrar registros'
-            multiple
-            options={issueFilterItems}
+            disabled={loadingUsers}
+            loading={loadingUsers}
+            options={[...classList, ...priorityList, manipulateUsers(users)]}
+            onClear={handleClear}
+            onChange={handleCascaderChange}
+            placeholder='Filtrar ocorrências'
             maxTagCount={'responsive'}
+            multiple
+            removeIcon
           />
           <Segmented
-            options={segItems}
             value={seg}
+            options={segItems}
             onChange={(e) => setSeg(e)}
           />
         </Flex>
         <Button
-          type='primary'
+          onClick={() => handleOpenForm()}
           icon={<PlusOutlined />}
+          type='primary'
           iconPosition='end'
-          onClick={() => setOpenModal(true)}
         >
-          Novo problema
+          Nova ocorrência
         </Button>
       </CustomRow>
 
       {seg ? (
         <KanbanBox>
-          <Flex vertical gap={4}>
-            <Button
-              type='primary'
-              icon={<PlusCircleFilled />}
-              iconPosition='end'
-              onClick={() => createNewColumn()}
-            >Adicionar coluna</Button>
-          </Flex>
           <DndContext
             sensors={sensors}
             onDragStart={onDragStart}
@@ -276,12 +326,13 @@ const OpenIssues = () => {
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
-                  issues={testIssues.filter(issue => issue.columnId == col.id)}
+                  issues={issues.filter(issue => issue.status == col.id)}
                   addIssue={addIssue}
                   updateColumn={updateColumn}
-                  column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
                   deleteIssue={deleteIssue}
+                  onAdd={() => handleOpenForm(col)}
+                  column={col}
                 />
               ))}
             </SortableContext>
@@ -289,12 +340,13 @@ const OpenIssues = () => {
               <DragOverlay>
                 {activeColumn && (
                   <KanbanColumn
-                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
+                    issues={issues.filter(issue => issue.columnId == activeColumn.id)}
                     addIssue={addIssue}
                     updateColumn={updateColumn}
                     column={activeColumn}
                     onRemoveColumn={() => deleteColumn(activeColumn.id)}
                     deleteIssue={deleteIssue}
+                    onAdd={() => { }}
                   />
                 )}
                 {activeIssue &&
@@ -308,11 +360,9 @@ const OpenIssues = () => {
           </DndContext>
         </KanbanBox>
       ) : (
-        <Flex vertical gap={12}>
+        <IssuesBox>
           {loading ? (
-            Array.from({ length: 3 }).map(() => (
-              <Skeleton.Input active style={{ width: "100%" }} />
-            ))
+            <SkeletonGroup total={3} />
           ) : (
             issues && issues.length > 0 ? (
               issues.map((issue, index) => (
@@ -324,24 +374,24 @@ const OpenIssues = () => {
                   descricao={issue.descricao}
                   prioridade={issue.prioridade}
                   status={issue.status}
-                  responsaveis={issue.responsaveis}
-                  dataCorrecao={issue.dataCorrecao}
+                  usuarios={issue.usuarios}
+                  dataEstimada={issue.dataEstimada}
                   onClick={() => handleIssueView(issue)}
                 />
               ))
             ) : (
               <NoIssuesBox>
-                <BugFilled style={{ fontSize: 40 }} />
+                <img src={teste} width={500} />
                 <Typography.Title level={4}>
-                  Nenhum problema encontrado. Abra novos problemas para visualizá-los
+                  Nenhuma ocorrência encontrada. Abra novas ocorrências para visualizá-las
                 </Typography.Title>
               </NoIssuesBox>
             )
           )}
-        </Flex>
+        </IssuesBox>
       )}
 
-      <NewIssue open={openModal} onClose={() => setOpenModal(false)} onOk={handleOkButton} />
+      <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
       <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
     </CustomBox>
   )

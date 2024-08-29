@@ -27,7 +27,6 @@ export const LoginCard = styled(Flex)`
     padding: 35px;
     box-sizing: border-box;
     gap: 35px;
-    border: 1px solid #000;
     border-radius: 6px;
 `
 

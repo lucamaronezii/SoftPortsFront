@@ -1,22 +1,21 @@
-import { StyledTitle, SubnavPad } from './styles'
+import { PlusOutlined } from '@ant-design/icons'
 import { Button, Cascader, Flex, Input, Layout } from 'antd'
-import { CustomRow } from '../../components/CustomRow/styles'
-import { PlusOutlined, UserOutlined } from '@ant-design/icons'
-import { CustomBox } from '../Projects/styles'
 import { useState } from 'react'
+import { CustomRow } from '../../components/CustomRow/styles'
+import { positionItems } from '../../utils/roleItems'
+import { CustomBox } from '../Projects/styles'
 import UserCard from './components/UserCard/UserCard'
-import NewUser from './NewUser/NewUser'
-import { positionItems } from '../../utils/positionItems'
 import { IUser } from './interfaces'
+import NewUser from './NewUser/NewUser'
+import { StyledTitle, SubnavPad } from './styles'
 
 const Users: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
-
+  
   return (
-    <Layout style={{ minHeight: '100vh', gap: 20, paddingLeft: 16 }}>
-      <SubnavPad gap={16}>
-        {/* <UserOutlined style={{ fontSize: 27 }} /> */}
+    <Layout style={{ minHeight: '100vh', gap: 27, paddingLeft: 16 }}>
+      <SubnavPad>
         <StyledTitle>Usuários</StyledTitle>
       </SubnavPad>
       <CustomBox mr={20}>

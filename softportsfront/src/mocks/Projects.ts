@@ -1,19 +1,16 @@
-interface IProject {
-    id: number;
-    name: string;
-}
+import { IProject } from "../layouts/interfaces";
 
 export const projects: IProject[] = [
     {
         id: 1,
-        name: 'Projeto Omega'
+        nome: 'Projeto Omega'
     },
     {
         id: 1,
-        name: 'Projeto Alpha'
+        nome: 'Projeto Alpha'
     },
     {
         id: 1,
-        name: 'Projeto Pinger'
+        nome: 'Projeto Pinger'
     },
 ]

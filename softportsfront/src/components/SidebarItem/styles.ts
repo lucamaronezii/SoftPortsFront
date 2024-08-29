@@ -1,9 +1,9 @@
+import { CaretDownFilled } from "@ant-design/icons";
+import { Flex, Typography } from "antd";
 import styled from "styled-components";
 import { prColor } from "../../styles/theme";
-import { Flex, Typography } from "antd";
-import { CaretDownFilled } from "@ant-design/icons";
-import { ISidebarItemProps } from "./interfaces";
 import { darkerPr } from "../../utils/darkerPrimary";
+import { ISidebarItemProps } from "./interfaces";
 
 export const StyledSidebarItem = styled.div<Partial<ISidebarItemProps>>`
     width: 169px;
@@ -60,17 +60,34 @@ export const ArrowDown = styled(CaretDownFilled) <{ isRotated: boolean }>`
 
 export const OptionsBox = styled(Flex)`
     background-color: ${darkerPr};
+    position: relative;
+    flex-direction: column;
     border-radius: 0px 0px 8px 8px;
-    padding: 10px 0px;
+    padding-block: 10px;
     box-sizing: border-box;
     gap: 10px;
     justify-content: center;
     align-items: center;
 `
 
+export const PjtsContainer = styled(Flex)`
+    flex-direction: column;
+    gap: 10px;
+    max-height: 35vh;
+    overflow: auto;
+    &::-webkit-scrollbar-thumb {
+        background: ${prColor};
+        border-radius: 3px;
+    };
+    &::-webkit-scrollbar-track {
+        border-radius: 3px;
+    }
+`
+
 export const StyledOption = styled(StyledSidebarItem)`
-    background-color: ${props => props.selProject == props.nameProject ? prColor : darkerPr};
+    background-color: ${props => (props.selProject == props.idProject) && props.location == '/projetos' ? prColor : darkerPr};
     width: 150px;
+    margin-inline: 3px;
     &:hover {
         background-color: ${prColor};
     }

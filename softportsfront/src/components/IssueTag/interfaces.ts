@@ -1,6 +1,4 @@
-export type Priority = "Crítica" | "Alta" | "Média" | "Baixa"
-
 export interface IIssueTag {
-    priority: Priority;
+    priority: number;
     children: React.ReactNode
 }

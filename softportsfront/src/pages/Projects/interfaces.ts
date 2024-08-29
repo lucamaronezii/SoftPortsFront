@@ -1,36 +1,42 @@
-import { Priority } from "../../components/IssueTag/interfaces";
+import { IUser } from "../Users/interfaces";
 import { Id } from "./components/Kanban/KanbanColumn/types";
-import { ITestCase } from "./TestCases/interfaces";
 
 export interface IStyledItem extends IIssue {
     styled: any;
     ref: any
 }
 
-export interface IClassification {
-    classificacaoId: number;
-    nome: string;
+export interface IIssueComment {
+    photo?: string;
+    username: string;
+    time: string;
+    description: string;
 }
 
-export interface IUserTestess {
-    usuarioId: number,
-    nome: string,
-    cargo: string
+export interface IClassResponse {
+    id: number,
+    nome: string;
 }
 
 export interface IIssue {
     id: number;
     titulo: string;
     descricao: string;
-    status: string;
-    responsaveis: IUserTestess[];
-    prioridade: Priority;
-    classificacoes: IClassification[];
-    screenshot?: string;
+    status: number;
+    usuarios: IUser[];
+    prioridade: number;
+    dataFechamento?: number;
+    classificacoes?: IClassResponse[];
+    screenshots?: string[];
     caminho?: string;
-    casosDeTestes?: ITestCase[];
-    dataCorrecao: string;
+    dataEstimada: number;
     versaoSO?: string;
     onClick?: () => void;
     columnId?: Id;
+    comentarios?: IIssueComment[];
+}
+
+export interface IProjectPage {
+    loadingUsers: boolean,
+    users: IUser[]
 }

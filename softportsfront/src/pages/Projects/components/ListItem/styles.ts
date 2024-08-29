@@ -9,7 +9,7 @@ export const StyledItem = styled(Flex)`
     padding: 10px;
     gap: 12px;
     justify-content: space-between;
-    box-shadow: 0px 3px ${prColor};
+    box-shadow: 0px 2px ${prColor};
     cursor: pointer;
     transition: background-color 0.3s;
     &:hover {

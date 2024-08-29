@@ -5,11 +5,11 @@ import { Button, Tooltip } from 'antd'
 import { format } from 'date-fns'
 import { RollbackOutlined } from '@ant-design/icons'
 
-const ClosedIssue: React.FC<IIssue> = ({ id, titulo: name, responsaveis, descricao, onClick }) => {
+const ClosedIssue: React.FC<IIssue> = ({ id, titulo, usuarios, descricao, onClick, dataFechamento }) => {
     const [initials, setInitials] = useState<string[]>([])
 
     const getUsersInitials = () => {
-        const newInitials = responsaveis.map(user => {
+        const newInitials = usuarios.map(user => {
             const text = user.nome[0] + user.nome[1]
             return text.toUpperCase()
         })
@@ -29,7 +29,7 @@ const ClosedIssue: React.FC<IIssue> = ({ id, titulo: name, responsaveis, descric
         <StyledItem onClick={onClick}>
             <StyledChild gap={10} width='30%'>
                 <IdIssue>[ID-{id}]</IdIssue>
-                <ListText title={name}>{name} - Fechado em: 22/10/2024</ListText>
+                <ListText title={titulo}>{titulo} - Fechado em: {dataFechamento}</ListText>
             </StyledChild>
             <StyledChild width='60%' justify='center'>
                 <ListText title={descricao}>{descricao}</ListText>
