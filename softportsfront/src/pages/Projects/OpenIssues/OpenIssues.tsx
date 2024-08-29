@@ -255,9 +255,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const handleCascaderChange = (e: (string | number)[][]) => {
     if (!e.length) {
       handleClear()
-      return
     }
-
     let priorityArray: (string | number)[] = []
     let classArray = []
     let usersArray = []

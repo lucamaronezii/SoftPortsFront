@@ -1,4 +1,3 @@
-import { BugFilled } from '@ant-design/icons'
 import { Cascader, DatePicker, Flex, Input, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { useAxios } from '../../../auth/useAxios'
@@ -13,6 +12,7 @@ import ClosedIssue from '../components/ClosedIssue/ClosedIssue'
 import { IIssue, IProjectPage } from '../interfaces'
 import { IssuesBox, NoIssuesBox } from '../OpenIssues/styles'
 import { CustomBox } from '../styles'
+import img from '../../../assets/empty.svg'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [input, setInput] = useState<string>('')
@@ -85,9 +85,9 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
             ))
           ) : (
             <NoIssuesBox>
-              <BugFilled style={{ fontSize: 40 }} />
+              <img src={img} width={500} />
               <Typography.Title level={4}>
-                Nenhum issue fechado encontrado. Feche issues para visualizá-los
+                Nenhuma ocorrência encontrada. Feche novas ocorrências para visualizá-las
               </Typography.Title>
             </NoIssuesBox>
           )
