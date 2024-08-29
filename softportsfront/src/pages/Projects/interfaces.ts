@@ -13,6 +13,11 @@ export interface IIssueComment {
     description: string;
 }
 
+export interface IClassResponse {
+    id: number,
+    nome: string;
+}
+
 export interface IIssue {
     id: number;
     titulo: string;
@@ -20,7 +25,8 @@ export interface IIssue {
     status: number;
     usuarios: IUser[];
     prioridade: number;
-    classificacao: number;
+    dataFechamento?: number;
+    classificacoes?: IClassResponse[];
     screenshots?: string[];
     caminho?: string;
     dataEstimada: number;

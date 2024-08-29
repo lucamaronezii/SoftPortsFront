@@ -1,9 +1,8 @@
+import { Button, Cascader, Flex, Input, Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
-import { CustomBox } from '../styles';
-import { Table, Input, Flex, Cascader, Button, TableColumnsType } from 'antd';
-import { CustomRow } from '../components/IssueView/styles';
-import { issueFilterItems } from '../../../utils/issueFilterItems';
 import { DataType, matrixData } from '../../../mocks/Matrix';
+import { CustomRow } from '../components/IssueView/styles';
+import { CustomBox } from '../styles';
 
 const columnsMap: TableColumnsType<DataType> = Array.from({ length: 15 }, (_, index) => ({
   title: `Requisito ${index + 1}`,
@@ -43,7 +42,6 @@ const Matrix = () => {
             removeIcon
             placeholder='Filtrar registros'
             multiple
-            options={issueFilterItems}
             maxTagCount={'responsive'}
           />
         </Flex>

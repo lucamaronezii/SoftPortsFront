@@ -1,6 +1,6 @@
 import { IOption } from "./getClass";
 
-export const priorityItems: IOption[] = [
+export const priorityList: IOption[] = [
     {
         label: 'Prioridade',
         value: 'priority',

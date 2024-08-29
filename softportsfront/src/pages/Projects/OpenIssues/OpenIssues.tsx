@@ -11,9 +11,9 @@ import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import useProjects from '../../../hooks/useProjects'
-import { statusList } from '../../../mocks/Status'
+import { statusList } from '../../../utils/getStatus'
 import { classList } from '../../../utils/getClass'
-import { priorityItems } from '../../../utils/getPriority'
+import { priorityList } from '../../../utils/getPriority'
 import { manipulateUsers } from '../../../utils/getUsers'
 import { segItems } from '../../../utils/segItems'
 import { IUser } from '../../Users/interfaces'
@@ -28,7 +28,7 @@ import { IIssue, IProjectPage } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
 
-const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
+const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>()
   const [debounce] = useDebounce(input, 500)
@@ -78,8 +78,9 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
     setLoading(true)
     let params = `projetoId=${selectedProject.id}&fechada=false`
     input && (params += `&titulo=${input}`)
-    await axios.get(`tarefa?${params}`).
-      then(res => setIssues(res.data.conteudo))
+    priority && (params += `&prioridade=${priority}`)
+    await axios.get(`tarefa?${params}`)
+      .then(res => setIssues(res.data.conteudo))
       .catch(err => console.error(err))
       .finally(() => {
         setTimeout(() => {
@@ -90,7 +91,7 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [selectedProject, debounce])
+  }, [selectedProject, debounce, priority])
 
   const [columns, setColumns] = useState<Column[]>(statusList)
 
@@ -211,7 +212,7 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
   const addIssue = (columnId: Id) => {
     const newIssue: IIssue = {
       id: generateId(),
-      classificacao: 1,
+      classificacoes: [],
       dataEstimada: 1,
       descricao: '',
       prioridade: 1,
@@ -252,8 +253,11 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
   const handleUsers = () => { }
 
   const handleCascaderChange = (e: (string | number)[][]) => {
-    // TODO
-    if (!e.length) return
+    if (!e.length) {
+      handleClear()
+      return
+    }
+
     let priorityArray: (string | number)[] = []
     let classArray = []
     let usersArray = []
@@ -289,7 +293,7 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
           <Cascader
             disabled={loadingUsers}
             loading={loadingUsers}
-            options={[...classList, ...priorityItems, manipulateUsers(users)]}
+            options={[...classList, ...priorityList, manipulateUsers(users)]}
             onClear={handleClear}
             onChange={handleCascaderChange}
             placeholder='Filtrar ocorrências'
@@ -368,7 +372,7 @@ const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
                   key={index}
                   id={issue.id}
                   titulo={issue.titulo}
-                  classificacao={issue.classificacao}
+                  classificacoes={issue.classificacoes}
                   descricao={issue.descricao}
                   prioridade={issue.prioridade}
                   status={issue.status}

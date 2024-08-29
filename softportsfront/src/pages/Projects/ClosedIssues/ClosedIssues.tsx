@@ -1,20 +1,18 @@
-import { Cascader, DatePicker, Flex, Input, Spin, Typography } from 'antd'
-import { issueFilterItems } from '../../../utils/issueFilterItems'
-import { useEffect, useState } from 'react'
-import { CustomRow } from '../../../components/CustomRow/styles'
-import { CustomBox } from '../styles'
-import { IssuesBox, NoIssuesBox } from '../OpenIssues/styles'
 import { BugFilled } from '@ant-design/icons'
-import { IIssue, IProjectPage } from '../interfaces'
-import { issuesList } from '../../../mocks/Issues'
-import ClosedIssue from '../components/ClosedIssue/ClosedIssue'
-import { IUser } from '../../Users/interfaces'
-import { classList } from '../../../utils/getClass'
-import { priorityItems } from '../../../utils/getPriority'
-import { manipulateUsers } from '../../../utils/getUsers'
+import { Cascader, DatePicker, Flex, Input, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 import { useAxios } from '../../../auth/useAxios'
-import useProjects from '../../../hooks/useProjects'
+import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import useProjects from '../../../hooks/useProjects'
+import { classList } from '../../../utils/getClass'
+import { priorityList } from '../../../utils/getPriority'
+import { manipulateUsers } from '../../../utils/getUsers'
+import { IUser } from '../../Users/interfaces'
+import ClosedIssue from '../components/ClosedIssue/ClosedIssue'
+import { IIssue, IProjectPage } from '../interfaces'
+import { IssuesBox, NoIssuesBox } from '../OpenIssues/styles'
+import { CustomBox } from '../styles'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [input, setInput] = useState<string>('')
@@ -22,7 +20,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [closedIssues, setClosedIssues] = useState<IIssue[]>([])
   const [priority, setPriority] = useState<number[]>([])
   const [_users, _setUsers] = useState<IUser[]>(users)
-  const [issues, setIssues] = useState<IIssue[]>(issuesList)
   const { selectedProject } = useProjects()
   const axios = useAxios()
 
@@ -57,7 +54,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           <Cascader
             removeIcon
             disabled={loadingUsers}
-            options={[...classList, ...priorityItems, manipulateUsers(users)]}
+            options={[...classList, ...priorityList, manipulateUsers(users)]}
             loading={loadingUsers}
             placeholder='Filtrar ocorrências'
             multiple
@@ -71,19 +68,19 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
         {loading ? (
           <SkeletonGroup total={3} />
         ) : (
-          issues && issues.length > 0 ? (
-            issues.map((issue, index) => (
+          closedIssues && closedIssues.length > 0 ? (
+            closedIssues.map((ci, index) => (
               <ClosedIssue
                 key={index}
-                id={issue.id}
-                classificacao={issue.classificacao}
-                dataEstimada={issue.dataEstimada}
-                descricao={issue.descricao}
-                prioridade={issue.prioridade}
-                usuarios={issue.usuarios}
-                status={issue.status}
-                titulo={issue.titulo}
-                caminho={issue.caminho}
+                id={ci.id}
+                classificacoes={ci.classificacoes}
+                dataEstimada={ci.dataEstimada}
+                descricao={ci.descricao}
+                prioridade={ci.prioridade}
+                usuarios={ci.usuarios}
+                status={ci.status}
+                titulo={ci.titulo}
+                caminho={ci.caminho}
               />
             ))
           ) : (

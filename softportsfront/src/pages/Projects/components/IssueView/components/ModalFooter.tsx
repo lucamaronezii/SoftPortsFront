@@ -21,10 +21,6 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
                 </Flex>
             }
             <FooterFlex>
-                <Flex align='center' gap={12}>
-                    <Typography.Text>Resolvido:</Typography.Text>
-                    <Checkbox checked={resolved} onChange={() => setResolved(!resolved)}/>
-                </Flex>
                 <Button
                     icon={<CheckOutlined />}
                     iconPosition='end'

@@ -12,12 +12,12 @@ import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { statusList } from '../../../../mocks/Status'
+import { statusList } from '../../../../utils/getStatus'
 import { usersList } from '../../../../mocks/Users'
 import { createIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
 import { classList } from '../../../../utils/getClass'
-import { priorityItems } from '../../../../utils/getPriority'
+import { priorityList } from '../../../../utils/getPriority'
 import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
@@ -174,7 +174,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                         <TitleSelect
                             text='Prioridade'
                             placeholder='Selecione a prioridade de correção'
-                            options={priorityItems[0].children}
+                            options={priorityList[0].children}
                             onChange={(value) => setPriority(value)}
                         />
                         <GapColumn>

@@ -5,7 +5,6 @@ export const issuesList: IIssue[] = [
     {
         id: 1,
         titulo: 'Botão desabilitado',
-        classificacao: 1,
         descricao: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         prioridade: 1,
         usuarios: usersList,
@@ -21,7 +20,6 @@ export const issuesListTest: IIssue[] = [
         descricao: 'Botão na tela X está desabilitado e impossibilitando usuário de criar novo usuário',
         status: 1,
         prioridade: 2,
-        classificacao: 1,
         usuarios: usersList,
         dataEstimada: 109389028,
         comentarios: [

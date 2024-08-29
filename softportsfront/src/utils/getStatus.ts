@@ -25,3 +25,14 @@ export const statusList: IStatus[] = [
         title: 'Resolvido'
     }
 ]
+
+
+export const getStatus = (id: number) => {
+    switch (id) {
+        case 1: return 'Novo';
+        case 2: return 'Em análise';
+        case 3: return 'Em correção';
+        case 4: return 'Em validação';
+        case 5: return 'Resolvido';
+    }
+}

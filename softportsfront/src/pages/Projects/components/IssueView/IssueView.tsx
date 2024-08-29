@@ -9,12 +9,12 @@ import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
 import { classList } from '../../../../utils/getClass' 
-import { statusList } from '../../../../mocks/Status'
+import { statusList } from '../../../../utils/getStatus'
 import { usersList } from '../../../../mocks/Users'
 import { deleteIssue, editIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
 import { IssueMenu } from '../../../../utils/menuItems'
-import { priorityItems } from '../../../../utils/getPriority'
+import { priorityList } from '../../../../utils/getPriority'
 import FeedbackModal from './components/FeedbackModal'
 import IssueComments from './components/IssueComments'
 import IssueLogs from './components/IssueLogs'
@@ -223,7 +223,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                                 text='Prioridade'
                                 value={priority}
                                 onChange={(e) => setPriority(e)}
-                                options={priorityItems[0].children}
+                                options={priorityList[0].children}
                                 style={!isEditing ? { pointerEvents: "none" } : {}}
                                 variant={inputVariant()}
                                 removeIcon={!isEditing}

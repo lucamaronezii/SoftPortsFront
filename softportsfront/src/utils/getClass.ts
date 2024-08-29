@@ -9,23 +9,23 @@ export interface IOption {
 const categories: IOption[] = [
     {
         label: 'Funcional',
-        value: 6,
+        value: 4,
     },
     {
         label: 'Desempenho',
-        value: 7,
+        value: 5,
     },
     {
         label: 'Segurança',
-        value: 8,
+        value: 6,
     },
     {
         label: 'Integração',
-        value: 9,
+        value: 7,
     },
     {
         label: 'Outro',
-        value: 14,
+        value: 8,
     },
 ]
 
@@ -42,26 +42,41 @@ export const classList: IOption[] = [
                 ]
             },
             {
-                value: 5,
+                value: 2,
                 label: 'Problema',
                 children: [
                     ...categories
                 ]
             },
             {
-                value: 10,
+                value: 3,
                 label: 'Mudança',
                 children: [
                     {
                         label: 'Normal',
-                        value: 12
+                        value: 9
                     },
                     {
                         label: 'Emergencial',
-                        value: 13
+                        value: 10
                     }
                 ]
             }
         ]
     }
 ]
+
+export const getClass = (id: number) => {
+    switch (id) {
+        case 1: return 'Incidente';
+        case 2: return 'Problema';
+        case 3: return 'Mudança';
+        case 4: return 'Funcional';
+        case 5: return 'Desempenho';
+        case 6: return 'Segurança';
+        case 7: return 'Integração';
+        case 8: return 'Outro';
+        case 9: return 'Normal';
+        case 10: return 'Emergencial';
+    }
+}
