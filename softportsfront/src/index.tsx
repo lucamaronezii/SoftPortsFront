@@ -14,13 +14,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: "login-required" }}>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <ConfigProvider>
         <ProjectsContext>
           <Router />
         </ProjectsContext>
       </ConfigProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </ReactKeycloakProvider>
 
 );

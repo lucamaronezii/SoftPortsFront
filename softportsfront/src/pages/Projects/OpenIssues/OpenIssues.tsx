@@ -14,7 +14,7 @@ import useProjects from '../../../hooks/useProjects'
 import { statusList } from '../../../mocks/Status'
 import { classList } from '../../../utils/getClass'
 import { priorityItems } from '../../../utils/getPriority'
-import { usersList } from '../../../utils/getUsers'
+import { manipulateUsers } from '../../../utils/getUsers'
 import { segItems } from '../../../utils/segItems'
 import { IUser } from '../../Users/interfaces'
 import IssueView from '../components/IssueView/IssueView'
@@ -24,16 +24,16 @@ import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
 import ListItem from '../components/ListItem/ListItem'
 import NewIssue from '../components/NewIssue/NewIssue'
-import { IIssue, IPage } from '../interfaces'
+import { IIssue, IProjectPage } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
 
-const OpenIssues: React.FC<IPage> = ({loadingUsers, users}) => {
+const OpenIssues: React.FC<IProjectPage> = ({loadingUsers, users}) => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>()
   const [debounce] = useDebounce(input, 500)
   const [priority, setPriority] = useState<number[]>([])
-  const [_users, _setUsers] = useState<IUser[]>([])
+  const [_users, _setUsers] = useState<IUser[]>(users)
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
@@ -76,7 +76,7 @@ const OpenIssues: React.FC<IPage> = ({loadingUsers, users}) => {
 
   const handleGetIssues = async () => {
     setLoading(true)
-    let params = `projetoId=${selectedProject.id}&prioridade=1`
+    let params = `projetoId=${selectedProject.id}&fechada=false`
     input && (params += `&titulo=${input}`)
     await axios.get(`tarefa?${params}`).
       then(res => setIssues(res.data.conteudo))
@@ -289,7 +289,7 @@ const OpenIssues: React.FC<IPage> = ({loadingUsers, users}) => {
           <Cascader
             disabled={loadingUsers}
             loading={loadingUsers}
-            options={[...classList, ...priorityItems, usersList(users)]}
+            options={[...classList, ...priorityItems, manipulateUsers(users)]}
             onClear={handleClear}
             onChange={handleCascaderChange}
             placeholder='Filtrar ocorrências'

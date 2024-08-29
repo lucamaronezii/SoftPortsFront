@@ -1,6 +1,6 @@
 import {
   AlertOutlined, BugOutlined, CheckCircleOutlined, MailOutlined,
-  MergeOutlined, ScheduleOutlined, SlidersOutlined, TableOutlined,
+  MergeOutlined, ScheduleOutlined, SettingOutlined, SlidersOutlined, TableOutlined,
   WarningOutlined
 } from '@ant-design/icons';
 import { type MenuProps } from 'antd';
@@ -51,6 +51,11 @@ export const OpenIssuesMenu: MenuItem[] = [
     label: 'Solicitações',
     key: 'requests',
     icon: <MailOutlined />,
+  },
+  {
+    label: 'Configurações',
+    key: 'config',
+    icon: <SettingOutlined />,
   },
 ];
 

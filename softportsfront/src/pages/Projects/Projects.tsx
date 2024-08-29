@@ -11,6 +11,7 @@ import { SubnavPad } from '../Users/styles';
 import useProjects from '../../hooks/useProjects';
 import { IUser } from '../Users/interfaces';
 import { useAxios } from '../../auth/useAxios';
+import ProjectConfig from './ProjectConfig/ProjectConfig';
 
 const Projects = () => {
   const [current, setCurrent] = useState<string>('tofix');
@@ -28,7 +29,7 @@ const Projects = () => {
       case "tofix":
         return <OpenIssues loadingUsers={loadingUsers} users={users} />
       case "fixed":
-        return <FixedIssues />
+        return <FixedIssues loadingUsers={loadingUsers} users={users} />
       case "test":
         return <TestCases />
       case "matrix":
@@ -37,6 +38,8 @@ const Projects = () => {
         return <DefectDensity />
       case "requests":
         return <Requests />
+      case "config":
+        return <ProjectConfig />
     }
   }
 
@@ -63,6 +66,7 @@ const Projects = () => {
           selectedKeys={[current]}
           mode="horizontal"
           items={OpenIssuesMenu}
+          style={{ width: '100%' }}
         />
       </SubnavPad>
       <Divider

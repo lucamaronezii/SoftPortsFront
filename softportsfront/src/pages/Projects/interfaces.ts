@@ -30,7 +30,7 @@ export interface IIssue {
     comentarios?: IIssueComment[];
 }
 
-export interface IPage {
+export interface IProjectPage {
     loadingUsers: boolean,
     users: IUser[]
 }
