@@ -36,7 +36,7 @@ const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, 
         <Typography>{getStatus(status)}</Typography>
       </StyledChild>
       <StyledChild width='10%' justify='center'>
-        <IssueTag priority={1}>{getPriority(1)}</IssueTag>
+        <IssueTag priority={prioridade}>{getPriority(prioridade)}</IssueTag>
       </StyledChild>
       <StyledChild width='15%' justify='center'>
         <Typography>{mapClass(classificacoes!)}‎</Typography>

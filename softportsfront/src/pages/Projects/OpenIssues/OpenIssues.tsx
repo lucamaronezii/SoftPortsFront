@@ -32,8 +32,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>()
   const [debounce] = useDebounce(input, 500)
-  const [priority, setPriority] = useState<number[]>([])
-  const [_users, _setUsers] = useState<IUser[]>(users)
+  const [filterPriority, setFilterPriority] = useState<number[]>([])
+  const [filterUsers, setFilterUsers] = useState<number[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
@@ -78,7 +78,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setLoading(true)
     let params = `projetoId=${selectedProject.id}&fechada=false`
     input && (params += `&titulo=${input}`)
-    priority && (params += `&prioridade=${priority}`)
+    filterPriority.length && (params += `&prioridades=${filterPriority}`)
+    filterUsers.length && (params += `&usuarios=${filterUsers}`)
     await axios.get(`tarefa?${params}`)
       .then(res => setIssues(res.data.conteudo))
       .catch(err => console.error(err))
@@ -91,7 +92,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [selectedProject, debounce, priority])
+  }, [selectedProject, debounce, filterPriority, filterUsers])
 
   const [columns, setColumns] = useState<Column[]>(statusList)
 
@@ -244,34 +245,45 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handlePriority = (array: any[]) => {
     return array.includes('priority')
-      ? setPriority([1, 2, 3, 4])
-      : setPriority(array)
+      ? setFilterPriority([1, 2, 3, 4])
+      : setFilterPriority(array)
+  }
+
+  const getUsersId = (users: IUser[]) => {
+    const usersIds = users.map(user => user.id)
+    return usersIds
+  }
+
+  const handleUsers = (array: any[]) => {
+    return array.includes('users')
+      ? setFilterUsers(getUsersId(users))
+      : setFilterUsers(array)
   }
 
   const handleClass = () => { }
 
-  const handleUsers = () => { }
-
   const handleCascaderChange = (e: (string | number)[][]) => {
+    console.log(e)
     if (!e.length) {
       handleClear()
     }
     let priorityArray: (string | number)[] = []
+    let usersArray: (string | number)[] = []
     let classArray = []
-    let usersArray = []
 
     e.map(valor => {
       const selectedAll = valor.length == 1
       if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
       if (valor[0] == 'class') { }
-      if (valor[0] == 'users') { }
+      if (valor[0] == 'users') selectedAll ? usersArray.push(valor[0]) : usersArray.push(valor[1])
     })
 
     priorityArray.length && handlePriority(priorityArray)
+    usersArray.length && handleUsers(usersArray)
   }
 
   const handleClear = () => {
-    setPriority([])
+    setFilterPriority([]); setFilterUsers([])
   }
 
   return (
@@ -326,13 +338,12 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
-                  issues={issues.filter(issue => issue.status == col.id)}
+                  issues={testIssues.filter(issue => issue.columnId == col.id)}
                   addIssue={addIssue}
                   updateColumn={updateColumn}
+                  column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
                   deleteIssue={deleteIssue}
-                  onAdd={() => handleOpenForm(col)}
-                  column={col}
                 />
               ))}
             </SortableContext>
@@ -340,13 +351,12 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
               <DragOverlay>
                 {activeColumn && (
                   <KanbanColumn
-                    issues={issues.filter(issue => issue.columnId == activeColumn.id)}
+                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
                     addIssue={addIssue}
                     updateColumn={updateColumn}
                     column={activeColumn}
                     onRemoveColumn={() => deleteColumn(activeColumn.id)}
                     deleteIssue={deleteIssue}
-                    onAdd={() => { }}
                   />
                 )}
                 {activeIssue &&

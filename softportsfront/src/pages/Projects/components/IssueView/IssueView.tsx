@@ -23,6 +23,7 @@ import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
 import { ChildBox, CustomCol, CustomRow, colProps } from './styles'
 import dayjs from 'dayjs'
+import { useAxios } from '../../../../auth/useAxios'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -46,6 +47,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
     const [resolved, setResolved] = useState<boolean>(false)
+    const axios = useAxios()
 
     useEffect(() => {
         if (issue) {
@@ -67,12 +69,9 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     }
 
     const handleDeleteIssue = async (id: number) => {
-        try {
-            await deleteIssue(id)
-            onClose('deleted')
-        } catch (error) {
-            console.error(error)
-        }
+        await axios.delete(`tarefa/${id}`)
+        .then(_ => onClose('deleted'))
+        .catch(err => console.error(err))
     }
 
     const handlePreview = async (file: UploadFile) => {
@@ -167,6 +166,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             title={'Excluir ocorrência'}
                             description={'Tem certeza que deseja excluir a ocorrência?'}
                             onConfirm={() => handleDeleteIssue(issue.id)}
+                            placement='right'
                         >
                             <Button
                                 type='primary'

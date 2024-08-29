@@ -3,6 +3,7 @@ import { IUser } from "../pages/Users/interfaces";
 export interface IOption {
     label: string;
     value?: number | string;
+    disabled?: boolean,
     children?: IOption[] | IUser[]
 }
 

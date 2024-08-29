@@ -7,6 +7,7 @@ import GapColumn from '../../../components/Column/Column'
 import TitleSelect from '../../../components/TitleSelect/TitleSelect'
 import { ConfigBox } from './styles'
 import { useNavigate } from 'react-router-dom'
+import Popdelete from '../../../components/Popdelete/Popdelete'
 
 const ProjectConfig = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -36,15 +37,21 @@ const ProjectConfig = () => {
                         text='Gerenciar usuários'
                     />
                 </GapColumn>
-                <Button
-                    danger
-                    type='primary'
-                    onClick={deleteProject}
-                    loading={loading}
-                    disabled={loading}
-                    style={{ width: "150px" }}
-                >Excluir projeto
-                </Button>
+                <Popdelete
+                    title={'Excluir projeto'}
+                    description={`Tem certeza que deseja excluir o projeto ${selectedProject.nome}`}
+                    onConfirm={deleteProject}
+                    placement="bottomLeft"
+                >
+                    <Button
+                        danger
+                        type='primary'
+                        loading={loading}
+                        disabled={loading}
+                        style={{ width: "150px" }}
+                    >Excluir projeto
+                    </Button>
+                </Popdelete>
             </ConfigBox>
         </CustomBox>
     )

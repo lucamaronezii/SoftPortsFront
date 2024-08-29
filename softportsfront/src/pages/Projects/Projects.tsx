@@ -44,6 +44,7 @@ const Projects = () => {
   }
 
   const handleGetUsers = async () => {
+    setLoadingUsers(true)
     await axios.get(`usuario?projetoId=${selectedProject.id}`)
       .then(res => setUsers(res.data.conteudo))
       .catch(err => console.error(err))
@@ -51,11 +52,8 @@ const Projects = () => {
   }
 
   useEffect(() => {
-    handleGetUsers()
-  }, [])
-
-  useEffect(() => {
     setCurrent('tofix')
+    handleGetUsers()
   }, [selectedProject])
 
   return (
