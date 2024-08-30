@@ -213,7 +213,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const addIssue = (columnId: Id) => {
     const newIssue: IIssue = {
       id: generateId(),
-      classificacoes: [],
+      classificacao: {id: 1, subclassificacaoId: 1},
       dataEstimada: 1,
       descricao: '',
       prioridade: 1,
@@ -376,7 +376,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
                   key={index}
                   id={issue.id}
                   titulo={issue.titulo}
-                  classificacoes={issue.classificacoes}
+                  classificacao={issue.classificacao}
                   descricao={issue.descricao}
                   prioridade={issue.prioridade}
                   status={issue.status}
@@ -403,6 +403,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           onClose={(e) => handleOkButton(e)}
           issueId={selectedIssue.id}
           issueTitle={selectedIssue.titulo}
+          relatedUsers={users}
         />
       }
 

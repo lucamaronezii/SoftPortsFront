@@ -15,7 +15,7 @@ export interface IIssueComment {
 
 export interface IClassResponse {
     id: number,
-    nome: string;
+    subclassificacaoId: number;
 }
 
 export interface IShortIssue {
@@ -31,7 +31,7 @@ export interface IIssue {
     usuarios: IUser[];
     prioridade: number;
     dataFechamento?: number;
-    classificacoes?: IClassResponse[];
+    classificacao?: IClassResponse;
     screenshots?: string[];
     caminho?: string;
     dataEstimada: number;

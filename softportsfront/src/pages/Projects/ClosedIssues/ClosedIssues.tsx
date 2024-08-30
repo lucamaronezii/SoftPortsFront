@@ -144,7 +144,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
               <ClosedIssue
                 key={index}
                 id={ci.id}
-                classificacoes={ci.classificacoes}
+                classificacao={ci.classificacao}
                 dataEstimada={ci.dataEstimada}
                 descricao={ci.descricao}
                 prioridade={ci.prioridade}
