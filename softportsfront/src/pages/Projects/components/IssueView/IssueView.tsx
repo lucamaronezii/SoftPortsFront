@@ -1,44 +1,44 @@
 import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { Button, Flex, GetProp, Image, Menu, Modal, Tooltip, UploadProps } from 'antd'
+import { Button, Flex, GetProp, Image, Menu, Modal, Spin, Tooltip, UploadProps } from 'antd'
 import { UploadFile } from 'antd/lib'
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
+import { useAxios } from '../../../../auth/useAxios'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { classList } from '../../../../utils/getClass' 
-import { statusList } from '../../../../utils/getStatus'
 import { usersList } from '../../../../mocks/Users'
-import { deleteIssue, editIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
-import { IssueMenu } from '../../../../utils/menuItems'
+import { classList } from '../../../../utils/getClass'
 import { priorityList } from '../../../../utils/getPriority'
+import { statusList } from '../../../../utils/getStatus'
+import { IssueMenu } from '../../../../utils/menuItems'
 import FeedbackModal from './components/FeedbackModal'
 import IssueComments from './components/IssueComments'
 import IssueLogs from './components/IssueLogs'
 import ModalFooter from './components/ModalFooter'
 import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
-import { ChildBox, CustomCol, CustomRow, colProps } from './styles'
-import dayjs from 'dayjs'
-import { useAxios } from '../../../../auth/useAxios'
+import { ChildBox, CustomCol, CustomRow, SpinBox, colProps } from './styles'
+import { IIssue } from '../../interfaces'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
+const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle }) => {
     const [selected, setSelected] = useState<SelectedOptions | any>('details')
+    const [issue, setIssue] = useState<IIssue>()
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('')
-    const [desc, setDesc] = useState<string>('')
-    const [so, setSo] = useState<string>('')
+    const [title, setTitle] = useState<string | undefined>(issue?.titulo)
+    const [desc, setDesc] = useState<string>()
+    const [so, setSo] = useState<string>()
     const [classif, setClassif] = useState<number[]>([])
     const [priority, setPriority] = useState<number>()
     const [status, setStatus] = useState<number>()
-    const [road, setRoad] = useState<string>('')
-    const [correctionDate, setCorrectionDate] = useState<number>()
-    const [testCase, setTestCase] = useState<number>();
+    const [road, setRoad] = useState<string>()
+    const [loadingIssue, setLoadingIssue] = useState<boolean>(true)
     const [responsaveis, setResponsaveis] = useState<string[]>([])
     const [previewImage, setPreviewImage] = useState('');
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -49,29 +49,36 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [resolved, setResolved] = useState<boolean>(false)
     const axios = useAxios()
 
+    const handleGetIssue = async () => {
+        await axios.get(`tarefa/${issueId}`)
+            .then(res => { setIssue(res.data); console.log('issue:', issue) })
+            .catch(err => console.error(err))
+            .finally(() => setTimeout(() => setLoadingIssue(false), 1000))
+    }
+
+    useEffect(() => {
+        handleGetIssue()
+    }, [issueId])
+
     useEffect(() => {
         if (issue) {
             setTitle(issue.titulo)
             setDesc(issue.descricao)
-            setSo(issue.versaoSO || '')
-            // setClassif(issue.classificacoes.map((c: IClassification) => c.nome))
+            setSo(issue.so)
             setPriority(issue.prioridade)
             setStatus(issue.status)
-            setRoad(issue.caminho || '')
-            setCorrectionDate(issue.dataEstimada)
-            setResponsaveis(issue.usuarios.map(responsavel => responsavel.nome))
-            setResolved(resolved)
+            setRoad(issue.caminho)
         }
-    }, [issue, onClose])
+    }, [issue])
 
     const inputVariant = () => {
         return isEditing ? 'outlined' : 'filled'
     }
 
-    const handleDeleteIssue = async (id: number) => {
-        await axios.delete(`tarefa/${id}`)
-        .then(_ => onClose('deleted'))
-        .catch(err => console.error(err))
+    const handleDeleteIssue = async () => {
+        await axios.delete(`tarefa/${issueId}`)
+            .then(_ => onClose('deleted'))
+            .catch(err => console.error(err))
     }
 
     const handlePreview = async (file: UploadFile) => {
@@ -97,39 +104,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
         return false;
     };
 
-    const handleUpdateIssue = async () => {
-
-        const responsiblesIds = responsaveis.map(r => {
-            const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.id : null;
-        }).filter(id => id !== null);
-
-        try {
-            setLoading(true)
-            const body = {
-                titulo: title,
-                versaoSO: so,
-                caminho: road,
-                dataEstimada: correctionDate,
-                prioridade: priority,
-                status: status,
-                screenshot: base64Images,
-                descricao: desc,
-                classificacoes: 1,
-                responsaveis: responsiblesIds,
-                casoDeTeste: [testCase]
-            }
-            await editIssue(issue.id, body)
-            setLoading(false)
-            setIsEditing(false)
-            onClose('updated')
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const handleCloseIssue = () => {
         setFeedbackOpen(true)
     }
@@ -138,8 +112,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
         onClose('close');
         setIsEditing(false)
     };
-
-    if (!issue) return null
 
     return (
         <Modal
@@ -150,7 +122,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             onCancel={handleCloseModal}
             title={
                 <Flex align='center' gap={15}>
-                    {issue.titulo}
+                    {issueTitle}
                     <Flex gap={10} align='center'>
                         {selected === 'details' &&
                             <Tooltip placement='top' title={'Editar campos'}>
@@ -165,7 +137,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                         <Popdelete
                             title={'Excluir ocorrência'}
                             description={'Tem certeza que deseja excluir a ocorrência?'}
-                            onConfirm={() => handleDeleteIssue(issue.id)}
+                            onConfirm={handleDeleteIssue}
                             placement='right'
                         >
                             <Button
@@ -180,7 +152,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             }
             footer={[<ModalFooter
                 onCloseIssue={handleCloseIssue}
-                onSave={handleUpdateIssue}
+                onSave={() => { }}
                 selected={selected}
                 setResolved={setResolved}
                 resolved={resolved}
@@ -194,7 +166,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 defaultSelectedKeys={['details']}
                 onClick={(event) => setSelected(event.key)}
             />
-            {selected === 'details' ? (
+            {loadingIssue ? (
+                <SpinBox>
+                    <Spin size='large' />
+                </SpinBox>
+            ) : selected === 'details' ? (
                 <ChildBox>
                     <CustomRow>
                         <CustomCol {...colProps}>
@@ -247,6 +223,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                                 text='Status'
                                 value={status}
                                 onChange={(e) => setStatus(e)}
+                                fieldNames={{ label: "title", value: "id" }}
                                 options={statusList}
                                 style={!isEditing ? { pointerEvents: "none" } : {}}
                                 variant={inputVariant()}
@@ -257,6 +234,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             <TitleInput
                                 text='Caminho entre telas'
                                 value={road}
+                                readOnly={!isEditing}
                                 onChange={(e) => setRoad(e.target.value)}
                                 variant={inputVariant()}
                             />
@@ -328,15 +306,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 </ChildBox>
             ) : selected === 'comments' ? (
                 <ChildBox>
-                    <IssueComments issue={issue} />
+                    <IssueComments />
                 </ChildBox>
             ) : (
                 <ChildBox>
                     <IssueLogs />
                 </ChildBox>
-            )
-            }
-
+            )}
             <FeedbackModal open={feedbackOpen} onConfirm={() => {/*TO DO*/ }} onCancel={() => setFeedbackOpen(false)} />
         </Modal >
     )

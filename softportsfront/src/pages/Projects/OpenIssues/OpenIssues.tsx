@@ -24,7 +24,7 @@ import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
 import ListItem from '../components/ListItem/ListItem'
 import NewIssue from '../components/NewIssue/NewIssue'
-import { IIssue, IProjectPage } from '../interfaces'
+import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
 
@@ -39,7 +39,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
-  const [issueId, setIssueId] = useState<IIssue>()
+  const [selectedIssue, setSelectedIssue] = useState<IShortIssue>()
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
   const [selectedKanban, setSelectedKanban] = useState<number>()
   const { selectedProject } = useProjects()
@@ -47,7 +47,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setIssueId(issue)
+    setSelectedIssue({ id: issue.id, titulo: issue.titulo })
   }
 
   const handleMessage = (type: NoticeType, content: string) => {
@@ -222,7 +222,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       titulo: `Issue ${testIssues.length + 1}`,
       caminho: '',
       screenshots: [],
-      versaoSO: '',
+      so: '',
       columnId: columnId
     }
 
@@ -397,8 +397,16 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
         </IssuesBox>
       )}
 
+      {selectedIssue &&
+        <IssueView
+          open={openIssue}
+          onClose={(e) => handleOkButton(e)}
+          issueId={selectedIssue.id}
+          issueTitle={selectedIssue.titulo}
+        />
+      }
+
       <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
-      <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
     </CustomBox>
   )
 }

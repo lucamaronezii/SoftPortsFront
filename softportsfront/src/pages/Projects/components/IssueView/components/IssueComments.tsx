@@ -5,7 +5,7 @@ import { CommentTime } from './styles'
 import { IIssue, IIssueComment } from '../../../interfaces'
 import { issuesListTest } from '../../../../../mocks/Issues'
 
-const IssueComments: React.FC<{ issue: IIssue }> = ({ issue }) => {
+const IssueComments: React.FC<{ issue?: IIssue }> = ({ }) => {
   const { Text } = Typography
   const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comentarios || [])
 

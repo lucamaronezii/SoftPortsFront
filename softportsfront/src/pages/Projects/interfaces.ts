@@ -18,6 +18,11 @@ export interface IClassResponse {
     nome: string;
 }
 
+export interface IShortIssue {
+    id: number;
+    titulo: string;
+}
+
 export interface IIssue {
     id: number;
     titulo: string;
@@ -30,7 +35,7 @@ export interface IIssue {
     screenshots?: string[];
     caminho?: string;
     dataEstimada: number;
-    versaoSO?: string;
+    so?: string;
     onClick?: () => void;
     columnId?: Id;
     comentarios?: IIssueComment[];
