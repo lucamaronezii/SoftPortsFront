@@ -34,6 +34,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [debounce] = useDebounce(input, 500)
   const [filterPriority, setFilterPriority] = useState<number[]>([])
   const [filterUsers, setFilterUsers] = useState<number[]>([])
+  const [filterClass, setFilterClass] = useState<number[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
@@ -69,6 +70,9 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     } else if (status == "updated") {
       handleMessage('success', 'Ocorrência atualizada com sucesso.')
       handleGetIssues()
+    } else if (status == "issueClosed") {
+      handleMessage('success', 'Ocorrência fechada com sucesso.')
+      handleGetIssues()
     }
     setOpenForm(false)
     setOpenIssue(false)
@@ -80,6 +84,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     input && (params += `&titulo=${input}`)
     filterPriority.length && (params += `&prioridades=${filterPriority}`)
     filterUsers.length && (params += `&usuarios=${filterUsers}`)
+    filterClass.length && (params += `&classificacao=${filterClass}`)
     await axios.get(`tarefa?${params}`)
       .then(res => setIssues(res.data.conteudo))
       .catch(err => console.error(err))
@@ -92,7 +97,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [selectedProject, debounce, filterPriority, filterUsers])
+  }, [selectedProject, debounce, filterPriority, filterUsers, filterClass])
 
   const [columns, setColumns] = useState<Column[]>(statusList)
 
@@ -213,7 +218,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const addIssue = (columnId: Id) => {
     const newIssue: IIssue = {
       id: generateId(),
-      classificacao: {id: 1, subclassificacaoId: 1},
+      classificacao: { id: 1, subclassificacaoId: 1 },
       dataEstimada: 1,
       descricao: '',
       prioridade: 1,
@@ -256,26 +261,40 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       : setFilterUsers(array)
   }
 
-  const handleClass = () => { }
+  const handleClass = (array: any[]) => {
+    return array.includes(0)
+      ? setFilterClass([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+      : setFilterClass(array)
+  }
 
   const handleCascaderChange = (e: (string | number)[][]) => {
     console.log(e)
-    if (!e.length) {
-      handleClear()
-    }
+
+    if (!e.length) handleClear()
+
     let priorityArray: (string | number)[] = []
     let usersArray: (string | number)[] = []
-    let classArray = []
+    let classArray: (string | number)[] = []
 
     e.map(valor => {
       const selectedAll = valor.length == 1
       if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
-      if (valor[0] == 'class') { }
       if (valor[0] == 'users') selectedAll ? usersArray.push(valor[0]) : usersArray.push(valor[1])
+      if (valor[0] == 0) {
+        console.log('VALOR: ', valor)
+        if (valor.length === 3) {
+          classArray.push(valor[1], valor[2])
+        } else if (valor.length === 2) {
+          classArray.push(valor[1])
+        } else if (valor.length === 1) {
+          classArray.push(0)
+        }
+      }
     })
 
     priorityArray.length && handlePriority(priorityArray)
     usersArray.length && handleUsers(usersArray)
+    classArray.length && handleClass(classArray)
   }
 
   const handleClear = () => {
@@ -400,14 +419,20 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       {selectedIssue &&
         <IssueView
           open={openIssue}
-          onClose={(e) => handleOkButton(e)}
+          projectUsers={users}
           issueId={selectedIssue.id}
           issueTitle={selectedIssue.titulo}
-          relatedUsers={users}
+          onClose={(e) => handleOkButton(e)}
         />
       }
 
-      <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
+      <NewIssue
+        open={openForm}
+        projectUsers={users}
+        selectedKanban={selectedKanban}
+        onOk={handleOkButton}
+        onClose={() => setOpenForm(false)}
+      />
     </CustomBox>
   )
 }

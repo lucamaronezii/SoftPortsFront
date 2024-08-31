@@ -36,6 +36,7 @@ export interface IIssue {
     caminho?: string;
     dataEstimada: number;
     so?: string;
+    projetoId?: number;
     onClick?: () => void;
     columnId?: Id;
     comentarios?: IIssueComment[];

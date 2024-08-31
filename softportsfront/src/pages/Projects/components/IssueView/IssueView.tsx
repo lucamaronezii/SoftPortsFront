@@ -4,46 +4,47 @@ import { UploadFile } from 'antd/lib'
 import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import { useAxios } from '../../../../auth/useAxios'
+import GapColumn from '../../../../components/Column/Column'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { usersList } from '../../../../mocks/Users'
+import useProjects from '../../../../hooks/useProjects'
 import { getBase64 } from '../../../../utils/getBase64'
 import { classList, IOption } from '../../../../utils/getClass'
 import { priorityList } from '../../../../utils/getPriority'
 import { statusList } from '../../../../utils/getStatus'
 import { IssueMenu } from '../../../../utils/menuItems'
+import { IUser } from '../../../Users/interfaces'
+import { IIssue } from '../../interfaces'
 import FeedbackModal from './components/FeedbackModal'
 import IssueComments from './components/IssueComments'
 import IssueLogs from './components/IssueLogs'
 import ModalFooter from './components/ModalFooter'
 import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
-import { ChildBox, CustomCol, CustomRow, SpinBox, colProps } from './styles'
-import { IIssue } from '../../interfaces'
-import GapColumn from '../../../../components/Column/Column'
-import { IUser } from '../../../Users/interfaces'
+import { ChildBox, colProps, CustomCol, CustomRow, SpinBox } from './styles'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, relatedUsers }) => {
+const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, projectUsers }) => {
     const [selected, setSelected] = useState<SelectedOptions | any>('details')
     const [issue, setIssue] = useState<IIssue>()
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [title, setTitle] = useState<string | undefined>(issue?.titulo)
+    const [title, setTitle] = useState<string | undefined>()
     const [desc, setDesc] = useState<string>()
-    const [users, setUsers] = useState<IUser[]>()
     const [so, setSo] = useState<string>()
     const [classification, setClassification] = useState<number[]>([])
     const [priority, setPriority] = useState<number>()
     const [status, setStatus] = useState<number>()
     const [road, setRoad] = useState<string>()
+    const [issueUsers, setIssueUsers] = useState<IUser[]>()
+    const [relatedUsers, setRelatedUsers] = useState<IUser[]>()
+    const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
     const [estimated, setEstimated] = useState<dayjs.Dayjs>()
     const [loadingIssue, setLoadingIssue] = useState<boolean>(true)
-    const [responsaveis, setResponsaveis] = useState<string[]>([])
     const [previewImage, setPreviewImage] = useState('');
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -51,6 +52,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
     const [resolved, setResolved] = useState<boolean>(false)
+    const { selectedProject } = useProjects()
     const axios = useAxios()
 
     const handleGetIssue = async () => {
@@ -60,35 +62,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
             .catch(err => console.error(err))
             .finally(() => setTimeout(() => setLoadingIssue(false), 1000))
     }
-
-    useEffect(() => {
-        handleGetIssue()
-        setUsers(relatedUsers)
-    }, [open])
-
-    useEffect(() => {
-        if (issue) {
-            setTitle(issue.titulo)
-            setDesc(issue.descricao)
-            setSo(issue.so)
-            setPriority(issue.prioridade)
-            setStatus(issue.status)
-            setRoad(issue.caminho)
-            setClassification([issue.classificacao!.id, issue.classificacao!.subclassificacaoId])
-            setEstimated(dayjs.unix(issue.dataEstimada / 1000))
-
-            if (issue.screenshots !== null) {
-                const files: UploadFile[] = issue.screenshots!.map((base64, index) => ({
-                    uid: `${index}`,
-                    name: `screenshot-${index}.png`,
-                    status: 'done',
-                    url: `data:image/png;base64,${base64}`,
-                    preview: `${base64}`
-                }));
-                setFileList(files);
-            }
-        }
-    }, [issue])
 
     const inputVariant = () => {
         return isEditing ? 'outlined' : 'filled'
@@ -124,17 +97,76 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
         return false;
     };
 
-    const handleCloseIssue = () => {
-        setFeedbackOpen(true)
-    }
-
     const handleCloseModal = () => {
         onClose('close');
         setFileList([])
         setIsEditing(false)
     };
 
+    const handleUpdateIssue = async () => {
+        setLoading(true)
+        if (!issue) return
+        const body = {
+            id: issue.id,
+            titulo: title,
+            descricao: desc,
+            so: so,
+            screenshots: fileList.map(image => image.preview?.split(',')[1]),
+            caminho: road,
+            dataEstimada: estimated!.format(),
+            prioridade: priority,
+            fechada: false,
+            posicao: 1,
+            status: status,
+            projetoId: selectedProject.id,
+            usuarioIds: selectedUserIds,
+            classificacaoId: classification[0],
+            subclassificacaoId: classification[1]
+        }
+        await axios.put('tarefa', body)
+            .then(_ => { onClose('updated'); setIsEditing(false) })
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false))
+    }
 
+    const handleIssueClosed = () => {
+        setFeedbackOpen(false)
+        setTimeout(() => {
+            onClose('issueClosed')
+        }, 200)
+    }
+
+    useEffect(() => {
+        handleGetIssue()
+        setRelatedUsers(projectUsers)
+    }, [open])
+
+    useEffect(() => {
+        if (issue) {
+            setTitle(issue.titulo)
+            setDesc(issue.descricao)
+            setSo(issue.so)
+            setPriority(issue.prioridade)
+            setStatus(issue.status)
+            setRoad(issue.caminho)
+            setClassification([issue.classificacao!.id, issue.classificacao!.subclassificacaoId])
+            setEstimated(dayjs.unix(issue.dataEstimada / 1000))
+            setIssueUsers(issue.usuarios)
+            const assignedUserIds = issue.usuarios.map(user => user.id);
+            setSelectedUserIds(assignedUserIds);
+
+            if (issue.screenshots !== null) {
+                const files: UploadFile[] = issue.screenshots!.map((base64, index) => ({
+                    uid: `${index}`,
+                    name: `screenshot-${index}.png`,
+                    status: 'done',
+                    url: `data:image/png;base64,${base64}`,
+                    preview: `${base64}`
+                }));
+                setFileList(files);
+            }
+        }
+    }, [issue])
 
     return (
         <Modal
@@ -175,12 +207,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
                 </Flex>
             }
             footer={[<ModalFooter
-                onCloseIssue={handleCloseIssue}
-                onSave={() => { }}
                 selected={selected}
-                setResolved={setResolved}
                 resolved={resolved}
-                loading={loading} />]
+                onCloseIssue={() => setFeedbackOpen(true)}
+                onSave={handleUpdateIssue}
+                loading={loading}
+                setResolved={setResolved}
+            />]
             }
         >
             <Menu
@@ -289,14 +322,15 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
                         <CustomCol {...colProps}>
                             <TitleSelect
                                 text='Responsáveis'
-                                value={responsaveis}
-                                style={!isEditing ? { pointerEvents: "none" } : {}}
-                                variant={inputVariant()}
+                                mode='multiple'
+
+                                value={selectedUserIds}
+                                onChange={(e) => setSelectedUserIds(e)}
                                 removeIcon={!isEditing}
                                 options={relatedUsers}
+                                variant={inputVariant()}
                                 fieldNames={{ label: "nome", value: "id" }}
-                                mode='multiple'
-                                onChange={(value) => setResponsaveis(value)}
+                                style={!isEditing ? { pointerEvents: "none" } : {}}
                             />
                         </CustomCol>
                     </CustomRow>
@@ -340,7 +374,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, r
                     <IssueLogs />
                 </ChildBox>
             )}
-            <FeedbackModal open={feedbackOpen} onConfirm={() => {/*TO DO*/ }} onCancel={() => setFeedbackOpen(false)} />
+            <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />
         </Modal >
     )
 }

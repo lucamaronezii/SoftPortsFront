@@ -22,6 +22,7 @@ export interface IModalFooter {
 
 export interface IFeedbackModal {
     open: boolean;
+    issueId: number;
     onCancel: () => void;
-    onConfirm: () => void;
+    onSuccess: () => void;
 }

@@ -4,7 +4,7 @@ import { IIssue } from "../../interfaces";
 export interface IIssueView {
     issueId: number;
     issueTitle: string;
-    relatedUsers: IUser[];
+    projectUsers: IUser[];
     open: boolean;
     onClose: (status?: string) => void;
 }
