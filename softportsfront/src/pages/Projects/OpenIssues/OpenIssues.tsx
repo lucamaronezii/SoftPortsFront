@@ -3,10 +3,10 @@ import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, P
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDebounce } from 'use-debounce'
-import teste from '../../../assets/empty.svg'
+import emptySvg from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
@@ -406,7 +406,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
               ))
             ) : (
               <NoIssuesBox>
-                <img src={teste} width={500} />
+                <img src={emptySvg} width={500} />
                 <Typography.Title level={4}>
                   Nenhuma ocorrência encontrada. Abra novas ocorrências para visualizá-las
                 </Typography.Title>
