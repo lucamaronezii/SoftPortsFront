@@ -14,7 +14,7 @@ export interface IIssueDetails {
 export interface IModalFooter {
     loading: boolean;
     selected: SelectedOptions;
-    resolved: boolean;
+    closed: boolean;
     setResolved: Dispatch<SetStateAction<boolean>>
     onSave: () => void;
     onCloseIssue: () => void;

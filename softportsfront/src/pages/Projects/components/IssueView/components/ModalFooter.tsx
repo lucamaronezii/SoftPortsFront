@@ -1,10 +1,10 @@
-import { CheckOutlined, SendOutlined, UserOutlined } from '@ant-design/icons'
+import { CheckOutlined, RollbackOutlined, SendOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Button, Checkbox, Flex, Input, Typography } from 'antd'
 import React from 'react'
 import { IModalFooter } from './interfaces'
 import { FooterFlex } from './styles'
 
-const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, loading, resolved, setResolved }) => {
+const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, loading, closed, setResolved }) => {
 
     return (
         <Flex align='center'>
@@ -22,17 +22,17 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
             }
             <FooterFlex>
                 <Button
-                    icon={<CheckOutlined />}
+                    icon={closed ? <RollbackOutlined /> : <CheckOutlined />}
                     iconPosition='end'
+                    loading={loading}
                     onClick={onCloseIssue}>
-                    Fechar ocorrência
+                    {closed ? 'Reabrir' : 'Fechar'} ocorrência
                 </Button>
                 <Button
                     type="primary"
                     onClick={onSave}
                     loading={loading}>
-                    Salvar
-                </Button>
+                    Salvar</Button>
             </FooterFlex>
         </Flex>
     )

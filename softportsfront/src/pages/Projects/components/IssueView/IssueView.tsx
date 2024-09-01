@@ -35,6 +35,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [title, setTitle] = useState<string | undefined>()
     const [desc, setDesc] = useState<string>()
+    const [feedback, setFeedback] = useState<string>()
     const [so, setSo] = useState<string>()
     const [classification, setClassification] = useState<number[]>([])
     const [priority, setPriority] = useState<number>()
@@ -106,7 +107,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
     const handleUpdateIssue = async () => {
         setLoading(true)
         if (!issue) return
-        const body = {
+        const body: any = {
             id: issue.id,
             titulo: title,
             descricao: desc,
@@ -115,7 +116,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             caminho: road,
             dataEstimada: estimated!.format(),
             prioridade: priority,
-            fechada: false,
+            fechada: issue.fechada,
             posicao: 1,
             status: status,
             projetoId: selectedProject.id,
@@ -123,6 +124,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             classificacaoId: classification[0],
             subclassificacaoId: classification[1]
         }
+        issue.fechada ?? (body["feedback"] = feedback)
         await axios.put('tarefa', body)
             .then(_ => { onClose('updated'); setIsEditing(false) })
             .catch(err => console.error(err))
@@ -149,6 +151,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             setPriority(issue.prioridade)
             setStatus(issue.status)
             setRoad(issue.caminho)
+            setFeedback(issue.feedback)
             setClassification([issue.classificacao!.id, issue.classificacao!.subclassificacaoId])
             setEstimated(dayjs.unix(issue.dataEstimada / 1000))
             setIssueUsers(issue.usuarios)
@@ -167,6 +170,20 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             }
         }
     }, [issue])
+
+    const handleReopenIssue = async () => {
+        setLoading(true)
+        setTimeout(async () => {
+            await axios.put(`tarefa/fechado/${issue!.id}?fechado=false`)
+                .then(_ => onClose('issueReopened'))
+                .catch(err => console.error(err))
+                .finally(() => setLoading(false))
+        }, 1000)
+    }
+
+    const handleLeftButtonClick = () => {
+        issue?.fechada ? handleReopenIssue() : setFeedbackOpen(true)
+    }
 
     return (
         <Modal
@@ -208,13 +225,12 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             }
             footer={[<ModalFooter
                 selected={selected}
-                resolved={resolved}
-                onCloseIssue={() => setFeedbackOpen(true)}
+                closed={issue?.fechada!}
+                onCloseIssue={handleLeftButtonClick}
                 onSave={handleUpdateIssue}
                 loading={loading}
                 setResolved={setResolved}
-            />]
-            }
+            />]}
         >
             <Menu
                 mode='horizontal'
@@ -323,7 +339,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                             <TitleSelect
                                 text='Responsáveis'
                                 mode='multiple'
-
                                 value={selectedUserIds}
                                 onChange={(e) => setSelectedUserIds(e)}
                                 removeIcon={!isEditing}
@@ -363,6 +378,18 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                                 />
                             )}
                         </CustomCol>
+                        {issue?.fechada && (
+                            <CustomCol {...colProps}>
+                                <TitleTextArea
+                                    text='Feedback'
+                                    value={feedback}
+                                    readOnly={!isEditing}
+                                    rows={3}
+                                    variant={inputVariant()}
+                                    onChange={(e) => setFeedback(e.target.value)}
+                                />
+                            </CustomCol>
+                        )}
                     </CustomRow>
                 </ChildBox>
             ) : selected === 'comments' ? (

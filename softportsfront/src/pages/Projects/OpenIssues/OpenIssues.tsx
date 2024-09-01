@@ -51,27 +51,20 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setSelectedIssue({ id: issue.id, titulo: issue.titulo })
   }
 
-  const handleMessage = (type: NoticeType, content: string) => {
-    messageApi.open({
-      type: type,
-      content: content,
-    });
-  };
-
   const handleOkButton = (status?: string | undefined) => {
     if (status == "close" || !status) {
       // pass
     } else if (status == "success") {
-      handleMessage('success', 'Ocorrência aberta com sucesso.')
+      messageApi.success('Ocorrência aberta com sucesso.')
       handleGetIssues()
     } else if (status == "deleted") {
-      handleMessage('success', 'Ocorrência excluída com sucesso.')
+      messageApi.success('Ocorrência excluída com sucesso.')
       handleGetIssues()
     } else if (status == "updated") {
-      handleMessage('success', 'Ocorrência atualizada com sucesso.')
+      messageApi.success('Ocorrência atualizada com sucesso.')
       handleGetIssues()
     } else if (status == "issueClosed") {
-      handleMessage('success', 'Ocorrência fechada com sucesso.')
+      messageApi.success('Ocorrência fechada com sucesso.')
       handleGetIssues()
     }
     setOpenForm(false)
@@ -281,7 +274,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
       if (valor[0] == 'users') selectedAll ? usersArray.push(valor[0]) : usersArray.push(valor[1])
       if (valor[0] == 0) {
-        console.log('VALOR: ', valor)
         if (valor.length === 3) {
           classArray.push(valor[1], valor[2])
         } else if (valor.length === 2) {
@@ -336,10 +328,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           onClick={() => handleOpenForm()}
           icon={<PlusOutlined />}
           type='primary'
-          iconPosition='end'
-        >
-          Nova ocorrência
-        </Button>
+          iconPosition='end'>
+          Nova ocorrência</Button>
       </CustomRow>
 
       {seg ? (

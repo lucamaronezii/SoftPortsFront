@@ -30,14 +30,18 @@ export interface IIssue {
     status: number;
     usuarios: IUser[];
     prioridade: number;
+    dataCriacao?: number;
     dataFechamento?: number;
+    dataEstimada: number;
     classificacao?: IClassResponse;
     screenshots?: string[];
+    fechada?: boolean;
     caminho?: string;
-    dataEstimada: number;
+    feedback?: string;
     so?: string;
     projetoId?: number;
     onClick?: () => void;
+    onReopen?: () => void;
     columnId?: Id;
     comentarios?: IIssueComment[];
 }

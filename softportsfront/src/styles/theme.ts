@@ -42,7 +42,8 @@ export const components: Partial<ComponentsToken> = {
     },
     Message: {
         colorSuccess: prColor,
-        colorError: errColor
+        colorError: errColor,
+        contentBg: secBgColor
     },
     Typography: {
         fontFamily: 'Inter'
