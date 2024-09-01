@@ -293,6 +293,26 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setFilterPriority([]); setFilterUsers([])
   }
 
+  const displayIssuesPositions = () => {
+    const positions = columns.map(column => {
+      const issuesInColumn = testIssues.filter(issue => issue.columnId === column.id);
+      return {
+        columnTitle: column.title,
+        issues: issuesInColumn.map((issue, index) => ({
+          title: issue.titulo,
+          position: index + 1,
+        }))
+      };
+    });
+
+    return positions;
+  };
+
+  useEffect(() => {
+    const issuesPositions = displayIssuesPositions();
+    console.log(issuesPositions);
+  }, [columns, testIssues]);
+
   return (
     <CustomBox>
       {contextHolder}
