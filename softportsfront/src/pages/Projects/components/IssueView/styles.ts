@@ -23,3 +23,9 @@ export const ChildBox = styled.div`
     height: 408px;
     overflow-y: auto;
 `
+
+export const SpinBox = styled(ChildBox)`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`

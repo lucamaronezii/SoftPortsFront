@@ -1,11 +1,11 @@
 import { Spin } from 'antd'
-import { StyledBackroom } from './styles'
+import { StyledLayout } from './styles'
 
 const Backroom = () => {
     return (
-        <StyledBackroom>
+        <StyledLayout>
             <Spin size='large' />
-        </StyledBackroom>
+        </StyledLayout>
     )
 }
 

@@ -3,17 +3,17 @@ import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, P
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDebounce } from 'use-debounce'
-import teste from '../../../assets/empty.svg'
+import emptySvg from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
 import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
 import useProjects from '../../../hooks/useProjects'
-import { statusList } from '../../../utils/getStatus'
 import { classList } from '../../../utils/getClass'
 import { priorityList } from '../../../utils/getPriority'
+import { statusList } from '../../../utils/getStatus'
 import { manipulateUsers } from '../../../utils/getUsers'
 import { segItems } from '../../../utils/segItems'
 import { IUser } from '../../Users/interfaces'
@@ -24,7 +24,7 @@ import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
 import { Column, Id } from '../components/Kanban/KanbanColumn/types'
 import ListItem from '../components/ListItem/ListItem'
 import NewIssue from '../components/NewIssue/NewIssue'
-import { IIssue, IProjectPage } from '../interfaces'
+import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
 
@@ -32,14 +32,15 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
   const [input, setInput] = useState<string>()
   const [debounce] = useDebounce(input, 500)
-  const [priority, setPriority] = useState<number[]>([])
-  const [_users, _setUsers] = useState<IUser[]>(users)
+  const [filterPriority, setFilterPriority] = useState<number[]>([])
+  const [filterUsers, setFilterUsers] = useState<number[]>([])
+  const [filterClass, setFilterClass] = useState<number[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
-  const [issueId, setIssueId] = useState<IIssue>()
+  const [selectedIssue, setSelectedIssue] = useState<IShortIssue>()
   const [testIssues, setTestIssues] = useState<IIssue[]>([])
   const [selectedKanban, setSelectedKanban] = useState<number>()
   const { selectedProject } = useProjects()
@@ -47,27 +48,23 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setIssueId(issue)
+    setSelectedIssue({ id: issue.id, titulo: issue.titulo })
   }
-
-  const handleMessage = (type: NoticeType, content: string) => {
-    messageApi.open({
-      type: type,
-      content: content,
-    });
-  };
 
   const handleOkButton = (status?: string | undefined) => {
     if (status == "close" || !status) {
       // pass
     } else if (status == "success") {
-      handleMessage('success', 'Ocorrência aberta com sucesso.')
+      messageApi.success('Ocorrência aberta com sucesso.')
       handleGetIssues()
     } else if (status == "deleted") {
-      handleMessage('success', 'Ocorrência excluída com sucesso.')
+      messageApi.success('Ocorrência excluída com sucesso.')
       handleGetIssues()
     } else if (status == "updated") {
-      handleMessage('success', 'Ocorrência atualizada com sucesso.')
+      messageApi.success('Ocorrência atualizada com sucesso.')
+      handleGetIssues()
+    } else if (status == "issueClosed") {
+      messageApi.success('Ocorrência fechada com sucesso.')
       handleGetIssues()
     }
     setOpenForm(false)
@@ -78,7 +75,9 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setLoading(true)
     let params = `projetoId=${selectedProject.id}&fechada=false`
     input && (params += `&titulo=${input}`)
-    priority && (params += `&prioridade=${priority}`)
+    filterPriority.length && (params += `&prioridades=${filterPriority}`)
+    filterUsers.length && (params += `&usuarios=${filterUsers}`)
+    filterClass.length && (params += `&classificacao=${filterClass}`)
     await axios.get(`tarefa?${params}`)
       .then(res => setIssues(res.data.conteudo))
       .catch(err => console.error(err))
@@ -91,7 +90,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   useEffect(() => {
     handleGetIssues()
-  }, [selectedProject, debounce, priority])
+  }, [selectedProject, debounce, filterPriority, filterUsers, filterClass])
 
   const [columns, setColumns] = useState<Column[]>(statusList)
 
@@ -212,7 +211,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const addIssue = (columnId: Id) => {
     const newIssue: IIssue = {
       id: generateId(),
-      classificacoes: [],
+      classificacao: { id: 1, subclassificacaoId: 1 },
       dataEstimada: 1,
       descricao: '',
       prioridade: 1,
@@ -221,7 +220,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       titulo: `Issue ${testIssues.length + 1}`,
       caminho: '',
       screenshots: [],
-      versaoSO: '',
+      so: '',
       columnId: columnId
     }
 
@@ -238,41 +237,81 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setOpenForm(true)
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
-  }
-
   const handlePriority = (array: any[]) => {
     return array.includes('priority')
-      ? setPriority([1, 2, 3, 4])
-      : setPriority(array)
+      ? setFilterPriority([1, 2, 3, 4])
+      : setFilterPriority(array)
   }
 
-  const handleClass = () => { }
+  const getUsersId = (users: IUser[]) => {
+    const usersIds = users.map(user => user.id)
+    return usersIds
+  }
 
-  const handleUsers = () => { }
+  const handleUsers = (array: any[]) => {
+    return array.includes('users')
+      ? setFilterUsers(getUsersId(users))
+      : setFilterUsers(array)
+  }
+
+  const handleClass = (array: any[]) => {
+    return array.includes(0)
+      ? setFilterClass([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+      : setFilterClass(array)
+  }
 
   const handleCascaderChange = (e: (string | number)[][]) => {
-    if (!e.length) {
-      handleClear()
-    }
+    console.log(e)
+
+    if (!e.length) handleClear()
+
     let priorityArray: (string | number)[] = []
-    let classArray = []
-    let usersArray = []
+    let usersArray: (string | number)[] = []
+    let classArray: (string | number)[] = []
 
     e.map(valor => {
       const selectedAll = valor.length == 1
       if (valor[0] == 'priority') selectedAll ? priorityArray.push(valor[0]) : priorityArray.push(valor[1])
-      if (valor[0] == 'class') { }
-      if (valor[0] == 'users') { }
+      if (valor[0] == 'users') selectedAll ? usersArray.push(valor[0]) : usersArray.push(valor[1])
+      if (valor[0] == 0) {
+        if (valor.length === 3) {
+          classArray.push(valor[1], valor[2])
+        } else if (valor.length === 2) {
+          classArray.push(valor[1])
+        } else if (valor.length === 1) {
+          classArray.push(0)
+        }
+      }
     })
 
     priorityArray.length && handlePriority(priorityArray)
+    usersArray.length && handleUsers(usersArray)
+    classArray.length && handleClass(classArray)
   }
 
   const handleClear = () => {
-    setPriority([])
+    setFilterPriority([]); setFilterUsers([])
   }
+
+  const displayIssuesPositions = () => {
+    const positions = columns.map(column => {
+      const issuesInColumn = testIssues.filter(issue => issue.columnId === column.id);
+      return {
+        columnTitle: column.title,
+        issues: issuesInColumn.map((issue, index) => ({
+          title: issue.titulo,
+          position: index + 1,
+        }))
+      };
+    });
+
+    return positions;
+  };
+
+  useEffect(() => {
+    const issuesPositions = displayIssuesPositions();
+    console.log(issuesPositions);
+  }, [columns, testIssues]);
 
   return (
     <CustomBox>
@@ -282,7 +321,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           <div style={{ maxWidth: '300px' }}>
             <Input.Search
               value={input}
-              onChange={handleInputChange}
+              onChange={(e) => setInput(e.target.value)}
               placeholder='Pesquisar ocorrência'
               allowClear
               enterButton
@@ -309,10 +348,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           onClick={() => handleOpenForm()}
           icon={<PlusOutlined />}
           type='primary'
-          iconPosition='end'
-        >
-          Nova ocorrência
-        </Button>
+          iconPosition='end'>
+          Nova ocorrência</Button>
       </CustomRow>
 
       {seg ? (
@@ -326,13 +363,12 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
-                  issues={issues.filter(issue => issue.status == col.id)}
+                  issues={testIssues.filter(issue => issue.columnId == col.id)}
                   addIssue={addIssue}
                   updateColumn={updateColumn}
+                  column={col}
                   onRemoveColumn={() => deleteColumn(col.id)}
                   deleteIssue={deleteIssue}
-                  onAdd={() => handleOpenForm(col)}
-                  column={col}
                 />
               ))}
             </SortableContext>
@@ -340,13 +376,12 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
               <DragOverlay>
                 {activeColumn && (
                   <KanbanColumn
-                    issues={issues.filter(issue => issue.columnId == activeColumn.id)}
+                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
                     addIssue={addIssue}
                     updateColumn={updateColumn}
                     column={activeColumn}
                     onRemoveColumn={() => deleteColumn(activeColumn.id)}
                     deleteIssue={deleteIssue}
-                    onAdd={() => { }}
                   />
                 )}
                 {activeIssue &&
@@ -370,7 +405,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
                   key={index}
                   id={issue.id}
                   titulo={issue.titulo}
-                  classificacoes={issue.classificacoes}
+                  classificacao={issue.classificacao}
                   descricao={issue.descricao}
                   prioridade={issue.prioridade}
                   status={issue.status}
@@ -381,7 +416,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
               ))
             ) : (
               <NoIssuesBox>
-                <img src={teste} width={500} />
+                <img src={emptySvg} width={500} />
                 <Typography.Title level={4}>
                   Nenhuma ocorrência encontrada. Abra novas ocorrências para visualizá-las
                 </Typography.Title>
@@ -391,8 +426,23 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
         </IssuesBox>
       )}
 
-      <NewIssue open={openForm} onClose={() => setOpenForm(false)} onOk={handleOkButton} selectedKanban={selectedKanban} />
-      <IssueView open={openIssue} onClose={(e) => handleOkButton(e)} issue={issueId!} />
+      {selectedIssue &&
+        <IssueView
+          open={openIssue}
+          projectUsers={users}
+          issueId={selectedIssue.id}
+          issueTitle={selectedIssue.titulo}
+          onClose={(e) => handleOkButton(e)}
+        />
+      }
+
+      <NewIssue
+        open={openForm}
+        projectUsers={users}
+        selectedKanban={selectedKanban}
+        onOk={handleOkButton}
+        onClose={() => setOpenForm(false)}
+      />
     </CustomBox>
   )
 }

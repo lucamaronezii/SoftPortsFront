@@ -3,8 +3,8 @@ import type { GetProp, UploadProps } from 'antd'
 import { Cascader, Flex, Image, Modal, Steps, Typography, message } from 'antd'
 import { NoticeType } from 'antd/es/message/interface'
 import { UploadFile } from 'antd/lib'
-import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
+import { useAxios } from '../../../../auth/useAxios'
 import GapColumn from '../../../../components/Column/Column'
 import { TitleModal } from '../../../../components/CustomRow/styles'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
@@ -12,19 +12,20 @@ import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { statusList } from '../../../../utils/getStatus'
+import useProjects from '../../../../hooks/useProjects'
 import { usersList } from '../../../../mocks/Users'
-import { createIssue } from '../../../../services/IssueServices'
 import { getBase64 } from '../../../../utils/getBase64'
-import { classList } from '../../../../utils/getClass'
+import { classList, IOption } from '../../../../utils/getClass'
 import { priorityList } from '../../../../utils/getPriority'
+import { statusList } from '../../../../utils/getStatus'
 import { stepperItems } from '../../../../utils/stepperItems'
 import { INewIssue } from './interfaces'
 import { FieldsBox } from './styles'
+import dayjs from 'dayjs'
 
 export type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) => {
+const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban, projectUsers }) => {
     console.log(selectedKanban)
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -32,16 +33,17 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
     const [title, setTitle] = useState<string>()
     const [description, setDescription] = useState<string>()
     const [systemVersion, setSystemVersion] = useState<string>()
-    const [classification, setClassification] = useState<string[]>([]);
+    const [classification, setClassification] = useState<number[]>([]);
     const [priority, setPriority] = useState<string>()
     const [status, setStatus] = useState<number | undefined>(undefined)
     const [road, setRoad] = useState<string>()
-    const [estimatedCorrectionDate, setEstimatedCorrectionDate] = useState<string>()
+    const [estimated, setEstimated] = useState<dayjs.Dayjs>()
     const [base64Images, setBase64Images] = useState<string[]>([]);
-    const [responsibles, setResponsibles] = useState<string[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage();
-    const [testCase, setTestCase] = useState<number | null>(0);
+    const { selectedProject } = useProjects()
+    const axios = useAxios()
 
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
@@ -66,48 +68,27 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
         return false;
     };
 
-    const handleMessage = (type: NoticeType, content: string) => {
-        messageApi.open({
-            type: type,
-            content: content,
-        });
-    };
-
     const handleCreateIssue = async () => {
-        const formattedDate = dayjs(estimatedCorrectionDate).format('YYYY-MM-DD HH:mm:ss');
-        if (!formattedDate || formattedDate === 'Invalid Date') {
-            message.error('Por favor, selecione uma data válida para correção.');
-            return;
+        setLoading(true)
+        const body = {
+            titulo: title,
+            descricao: description,
+            so: systemVersion,
+            screenshots: fileList.map(image => image.preview?.split(',')[1]),
+            caminho: road,
+            dataEstimada: estimated!.format(),
+            prioridade: priority,
+            posicao: 1,
+            status: status,
+            projetoId: selectedProject.id,
+            usuarioIds: selectedUsers,
+            classificacaoId: classification[0],
+            subclassificacaoId: classification[1]
         }
-
-        const responsiblesIds = responsibles.map(r => {
-            const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.id : null;
-        }).filter(id => id !== null);
-
-        try {
-            setLoading(true)
-            const body = {
-                titulo: title,
-                nome: title,
-                versaoSO: systemVersion,
-                caminho: road,
-                dataCorrecao: formattedDate,
-                prioridade: priority,
-                status: status,
-                screenshots: base64Images[0],
-                descricao: description,
-                classificacoes: 1,
-                responsaveis: responsiblesIds,
-                casoDeTeste: [testCase]
-            }
-            await createIssue(body)
-            setLoading(false)
-            onOk('success')
-        } catch (error) {
-            console.error(error)
-            setLoading(false)
-        }
+        await axios.post('tarefa', body)
+            .then(res => { console.log(res); onOk('success') })
+            .catch(err => console.log(err))
+            .finally(() => setLoading(false))
     }
 
     useEffect(() => {
@@ -166,7 +147,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                         <TitleDatePicker
                             text='Data estimada para correção'
                             placeholder='Selecione a data estimada para correção'
-                            onChange={(date) => setEstimatedCorrectionDate(date ? date.format() : '')}
+                            onChange={(date) => setEstimated(date)}
                         />
                     </FieldsBox>
 
@@ -181,9 +162,9 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                             <Typography.Text>Classificação</Typography.Text>
                             <Cascader
                                 placeholder='Selecione a classificação da ocorrência'
-                                options={classList}
+                                options={classList[0].children as IOption[]}
                                 style={{ width: '100%' }}
-                                onChange={e => console.log(e)}
+                                onChange={e => setClassification([Number(e[0]), Number(e[1])])}
                             />
                         </GapColumn>
                         <TitleSelect
@@ -221,9 +202,10 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban }) 
                         <TitleSelect
                             text='Responsáveis'
                             placeholder='Selecione os responsáveis para correção'
-                            options={usersList}
+                            options={projectUsers}
+                            fieldNames={{ label: "nome", value: "id" }}
                             mode='multiple'
-                            onChange={(value) => setResponsibles(value)}
+                            onChange={(value) => setSelectedUsers(value)}
                         />
                     </FieldsBox>
                 </Flex>

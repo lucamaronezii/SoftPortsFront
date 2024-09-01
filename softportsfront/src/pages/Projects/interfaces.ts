@@ -15,7 +15,12 @@ export interface IIssueComment {
 
 export interface IClassResponse {
     id: number,
-    nome: string;
+    subclassificacaoId: number;
+}
+
+export interface IShortIssue {
+    id: number;
+    titulo: string;
 }
 
 export interface IIssue {
@@ -25,18 +30,23 @@ export interface IIssue {
     status: number;
     usuarios: IUser[];
     prioridade: number;
+    dataCriacao?: number;
     dataFechamento?: number;
-    classificacoes?: IClassResponse[];
-    screenshots?: string[];
-    caminho?: string;
     dataEstimada: number;
-    versaoSO?: string;
+    classificacao?: IClassResponse;
+    screenshots?: string[];
+    fechada?: boolean;
+    caminho?: string;
+    feedback?: string;
+    so?: string;
+    projetoId?: number;
     onClick?: () => void;
+    onReopen?: () => void;
     columnId?: Id;
     comentarios?: IIssueComment[];
 }
 
 export interface IProjectPage {
-    loadingUsers: boolean,
     users: IUser[]
+    loadingUsers: boolean,
 }

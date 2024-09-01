@@ -1,44 +1,51 @@
-import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { Button, Flex, GetProp, Image, Menu, Modal, Tooltip, UploadProps } from 'antd'
+import { CheckOutlined, DeleteOutlined, DownOutlined, EditOutlined } from '@ant-design/icons'
+import { Button, Cascader, Flex, GetProp, Image, Menu, Modal, Spin, Tooltip, Typography, UploadProps } from 'antd'
 import { UploadFile } from 'antd/lib'
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
+import { useAxios } from '../../../../auth/useAxios'
+import GapColumn from '../../../../components/Column/Column'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import TitleDatePicker from '../../../../components/TitleDatePicker/TitleDatePicker'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
 import TitleTextArea from '../../../../components/TitleTextArea/TitleTextArea'
 import TitleUpload from '../../../../components/TitleUpload/TitleUpload'
-import { classList } from '../../../../utils/getClass' 
-import { statusList } from '../../../../utils/getStatus'
-import { usersList } from '../../../../mocks/Users'
-import { deleteIssue, editIssue } from '../../../../services/IssueServices'
+import useProjects from '../../../../hooks/useProjects'
 import { getBase64 } from '../../../../utils/getBase64'
-import { IssueMenu } from '../../../../utils/menuItems'
+import { classList, IOption } from '../../../../utils/getClass'
 import { priorityList } from '../../../../utils/getPriority'
+import { statusList } from '../../../../utils/getStatus'
+import { IssueMenu } from '../../../../utils/menuItems'
+import { IUser } from '../../../Users/interfaces'
+import { IIssue } from '../../interfaces'
 import FeedbackModal from './components/FeedbackModal'
 import IssueComments from './components/IssueComments'
 import IssueLogs from './components/IssueLogs'
 import ModalFooter from './components/ModalFooter'
 import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
-import { ChildBox, CustomCol, CustomRow, colProps } from './styles'
-import dayjs from 'dayjs'
+import { ChildBox, colProps, CustomCol, CustomRow, SpinBox } from './styles'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
+const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, projectUsers }) => {
     const [selected, setSelected] = useState<SelectedOptions | any>('details')
+    const [issue, setIssue] = useState<IIssue>()
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('')
-    const [desc, setDesc] = useState<string>('')
-    const [so, setSo] = useState<string>('')
-    const [classif, setClassif] = useState<number[]>([])
+    const [title, setTitle] = useState<string | undefined>()
+    const [desc, setDesc] = useState<string>()
+    const [feedback, setFeedback] = useState<string>()
+    const [so, setSo] = useState<string>()
+    const [classification, setClassification] = useState<number[]>([])
     const [priority, setPriority] = useState<number>()
     const [status, setStatus] = useState<number>()
-    const [road, setRoad] = useState<string>('')
-    const [correctionDate, setCorrectionDate] = useState<number>()
-    const [testCase, setTestCase] = useState<number>();
-    const [responsaveis, setResponsaveis] = useState<string[]>([])
+    const [road, setRoad] = useState<string>()
+    const [issueUsers, setIssueUsers] = useState<IUser[]>()
+    const [relatedUsers, setRelatedUsers] = useState<IUser[]>()
+    const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
+    const [estimated, setEstimated] = useState<dayjs.Dayjs>()
+    const [loadingIssue, setLoadingIssue] = useState<boolean>(true)
     const [previewImage, setPreviewImage] = useState('');
     const [previewOpen, setPreviewOpen] = useState<boolean>(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -46,33 +53,25 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
     const [resolved, setResolved] = useState<boolean>(false)
+    const { selectedProject } = useProjects()
+    const axios = useAxios()
 
-    useEffect(() => {
-        if (issue) {
-            setTitle(issue.titulo)
-            setDesc(issue.descricao)
-            setSo(issue.versaoSO || '')
-            // setClassif(issue.classificacoes.map((c: IClassification) => c.nome))
-            setPriority(issue.prioridade)
-            setStatus(issue.status)
-            setRoad(issue.caminho || '')
-            setCorrectionDate(issue.dataEstimada)
-            setResponsaveis(issue.usuarios.map(responsavel => responsavel.nome))
-            setResolved(resolved)
-        }
-    }, [issue, onClose])
+    const handleGetIssue = async () => {
+        setLoadingIssue(true)
+        await axios.get(`tarefa/${issueId}`)
+            .then(res => setIssue(res.data))
+            .catch(err => console.error(err))
+            .finally(() => setTimeout(() => setLoadingIssue(false), 1000))
+    }
 
     const inputVariant = () => {
         return isEditing ? 'outlined' : 'filled'
     }
 
-    const handleDeleteIssue = async (id: number) => {
-        try {
-            await deleteIssue(id)
-            onClose('deleted')
-        } catch (error) {
-            console.error(error)
-        }
+    const handleDeleteIssue = async () => {
+        await axios.delete(`tarefa/${issueId}`)
+            .then(_ => onClose('deleted'))
+            .catch(err => console.error(err))
     }
 
     const handlePreview = async (file: UploadFile) => {
@@ -83,9 +82,10 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
         setPreviewOpen(true);
     };
 
-    const handleChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
-        setFileList(newFileList)
-        const base64List = await Promise.all(newFileList.map(async (file) => {
+    const handleChange: UploadProps['onChange'] = async ({ fileList }) => {
+        setFileList(fileList)
+        console.log(fileList)
+        const base64List = await Promise.all(fileList.map(async (file) => {
             if (!file.url && !file.preview) {
                 file.preview = await getBase64(file.originFileObj as FileType);
             }
@@ -98,49 +98,92 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
         return false;
     };
 
-    const handleUpdateIssue = async () => {
-
-        const responsiblesIds = responsaveis.map(r => {
-            const selectedUser = usersList.find(user => user.value === r);
-            return selectedUser ? selectedUser.id : null;
-        }).filter(id => id !== null);
-
-        try {
-            setLoading(true)
-            const body = {
-                titulo: title,
-                versaoSO: so,
-                caminho: road,
-                dataEstimada: correctionDate,
-                prioridade: priority,
-                status: status,
-                screenshot: base64Images,
-                descricao: desc,
-                classificacoes: 1,
-                responsaveis: responsiblesIds,
-                casoDeTeste: [testCase]
-            }
-            await editIssue(issue.id, body)
-            setLoading(false)
-            setIsEditing(false)
-            onClose('updated')
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleCloseIssue = () => {
-        setFeedbackOpen(true)
-    }
-
     const handleCloseModal = () => {
         onClose('close');
+        setFileList([])
         setIsEditing(false)
     };
 
-    if (!issue) return null
+    const handleUpdateIssue = async () => {
+        setLoading(true)
+        if (!issue) return
+        const body: any = {
+            id: issue.id,
+            titulo: title,
+            descricao: desc,
+            so: so,
+            screenshots: fileList.map(image => image.preview?.split(',')[1]),
+            caminho: road,
+            dataEstimada: estimated!.format(),
+            prioridade: priority,
+            fechada: issue.fechada,
+            posicao: 1,
+            status: status,
+            projetoId: selectedProject.id,
+            usuarioIds: selectedUserIds,
+            classificacaoId: classification[0],
+            subclassificacaoId: classification[1]
+        }
+        issue.fechada ?? (body["feedback"] = feedback)
+        await axios.put('tarefa', body)
+            .then(_ => { onClose('updated'); setIsEditing(false) })
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false))
+    }
+
+    const handleIssueClosed = () => {
+        setFeedbackOpen(false)
+        setTimeout(() => {
+            onClose('issueClosed')
+        }, 200)
+    }
+
+    useEffect(() => {
+        handleGetIssue()
+        setRelatedUsers(projectUsers)
+    }, [open])
+
+    useEffect(() => {
+        if (issue) {
+            setTitle(issue.titulo)
+            setDesc(issue.descricao)
+            setSo(issue.so)
+            setPriority(issue.prioridade)
+            setStatus(issue.status)
+            setRoad(issue.caminho)
+            setFeedback(issue.feedback)
+            setClassification([issue.classificacao!.id, issue.classificacao!.subclassificacaoId])
+            setEstimated(dayjs.unix(issue.dataEstimada / 1000))
+            setIssueUsers(issue.usuarios)
+            const assignedUserIds = issue.usuarios.map(user => user.id);
+            setSelectedUserIds(assignedUserIds);
+
+            if (issue.screenshots !== null) {
+                const files: UploadFile[] = issue.screenshots!.map((base64, index) => ({
+                    uid: `${index}`,
+                    name: `screenshot-${index}.png`,
+                    status: 'done',
+                    url: `data:image/png;base64,${base64}`,
+                    preview: `${base64}`
+                }));
+                setFileList(files);
+            }
+        }
+    }, [issue])
+
+    const handleReopenIssue = async () => {
+        setLoading(true)
+        setTimeout(async () => {
+            await axios.put(`tarefa/fechado/${issue!.id}?fechado=false`)
+                .then(_ => onClose('issueReopened'))
+                .catch(err => console.error(err))
+                .finally(() => setLoading(false))
+        }, 1000)
+    }
+
+    const handleLeftButtonClick = () => {
+        issue?.fechada ? handleReopenIssue() : setFeedbackOpen(true)
+    }
 
     return (
         <Modal
@@ -148,10 +191,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
             closable
             width={1200}
             open={open}
+            destroyOnClose
             onCancel={handleCloseModal}
             title={
                 <Flex align='center' gap={15}>
-                    {issue.titulo}
+                    {issueTitle}
                     <Flex gap={10} align='center'>
                         {selected === 'details' &&
                             <Tooltip placement='top' title={'Editar campos'}>
@@ -166,7 +210,8 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                         <Popdelete
                             title={'Excluir ocorrência'}
                             description={'Tem certeza que deseja excluir a ocorrência?'}
-                            onConfirm={() => handleDeleteIssue(issue.id)}
+                            onConfirm={handleDeleteIssue}
+                            placement='right'
                         >
                             <Button
                                 type='primary'
@@ -179,13 +224,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 </Flex>
             }
             footer={[<ModalFooter
-                onCloseIssue={handleCloseIssue}
-                onSave={handleUpdateIssue}
                 selected={selected}
+                closed={issue?.fechada!}
+                onCloseIssue={handleLeftButtonClick}
+                onSave={handleUpdateIssue}
+                loading={loading}
                 setResolved={setResolved}
-                resolved={resolved}
-                loading={loading} />]
-            }
+            />]}
         >
             <Menu
                 mode='horizontal'
@@ -194,7 +239,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                 defaultSelectedKeys={['details']}
                 onClick={(event) => setSelected(event.key)}
             />
-            {selected === 'details' ? (
+            {loadingIssue ? (
+                <SpinBox>
+                    <Spin size='large' />
+                </SpinBox>
+            ) : selected === 'details' ? (
                 <ChildBox>
                     <CustomRow>
                         <CustomCol {...colProps}>
@@ -207,16 +256,17 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             />
                         </CustomCol>
                         <CustomCol {...colProps}>
-                            <TitleSelect
-                                text='Classificação'
-                                value={classif}
-                                style={!isEditing ? { pointerEvents: "none" } : {}}
-                                variant={inputVariant()}
-                                removeIcon={!isEditing}
-                                options={classList}
-                                onChange={(e) => setClassif(e)}
-                                mode='multiple'
-                            />
+                            <GapColumn>
+                                <Typography.Text>Classificação</Typography.Text>
+                                <Cascader
+                                    options={classList[0].children as IOption[]}
+                                    variant={inputVariant()}
+                                    value={classification}
+                                    onChange={e => setClassification([Number(e[0]), Number(e[1])])}
+                                    suffixIcon={!isEditing ? null : <DownOutlined />}
+                                    style={!isEditing ? { pointerEvents: "none", width: '100%' } : { width: '100%' }}
+                                />
+                            </GapColumn>
                         </CustomCol>
                         <CustomCol {...colProps}>
                             <TitleSelect
@@ -247,6 +297,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                                 text='Status'
                                 value={status}
                                 onChange={(e) => setStatus(e)}
+                                fieldNames={{ label: "title", value: "id" }}
                                 options={statusList}
                                 style={!isEditing ? { pointerEvents: "none" } : {}}
                                 variant={inputVariant()}
@@ -257,6 +308,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                             <TitleInput
                                 text='Caminho entre telas'
                                 value={road}
+                                readOnly={!isEditing}
                                 onChange={(e) => setRoad(e.target.value)}
                                 variant={inputVariant()}
                             />
@@ -276,22 +328,24 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                         <CustomCol {...colProps}>
                             <TitleDatePicker
                                 text='Data estimada para correção'
-                                value={dayjs()}
-                                style={!isEditing ? { pointerEvents: "none" } : {}}
                                 variant={inputVariant()}
                                 removeIcon={!isEditing}
+                                value={estimated}
+                                onChange={(e) => setEstimated(e)}
+                                style={!isEditing ? { pointerEvents: "none" } : {}}
                             />
                         </CustomCol>
                         <CustomCol {...colProps}>
                             <TitleSelect
                                 text='Responsáveis'
-                                value={responsaveis}
-                                style={!isEditing ? { pointerEvents: "none" } : {}}
-                                variant={inputVariant()}
-                                removeIcon={!isEditing}
-                                options={usersList}
                                 mode='multiple'
-                                onChange={(value) => setResponsaveis(value)}
+                                value={selectedUserIds}
+                                onChange={(e) => setSelectedUserIds(e)}
+                                removeIcon={!isEditing}
+                                options={relatedUsers}
+                                variant={inputVariant()}
+                                fieldNames={{ label: "nome", value: "id" }}
+                                style={!isEditing ? { pointerEvents: "none" } : {}}
                             />
                         </CustomCol>
                     </CustomRow>
@@ -324,20 +378,30 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issue }) => {
                                 />
                             )}
                         </CustomCol>
+                        {issue?.fechada && (
+                            <CustomCol {...colProps}>
+                                <TitleTextArea
+                                    text='Feedback'
+                                    value={feedback}
+                                    readOnly={!isEditing}
+                                    rows={3}
+                                    variant={inputVariant()}
+                                    onChange={(e) => setFeedback(e.target.value)}
+                                />
+                            </CustomCol>
+                        )}
                     </CustomRow>
                 </ChildBox>
             ) : selected === 'comments' ? (
                 <ChildBox>
-                    <IssueComments issue={issue} />
+                    <IssueComments />
                 </ChildBox>
             ) : (
                 <ChildBox>
                     <IssueLogs />
                 </ChildBox>
-            )
-            }
-
-            <FeedbackModal open={feedbackOpen} onConfirm={() => {/*TO DO*/ }} onCancel={() => setFeedbackOpen(false)} />
+            )}
+            <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />
         </Modal >
     )
 }

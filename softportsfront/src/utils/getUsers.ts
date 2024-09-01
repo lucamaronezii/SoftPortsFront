@@ -10,6 +10,7 @@ export const manipulateUsers = (users: IUser[]): IOption => {
     return {
         label: 'Responsáveis',
         value: 'users',
+        disabled: !mappedUsers.length,
         children: mappedUsers
     }
 }

@@ -14,7 +14,7 @@ export interface IIssueDetails {
 export interface IModalFooter {
     loading: boolean;
     selected: SelectedOptions;
-    resolved: boolean;
+    closed: boolean;
     setResolved: Dispatch<SetStateAction<boolean>>
     onSave: () => void;
     onCloseIssue: () => void;
@@ -22,6 +22,7 @@ export interface IModalFooter {
 
 export interface IFeedbackModal {
     open: boolean;
+    issueId: number;
     onCancel: () => void;
-    onConfirm: () => void;
+    onSuccess: () => void;
 }
