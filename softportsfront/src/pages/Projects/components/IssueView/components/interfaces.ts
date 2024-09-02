@@ -26,3 +26,7 @@ export interface IFeedbackModal {
     onCancel: () => void;
     onSuccess: () => void;
 }
+
+export interface ISubPage {
+    issue: IIssue
+}

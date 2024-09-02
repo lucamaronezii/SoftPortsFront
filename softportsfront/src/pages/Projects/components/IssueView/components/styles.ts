@@ -13,3 +13,9 @@ export const FooterFlex = styled(Flex)`
     align-items: center;
     margin-left: auto;
 `
+
+export const SectionFlex = styled(Flex)`
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+`

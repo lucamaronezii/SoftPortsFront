@@ -1,16 +1,17 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Avatar, Flex, Typography } from 'antd'
 import React, { useState } from 'react'
-import { CommentTime } from './styles'
+import { CommentTime, SectionFlex } from './styles'
 import { IIssue, IIssueComment } from '../../../interfaces'
 import { issuesListTest } from '../../../../../mocks/Issues'
+import { ISubPage } from './interfaces'
 
-const IssueComments: React.FC<{ issue?: IIssue }> = ({ }) => {
+const IssueComments: React.FC<ISubPage> = ({ issue }) => {
   const { Text } = Typography
   const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comentarios || [])
 
   return (
-    <Flex vertical gap={15} style={{ overflowY: 'auto' }}>
+    <SectionFlex>
       {comments.map((value) => (
         <Flex gap={12}>
           <Avatar
@@ -28,7 +29,7 @@ const IssueComments: React.FC<{ issue?: IIssue }> = ({ }) => {
           </Flex>
         </Flex>
       ))}
-    </Flex>
+    </SectionFlex>
   )
 }
 

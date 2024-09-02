@@ -394,11 +394,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 </ChildBox>
             ) : selected === 'comments' ? (
                 <ChildBox>
-                    <IssueComments />
+                    <IssueComments issue={issue!}/>
                 </ChildBox>
             ) : (
                 <ChildBox>
-                    <IssueLogs />
+                    <IssueLogs issue={issue!}/>
                 </ChildBox>
             )}
             <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />
