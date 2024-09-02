@@ -1,15 +1,14 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import { Button, Cascader, Flex, Input, Segmented, Typography, message } from 'antd'
-import { NoticeType } from 'antd/es/message/interface'
+import { Button, Cascader, Flex, Input, Segmented, Skeleton, Typography, message } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDebounce } from 'use-debounce'
 import emptySvg from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
-import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import SkeletonList from '../../../components/SkeletonGroup/SkeletonList'
 import useProjects from '../../../hooks/useProjects'
 import { classList } from '../../../utils/getClass'
 import { priorityList } from '../../../utils/getPriority'
@@ -21,12 +20,13 @@ import IssueView from '../components/IssueView/IssueView'
 import KanbanBox from '../components/Kanban/KanbanBox/KanbanBox'
 import KanbanCard from '../components/Kanban/KanbanCard/KanbanCard'
 import KanbanColumn from '../components/Kanban/KanbanColumn/KanbanColumn'
-import { Column, Id } from '../components/Kanban/KanbanColumn/types'
+import { Column } from '../components/Kanban/KanbanColumn/types'
 import ListItem from '../components/ListItem/ListItem'
 import NewIssue from '../components/NewIssue/NewIssue'
 import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
+import SkeletonKanban from '../../../components/SkeletonGroup/SkeletonKanban'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
@@ -41,14 +41,14 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
   const [selectedIssue, setSelectedIssue] = useState<IShortIssue>()
-  const [testIssues, setTestIssues] = useState<IIssue[]>([])
   const [selectedKanban, setSelectedKanban] = useState<number>()
+  const [columns, setColumns] = useState<Column[]>(statusList)
   const { selectedProject } = useProjects()
   const axios = useAxios()
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setSelectedIssue({ id: issue.id, titulo: issue.titulo })
+    setSelectedIssue({ id: Number(issue.id), titulo: issue.titulo })
   }
 
   const handleOkButton = (status?: string | undefined) => {
@@ -78,13 +78,21 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     filterPriority.length && (params += `&prioridades=${filterPriority}`)
     filterUsers.length && (params += `&usuarios=${filterUsers}`)
     filterClass.length && (params += `&classificacao=${filterClass}`)
+
     await axios.get(`tarefa?${params}`)
-      .then(res => setIssues(res.data.conteudo))
+      .then(res => {
+        const mappedIssues = res.data.conteudo.map((issue: IIssue) => ({
+          ...issue,
+          id: String(issue.id),
+          columnId: issue.status,
+        }));
+        setIssues(mappedIssues);
+      })
       .catch(err => console.error(err))
       .finally(() => {
         setTimeout(() => {
           setLoading(false)
-        }, 700)
+        }, 1500)
       })
   }
 
@@ -92,25 +100,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     handleGetIssues()
   }, [selectedProject, debounce, filterPriority, filterUsers, filterClass])
 
-  const [columns, setColumns] = useState<Column[]>(statusList)
-
-  const generateId = () => {
-    return Math.floor(Math.random() * 10001)
-  }
-
-  const createNewColumn = () => {
-    const columnToAdd: Column = {
-      id: generateId(),
-      title: `Column ${columns.length + 1}`
-    }
-
-    setColumns([...columns, columnToAdd])
-  }
-
-  const deleteColumn = (id: Id) => {
-    setColumns(columns.filter(column => column.id !== id))
-    setTestIssues(testIssues.filter(issue => issue.columnId !== id))
-  }
 
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
@@ -170,24 +159,24 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     if (!isActiveIssue) return
 
     if (isActiveIssue && isOverIssue) {
-      setTestIssues(testIssues => {
-        const activeIndex = testIssues.findIndex(t => t.id == activeId)
-        const overIndex = testIssues.findIndex(t => t.id == overId)
+      setIssues(issues => {
+        const activeIndex = issues.findIndex(t => t.id == activeId)
+        const overIndex = issues.findIndex(t => t.id == overId)
 
-        testIssues[activeIndex].columnId = testIssues[overIndex].columnId
+        issues[activeIndex].columnId = issues[overIndex].columnId
 
-        return arrayMove(testIssues, activeIndex, overIndex)
+        return arrayMove(issues, activeIndex, overIndex)
       })
     }
 
     const isOverAColumn = over.data.current?.type === "Column"
 
     if (isActiveIssue && isOverAColumn) {
-      const activeIndex = testIssues.findIndex(t => t.id == activeId)
+      const activeIndex = issues.findIndex(t => t.id == activeId)
 
-      testIssues[activeIndex].columnId = overId
+      issues[activeIndex].columnId = Number(overId)
 
-      return arrayMove(testIssues, activeIndex, activeIndex)
+      return arrayMove(issues, activeIndex, activeIndex)
     }
   }
 
@@ -199,7 +188,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     })
   )
 
-  const updateColumn = (id: Id, text: string) => {
+  const updateColumn = (id: number, text: string) => {
     const newColumns = columns.map(col => {
       if (col.id !== id) return col
       return { ...col, text }
@@ -208,32 +197,13 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setColumns(newColumns)
   }
 
-  const addIssue = (columnId: Id) => {
-    const newIssue: IIssue = {
-      id: generateId(),
-      classificacao: { id: 1, subclassificacaoId: 1 },
-      dataEstimada: 1,
-      descricao: '',
-      prioridade: 1,
-      usuarios: [],
-      status: 1,
-      titulo: `Issue ${testIssues.length + 1}`,
-      caminho: '',
-      screenshots: [],
-      so: '',
-      columnId: columnId
-    }
-
-    setTestIssues([...testIssues, newIssue])
+  const deleteIssue = (id: number) => {
+    const newIssues = issues.filter(issue => issue.id !== id)
+    setIssues(newIssues)
   }
 
-  const deleteIssue = (id: Id) => {
-    const newIssues = testIssues.filter(issue => issue.id !== id)
-    setTestIssues(newIssues)
-  }
-
-  const handleOpenForm = (col?: Column) => {
-    col ? setSelectedKanban(Number(col.id)) : setSelectedKanban(undefined)
+  const handleOpenForm = (id?: number) => {
+    id ? setSelectedKanban(Number(id)) : setSelectedKanban(undefined)
     setOpenForm(true)
   }
 
@@ -295,7 +265,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const displayIssuesPositions = () => {
     const positions = columns.map(column => {
-      const issuesInColumn = testIssues.filter(issue => issue.columnId === column.id);
+      const issuesInColumn = issues.filter(issue => issue.columnId === column.id);
       return {
         columnTitle: column.title,
         issues: issuesInColumn.map((issue, index) => ({
@@ -311,7 +281,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   useEffect(() => {
     const issuesPositions = displayIssuesPositions();
     console.log(issuesPositions);
-  }, [columns, testIssues]);
+    console.log('issues:', issues)
+  }, [columns, issues, seg]);
 
   return (
     <CustomBox>
@@ -354,50 +325,51 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
       {seg ? (
         <KanbanBox>
-          <DndContext
-            sensors={sensors}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            onDragOver={onDragOver}
-          >
-            <SortableContext items={columnsId}>
-              {columns.map((col) => (
-                <KanbanColumn
-                  issues={testIssues.filter(issue => issue.columnId == col.id)}
-                  addIssue={addIssue}
-                  updateColumn={updateColumn}
-                  column={col}
-                  onRemoveColumn={() => deleteColumn(col.id)}
-                  deleteIssue={deleteIssue}
-                />
-              ))}
-            </SortableContext>
-            {createPortal(
-              <DragOverlay>
-                {activeColumn && (
+          {loading ? (
+            <SkeletonKanban total={5}/>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              onDragOver={onDragOver}
+            >
+              <SortableContext items={columnsId}>
+                {columns.map((col) => (
                   <KanbanColumn
-                    issues={testIssues.filter(issue => issue.columnId == activeColumn.id)}
-                    addIssue={addIssue}
+                    issues={issues.filter(issue => issue.columnId == col.id)}
                     updateColumn={updateColumn}
-                    column={activeColumn}
-                    onRemoveColumn={() => deleteColumn(activeColumn.id)}
+                    column={col}
                     deleteIssue={deleteIssue}
+                    onAdd={handleOpenForm}
                   />
-                )}
-                {activeIssue &&
-                  <KanbanCard
-                    issue={activeIssue}
-                    deleteIssue={deleteIssue}
-                  />
-                }
-              </DragOverlay>, document.body
-            )}
-          </DndContext>
+                ))}
+              </SortableContext>
+              {createPortal(
+                <DragOverlay>
+                  {activeColumn && (
+                    <KanbanColumn
+                      issues={issues.filter(issue => issue.columnId == activeColumn.id)}
+                      updateColumn={updateColumn}
+                      column={activeColumn}
+                      deleteIssue={deleteIssue}
+                    />
+                  )}
+                  {activeIssue &&
+                    <KanbanCard
+                      issue={activeIssue}
+                      deleteIssue={deleteIssue}
+                    />
+                  }
+                </DragOverlay>, document.body
+              )}
+            </DndContext>
+          )}
         </KanbanBox>
       ) : (
         <IssuesBox>
           {loading ? (
-            <SkeletonGroup total={3} />
+            <SkeletonList total={3} />
           ) : (
             issues && issues.length > 0 ? (
               issues.map((issue, index) => (

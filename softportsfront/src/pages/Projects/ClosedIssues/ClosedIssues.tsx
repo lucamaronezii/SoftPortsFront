@@ -6,7 +6,7 @@ import { useDebounce } from 'use-debounce'
 import img from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
-import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import SkeletonList from '../../../components/SkeletonGroup/SkeletonList'
 import useProjects from '../../../hooks/useProjects'
 import { classList } from '../../../utils/getClass'
 import { priorityList } from '../../../utils/getPriority'
@@ -151,7 +151,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setSelectedIssue({ id: issue.id, titulo: issue.titulo })
+    setSelectedIssue({ id: Number(issue.id), titulo: issue.titulo })
   }
 
   return (
@@ -188,7 +188,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
         <IssuesBox>
           {loading ? (
-            <SkeletonGroup total={3} />
+            <SkeletonList total={3} />
           ) : (
             closedIssues && closedIssues.length > 0 ? (
               closedIssues.map((issue, index) => (

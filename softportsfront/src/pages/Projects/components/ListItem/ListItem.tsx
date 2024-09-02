@@ -10,20 +10,13 @@ import { getStatus } from '../../../../utils/getStatus'
 import { IIssue } from '../../interfaces'
 import { IdIssue, ListText, StyledChild, StyledItem } from './styles'
 import { getClass } from '../../../../utils/getClass'
+import { getUsersInitials } from '../../../../utils/getUsersInitials'
 
 const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, classificacao, dataEstimada, onClick }) => {
   const [initials, setInitials] = useState<string[]>([])
 
-  const getUsersInitials = () => {
-    const newInitials = usuarios.map(user => {
-      const text = user.nome[0] + user.nome[1]
-      return text.toUpperCase()
-    })
-    setInitials(newInitials)
-  }
-
   useEffect(() => {
-    getUsersInitials()
+    getUsersInitials(usuarios, setInitials)
   }, [])
 
   return (
@@ -50,10 +43,8 @@ const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, 
             <Avatar
               key={index}
               size={'default'}
-              style={{ backgroundColor: prColor }}
-            >
-              {user}
-            </Avatar>
+              style={{ backgroundColor: prColor }}>
+              {user}</Avatar>
           ))}
         </Avatar.Group>
       </StyledChild>

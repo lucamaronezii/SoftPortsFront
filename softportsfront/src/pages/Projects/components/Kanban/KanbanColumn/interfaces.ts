@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Column, Id } from "./types";
+import { Column } from "./types";
 import { IIssue } from "../../../interfaces";
 
 export interface IKanbanColumnProps {
@@ -7,10 +7,8 @@ export interface IKanbanColumnProps {
     children?: ReactNode;
     onClick?: () => void;
     onAddItem?: () => void;
-    onRemoveColumn?: () => void;
-    updateColumn: (id: Id, e: string) => void;
-    addIssue: (id: Id) => void;
+    updateColumn: (id: number, e: string) => void;
     issues: IIssue[];
-    deleteIssue: (id: Id) => void
+    deleteIssue: (id: number) => void
     onAdd?: (id?: number) => void;
 }

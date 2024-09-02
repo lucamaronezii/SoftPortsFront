@@ -3,9 +3,12 @@ import React from 'react'
 import { IIssueTag } from './interfaces'
 import { getPriority, tagColor } from '../../utils/getPriority'
 
-const IssueTag: React.FC<IIssueTag> = ({ priority, children }) => {    
+const IssueTag: React.FC<IIssueTag> = ({ priority, children }) => {
     return (
-        <Tag color={tagColor(getPriority(priority)!)}>
+        <Tag
+            color={tagColor(getPriority(priority)!)}
+            style={{ alignContent: 'center' }}
+        >
             {children}
         </Tag>
     )

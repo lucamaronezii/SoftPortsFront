@@ -1,5 +1,4 @@
 import { IUser } from "../Users/interfaces";
-import { Id } from "./components/Kanban/KanbanColumn/types";
 
 export interface IStyledItem extends IIssue {
     styled: any;
@@ -24,7 +23,7 @@ export interface IShortIssue {
 }
 
 export interface IIssue {
-    id: number;
+    id: number | string;
     titulo: string;
     descricao: string;
     status: number;
@@ -42,7 +41,7 @@ export interface IIssue {
     projetoId?: number;
     onClick?: () => void;
     onReopen?: () => void;
-    columnId?: Id;
+    columnId?: number;
     comentarios?: IIssueComment[];
 }
 
