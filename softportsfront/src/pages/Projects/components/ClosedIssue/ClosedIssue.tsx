@@ -9,6 +9,7 @@ import { IClosedIssue } from './interfaces'
 import { getUsersInitials } from '../../../../utils/getUsersInitials'
 import dayjs from 'dayjs'
 import { getClass } from '../../../../utils/getClass'
+import { formatUnix } from '../../../../utils/handleDate'
 
 const ClosedIssue: React.FC<IClosedIssue> = ({ issue, onClick, onReopen }) => {
     const [initials, setInitials] = useState<string[]>([])
@@ -26,10 +27,6 @@ const ClosedIssue: React.FC<IClosedIssue> = ({ issue, onClick, onReopen }) => {
         }, 1500)
     }
 
-    const formatDate = (unix: number) => {
-        return dayjs.unix(unix / 1000).format('DD/MM/YYYY')
-    }
-
     useEffect(() => {
         getUsersInitials(issue.usuarios, setInitials)
     }, [])
@@ -41,7 +38,7 @@ const ClosedIssue: React.FC<IClosedIssue> = ({ issue, onClick, onReopen }) => {
                 <ListText title={issue.titulo}>{issue.titulo}</ListText>
             </StyledChild>
             <StyledChild width='30%' justify='center'>
-                <ListText>Fechado em {formatDate(issue.dataFechamento!)}</ListText>
+                <ListText>Fechado em {formatUnix(issue.dataFechamento!)}</ListText>
             </StyledChild>
             <StyledChild width='30%' justify='center'>
                 <ListText>{getClass(issue.classificacao?.id!)} / {getClass(issue.classificacao?.subclassificacaoId!)}</ListText>

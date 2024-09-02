@@ -1,5 +1,4 @@
 import { ReactKeycloakProvider } from '@react-keycloak/web';
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { keycloak } from './auth/Keycloak';
 import ConfigProvider from './config/ConfigProvider';
@@ -13,7 +12,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: "login-required" }}>
+  <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: "login-required", flow: 'implicit', useNonce: true }}>
     <ConfigProvider>
       <ProjectsContext>
         <Router />

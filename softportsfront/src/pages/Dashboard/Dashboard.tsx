@@ -16,7 +16,7 @@ export const Dashboard = () => {
     return (
         <div>
             {contextHolder}
-            dash
+            Dashboard
         </div>
     )
 }

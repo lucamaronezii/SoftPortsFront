@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Cascader, Flex, Input, Layout } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CustomRow } from '../../components/CustomRow/styles'
 import { positionItems } from '../../utils/roleItems'
 import { CustomBox } from '../Projects/styles'
@@ -8,11 +8,21 @@ import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
 import NewUser from './NewUser/NewUser'
 import { StyledTitle, SubnavPad } from './styles'
+import { useAxios } from '../../auth/useAxios'
 
 const Users: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
-  
+  const axios = useAxios()
+
+  const handleGetUsers = async () => {
+    await axios.get('usuario').then(res => setUsers([...res.data.conteudo]))
+  }
+
+  useEffect(() => {
+    handleGetUsers()
+  }, [])
+
   return (
     <Layout style={{ minHeight: '100vh', gap: 27, paddingLeft: 16 }}>
       <SubnavPad>
