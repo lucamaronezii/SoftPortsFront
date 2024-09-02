@@ -127,7 +127,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   }
 
   const handleClear = () => {
-    setFilterPriority([]); setFilterUsers([])
+    setFilterPriority([]); setFilterUsers([]); setFilterClass([])
   }
 
   useEffect(() => {

@@ -11,7 +11,7 @@ import { prColor } from '../../../../../styles/theme'
 import IssueTag from '../../../../../components/IssueTag/IssueTag'
 import { getPriority } from '../../../../../utils/getPriority'
 
-const KanbanCard: React.FC<IKanbanCard> = ({ issue, deleteIssue }) => {
+const KanbanCard: React.FC<IKanbanCard> = ({ issue, deleteIssue, onView }) => {
     const [initials, setInitials] = useState<string[]>([])
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: issue.id,
@@ -47,7 +47,7 @@ const KanbanCard: React.FC<IKanbanCard> = ({ issue, deleteIssue }) => {
             {...attributes}
             {...listeners}
         >
-            <StyledFlexBox>
+            <StyledFlexBox onClick={() => onView!(issue)}>
                 <StyledTitle
                     ellipsis={{
                         rows: 2,

@@ -138,6 +138,20 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
         }, 200)
     }
 
+    const handleReopenIssue = async () => {
+        setLoading(true)
+        setTimeout(async () => {
+            await axios.put(`tarefa/fechado/${issue!.id}?fechado=false`)
+                .then(_ => onClose('issueReopened'))
+                .catch(err => console.error(err))
+                .finally(() => setLoading(false))
+        }, 1000)
+    }
+
+    const handleLeftButtonClick = () => {
+        issue?.fechada ? handleReopenIssue() : setFeedbackOpen(true)
+    }
+
     useEffect(() => {
         handleGetIssue()
         setRelatedUsers(projectUsers)
@@ -170,20 +184,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             }
         }
     }, [issue])
-
-    const handleReopenIssue = async () => {
-        setLoading(true)
-        setTimeout(async () => {
-            await axios.put(`tarefa/fechado/${issue!.id}?fechado=false`)
-                .then(_ => onClose('issueReopened'))
-                .catch(err => console.error(err))
-                .finally(() => setLoading(false))
-        }, 1000)
-    }
-
-    const handleLeftButtonClick = () => {
-        issue?.fechada ? handleReopenIssue() : setFeedbackOpen(true)
-    }
 
     return (
         <Modal

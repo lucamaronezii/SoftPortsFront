@@ -100,10 +100,15 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     handleGetIssues()
   }, [selectedProject, debounce, filterPriority, filterUsers, filterClass])
 
-
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeIssue, setActiveIssue] = useState<IIssue | null>(null)
+
+  const handleStatusChange = async (issueId: number, newStatus: number) => {
+    await axios.put(`tarefa/status/${issueId}?status=${newStatus}`)
+      .then(res => console.log(res))
+      .catch(err => console.error(err))
+  }
 
   const onDragStart = (event: DragStartEvent) => {
     console.log("DRAGGING START", event)
@@ -137,6 +142,15 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
         const overColumnIndex = columns.findIndex(col => col.id === overColumnId);
         return arrayMove(columns, activeColumnIndex, overColumnIndex);
       });
+    }
+
+    if (active.data.current?.type === "IIssue") {
+      const crtIssue = active.data.current!
+      if (crtIssue.issue.columnId !== crtIssue.issue.status) {
+        handleStatusChange(crtIssue.issue.id, crtIssue.issue.columnId)
+        const updatedIssues = issues.map(issue => issue.id === crtIssue.issue.id ? { ...issue, status: crtIssue.issue.columnId } : issue)
+        setIssues([...updatedIssues])
+      }
     }
 
     setActiveColumn(null);
@@ -231,8 +245,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   }
 
   const handleCascaderChange = (e: (string | number)[][]) => {
-    console.log(e)
-
     if (!e.length) handleClear()
 
     let priorityArray: (string | number)[] = []
@@ -260,7 +272,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   }
 
   const handleClear = () => {
-    setFilterPriority([]); setFilterUsers([])
+    setFilterPriority([]); setFilterUsers([]); setFilterClass([])
   }
 
   const displayIssuesPositions = () => {
@@ -280,8 +292,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   useEffect(() => {
     const issuesPositions = displayIssuesPositions();
-    console.log(issuesPositions);
-    console.log('issues:', issues)
   }, [columns, issues, seg]);
 
   return (
@@ -326,7 +336,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       {seg ? (
         <KanbanBox>
           {loading ? (
-            <SkeletonKanban total={5}/>
+            <SkeletonKanban total={5} />
           ) : (
             <DndContext
               sensors={sensors}
@@ -342,6 +352,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
                     column={col}
                     deleteIssue={deleteIssue}
                     onAdd={handleOpenForm}
+                    onView={handleIssueView}
                   />
                 ))}
               </SortableContext>
@@ -353,6 +364,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
                       updateColumn={updateColumn}
                       column={activeColumn}
                       deleteIssue={deleteIssue}
+                      onView={handleIssueView}
                     />
                   )}
                   {activeIssue &&

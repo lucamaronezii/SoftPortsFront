@@ -6,23 +6,14 @@ import { format } from 'date-fns'
 import { RollbackOutlined } from '@ant-design/icons'
 import { useAxios } from '../../../../auth/useAxios'
 import { IClosedIssue } from './interfaces'
+import { getUsersInitials } from '../../../../utils/getUsersInitials'
+import dayjs from 'dayjs'
+import { getClass } from '../../../../utils/getClass'
 
 const ClosedIssue: React.FC<IClosedIssue> = ({ issue, onClick, onReopen }) => {
     const [initials, setInitials] = useState<string[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const axios = useAxios()
-
-    const getUsersInitials = () => {
-        const newInitials = issue.usuarios.map(user => {
-            const text = user.nome[0] + user.nome[1]
-            return text.toUpperCase()
-        })
-        setInitials(newInitials)
-    }
-
-    useEffect(() => {
-        getUsersInitials()
-    }, [])
 
     const handleReopenIssue = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -35,14 +26,25 @@ const ClosedIssue: React.FC<IClosedIssue> = ({ issue, onClick, onReopen }) => {
         }, 1500)
     }
 
+    const formatDate = (unix: number) => {
+        return dayjs.unix(unix / 1000).format('DD/MM/YYYY')
+    }
+
+    useEffect(() => {
+        getUsersInitials(issue.usuarios, setInitials)
+    }, [])
+
     return (
         <StyledItem onClick={onClick}>
             <StyledChild gap={10} width='30%'>
                 <IdIssue>[ID-{issue.id}]</IdIssue>
-                <ListText title={issue.titulo}>{issue.titulo} - Fechado em: {issue.dataFechamento}</ListText>
+                <ListText title={issue.titulo}>{issue.titulo}</ListText>
             </StyledChild>
-            <StyledChild width='60%' justify='center'>
-                <ListText title={issue.descricao}>{issue.descricao}</ListText>
+            <StyledChild width='30%' justify='center'>
+                <ListText>Fechado em {formatDate(issue.dataFechamento!)}</ListText>
+            </StyledChild>
+            <StyledChild width='30%' justify='center'>
+                <ListText>{getClass(issue.classificacao?.id!)} / {getClass(issue.classificacao?.subclassificacaoId!)}</ListText>
             </StyledChild>
             <StyledChild width='10%' justify='end'>
                 <Tooltip title={"Reabrir ocorrência"} mouseEnterDelay={0.9}>

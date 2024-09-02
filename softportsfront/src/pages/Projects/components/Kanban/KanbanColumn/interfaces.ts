@@ -11,4 +11,5 @@ export interface IKanbanColumnProps {
     issues: IIssue[];
     deleteIssue: (id: number) => void
     onAdd?: (id?: number) => void;
+    onView?: (issue: IIssue) => void;
 }
