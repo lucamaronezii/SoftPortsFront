@@ -22,6 +22,13 @@ export interface IShortIssue {
     titulo: string;
 }
 
+interface IComment {
+    id: number,
+    conteudo: string,
+    dataCriacao: number[],
+    nome: string
+}
+
 export interface IIssue {
     id: number | string;
     titulo: string;
@@ -36,16 +43,18 @@ export interface IIssue {
     screenshots?: string[];
     fechada?: boolean;
     caminho?: string;
+    comentarios?: IComment[],
     feedback?: string;
     so?: string;
     projetoId?: number;
     onClick?: () => void;
     onReopen?: () => void;
     columnId?: number;
-    comentarios?: IIssueComment[];
+    old_comentarios?: IIssueComment[];
 }
 
 export interface IProjectPage {
     users: IUser[]
     loadingUsers: boolean,
+    updated?: () => void;
 }

@@ -1,18 +1,19 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Avatar, Flex, Typography } from 'antd'
-import React, { useState } from 'react'
-import { CommentTime, SectionFlex } from './styles'
-import { IIssue, IIssueComment } from '../../../interfaces'
-import { issuesListTest } from '../../../../../mocks/Issues'
+import React from 'react'
 import { ISubPage } from './interfaces'
+import { CommentTime, SectionFlex } from './styles'
 
 const IssueComments: React.FC<ISubPage> = ({ issue }) => {
   const { Text } = Typography
-  const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comentarios || [])
+
+  const handleCreateComment = () => {
+    
+  }
 
   return (
     <SectionFlex>
-      {comments.map((value) => (
+      {issue.comentarios!.map((value) => (
         <Flex gap={12}>
           <Avatar
             icon={<UserOutlined />}
@@ -20,11 +21,11 @@ const IssueComments: React.FC<ISubPage> = ({ issue }) => {
           />
           <Flex vertical gap={5}>
             <Flex gap={12}>
-              <Text style={{ fontWeight: '500' }}>{value.username}</Text>
-              <CommentTime>{value.time}</CommentTime>
+              <Text style={{ fontWeight: '500' }}>{value.nome}</Text>
+              <CommentTime>{value.dataCriacao}</CommentTime>
             </Flex>
             <Flex>
-              <Text style={{ fontWeight: '300' }}>{value.description}</Text>
+              <Text style={{ fontWeight: '300' }}>{value.conteudo}</Text>
             </Flex>
           </Flex>
         </Flex>
