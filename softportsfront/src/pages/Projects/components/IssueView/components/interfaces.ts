@@ -15,9 +15,10 @@ export interface IModalFooter {
     loading: boolean;
     selected: SelectedOptions;
     closed: boolean;
-    setResolved: Dispatch<SetStateAction<boolean>>
     onSave: () => void;
     onCloseIssue: () => void;
+    issue: IIssue;
+    created: () => void;
 }
 
 export interface IFeedbackModal {

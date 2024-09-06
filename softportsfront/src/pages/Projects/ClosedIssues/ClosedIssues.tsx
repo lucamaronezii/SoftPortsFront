@@ -1,4 +1,3 @@
-import { CheckCircleOutlined } from '@ant-design/icons'
 import { Cascader, DatePicker, Flex, Input, message, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -13,11 +12,10 @@ import { priorityList } from '../../../utils/getPriority'
 import { manipulateUsers } from '../../../utils/getUsers'
 import { IUser } from '../../Users/interfaces'
 import ClosedIssue from '../components/ClosedIssue/ClosedIssue'
+import IssueView from '../components/IssueView/IssueView'
 import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { IssuesBox, NoIssuesBox } from '../OpenIssues/styles'
 import { CustomBox } from '../styles'
-import ConfigProvider from '../../../config/ConfigProvider'
-import IssueView from '../components/IssueView/IssueView'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [input, setInput] = useState<string>()

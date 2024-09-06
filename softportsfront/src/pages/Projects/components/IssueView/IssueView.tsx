@@ -52,7 +52,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
     const [base64Images, setBase64Images] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
-    const [resolved, setResolved] = useState<boolean>(false)
     const { selectedProject } = useProjects()
     const axios = useAxios()
 
@@ -102,9 +101,12 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
         onClose('close');
         setFileList([])
         setIsEditing(false)
+        setSelected('details')
     };
 
     const handleUpdateIssue = async () => {
+        console.log(fileList)
+        console.log('aa', fileList.map(image => image.url?.split(',')[1]))
         setLoading(true)
         if (!issue) return
         const body: any = {
@@ -112,7 +114,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             titulo: title,
             descricao: desc,
             so: so,
-            screenshots: fileList.map(image => image.preview?.split(',')[1]),
+            screenshots: fileList.map(image => image.url ? image.url.split(',')[1] : image.preview?.split(',')[1]),
             caminho: road,
             dataEstimada: estimated!.format(),
             prioridade: priority,
@@ -146,6 +148,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))
         }, 1000)
+    }
+
+    const handleIssueCreated = () => {
+        handleGetIssue()
+        setSelected('comments')
     }
 
     const handleLeftButtonClick = () => {
@@ -182,8 +189,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 }));
                 setFileList(files);
             }
+
         }
     }, [issue])
+
+    useEffect(() => {
+        console.log(fileList)
+    }, [fileList])
 
     return (
         <Modal
@@ -224,12 +236,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 </Flex>
             }
             footer={[<ModalFooter
+                issue={issue!}
                 selected={selected}
                 closed={issue?.fechada!}
                 onCloseIssue={handleLeftButtonClick}
                 onSave={handleUpdateIssue}
                 loading={loading}
-                setResolved={setResolved}
+                created={handleIssueCreated}
             />]}
         >
             <Menu
@@ -394,11 +407,11 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 </ChildBox>
             ) : selected === 'comments' ? (
                 <ChildBox>
-                    <IssueComments issue={issue!}/>
+                    <IssueComments issue={issue!} />
                 </ChildBox>
             ) : (
                 <ChildBox>
-                    <IssueLogs issue={issue!}/>
+                    <IssueLogs issue={issue!} />
                 </ChildBox>
             )}
             <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />

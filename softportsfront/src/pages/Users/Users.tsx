@@ -1,26 +1,32 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Cascader, Flex, Input, Layout, message } from 'antd'
+import { Button, Flex, Input, Layout, message } from 'antd'
 import { useEffect, useState } from 'react'
+import { useDebounce } from 'use-debounce'
+import { useAxios } from '../../auth/useAxios'
 import { CustomRow } from '../../components/CustomRow/styles'
-import { positionItems } from '../../utils/roleItems'
 import { CustomBox } from '../Projects/styles'
 import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
 import NewUser from './NewUser/NewUser'
-import { StyledTitle, SubnavPad } from './styles'
-import { useAxios } from '../../auth/useAxios'
-import { useDebounce } from 'use-debounce'
+import { StyledLayout, StyledTitle, SubnavPad } from './styles'
+import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 
 const Users: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
   const [input, setInput] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(true)
   const [debounce] = useDebounce(input, 500)
   const [messageApi, contextHolder] = message.useMessage()
   const axios = useAxios()
 
   const handleGetUsers = async () => {
-    await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
+    setLoading(true)
+    setTimeout(async () => {
+      await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
+        .catch(err => console.error(err))
+        .finally(() => setLoading(false))
+    }, 1500)
   }
 
   const onSuccess = () => {
@@ -36,7 +42,7 @@ const Users: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <Layout style={{ minHeight: '100vh', gap: 27, paddingLeft: 16 }}>
+      <StyledLayout>
         <SubnavPad>
           <StyledTitle>Usuários</StyledTitle>
         </SubnavPad>
@@ -61,14 +67,18 @@ const Users: React.FC = () => {
           </CustomRow>
 
           <Flex gap={16}>
-            {users.map((user) => (
-              <UserCard user={user} />
-            ))}
+            {loading ? (
+              <SkeletonCard total={4} />
+            ) : (
+              users.map((user) => (
+                <UserCard user={user} />
+              ))
+            )}
           </Flex>
         </CustomBox>
 
         <NewUser open={openModal} onClose={() => setOpenModal(false)} onSuccess={onSuccess} />
-      </Layout>
+      </StyledLayout>
     </>
   )
 }

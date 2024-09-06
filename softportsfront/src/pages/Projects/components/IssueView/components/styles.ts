@@ -15,7 +15,7 @@ export const FooterFlex = styled(Flex)`
 `
 
 export const SectionFlex = styled(Flex)`
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 15px;
     overflow-y: auto;
 `
