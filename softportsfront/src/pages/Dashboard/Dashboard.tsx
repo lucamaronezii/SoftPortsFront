@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export const Dashboard = () => {
     const location = useLocation()
@@ -16,7 +16,7 @@ export const Dashboard = () => {
     return (
         <div>
             {contextHolder}
-            dash
+            Dashboard
         </div>
     )
 }

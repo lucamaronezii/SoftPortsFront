@@ -1,14 +1,13 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@ant-design/icons'
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Divider, Flex, Input, Typography } from 'antd'
+import { Button, Divider, Flex, Input } from 'antd'
 import { useMemo, useState } from 'react'
 import KanbanCard from '../KanbanCard/KanbanCard'
 import { IKanbanColumnProps } from './interfaces'
 import { ColumnTitle, StyledCardsBox, StyledKColumn } from './styles'
 
-const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddItem, onClick, onRemoveColumn,
-  updateColumn, addIssue, issues, deleteIssue, onAdd }) => {
+const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, updateColumn, issues, deleteIssue, onAdd, onView }) => {
   const [editMode, setEditMode] = useState<boolean>(false)
 
   const issuesId = useMemo(() => {
@@ -53,24 +52,8 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
         align='center'
         {...listeners}
         {...attributes}
-        style={{ cursor: 'grab' }}
       >
-        {!editMode &&
-          <ColumnTitle onClick={() => setEditMode(true)}>{column.title}</ColumnTitle>
-        }
-        {editMode &&
-          <Input
-            value={column.title}
-            onChange={(e) => updateColumn(column.id, e.target.value)}
-            size='small'
-            autoFocus
-            onBlur={() => setEditMode(false)}
-            onKeyDown={(e) => {
-              if (e.key !== "Enter") return;
-              setEditMode(false);
-            }}
-          />
-        }
+        <ColumnTitle>{column.title}</ColumnTitle>
       </Flex>
       <Divider style={{ marginTop: 0 }} />
       <StyledCardsBox vertical>
@@ -80,6 +63,7 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
               key={issue.id}
               issue={issue}
               deleteIssue={deleteIssue}
+              onView={onView}
             />
           ))}
         </SortableContext>
@@ -88,7 +72,7 @@ const KanbanColumn: React.FC<IKanbanColumnProps> = ({ column, children, onAddIte
         style={{ position: 'absolute', bottom: 13 }}
         icon={<PlusOutlined />}
         shape='circle'
-        onClick={() => addIssue(column.id)}
+        onClick={() => onAdd!(column.id)}
       />
     </StyledKColumn>
   )

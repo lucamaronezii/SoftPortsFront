@@ -1,6 +1,4 @@
-export type Id = string | number;
-
 export type Column = {
-    id: Id,
+    id: number,
     title: string
 }

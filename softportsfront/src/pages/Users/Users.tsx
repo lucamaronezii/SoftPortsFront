@@ -1,60 +1,85 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Cascader, Flex, Input, Layout } from 'antd'
-import { useState } from 'react'
+import { Button, Flex, Input, Layout, message } from 'antd'
+import { useEffect, useState } from 'react'
+import { useDebounce } from 'use-debounce'
+import { useAxios } from '../../auth/useAxios'
 import { CustomRow } from '../../components/CustomRow/styles'
-import { positionItems } from '../../utils/roleItems'
 import { CustomBox } from '../Projects/styles'
 import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
 import NewUser from './NewUser/NewUser'
-import { StyledTitle, SubnavPad } from './styles'
+import { StyledLayout, StyledTitle, SubnavPad } from './styles'
+import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 
 const Users: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
-  
+  const [input, setInput] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(true)
+  const [debounce] = useDebounce(input, 500)
+  const [messageApi, contextHolder] = message.useMessage()
+  const axios = useAxios()
+
+  const handleGetUsers = async () => {
+    setLoading(true)
+    setTimeout(async () => {
+      await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
+        .catch(err => console.error(err))
+        .finally(() => setLoading(false))
+    }, 1500)
+  }
+
+  const onSuccess = () => {
+    setOpenModal(false)
+    messageApi.success('Usuário cadastrado com sucesso')
+    handleGetUsers()
+  }
+
+  useEffect(() => {
+    handleGetUsers()
+  }, [debounce])
+
   return (
-    <Layout style={{ minHeight: '100vh', gap: 27, paddingLeft: 16 }}>
-      <SubnavPad>
-        <StyledTitle>Usuários</StyledTitle>
-      </SubnavPad>
-      <CustomBox mr={20}>
-        <CustomRow>
-          <Flex gap={15}>
-            <div>
+    <>
+      {contextHolder}
+      <StyledLayout>
+        <SubnavPad>
+          <StyledTitle>Usuários</StyledTitle>
+        </SubnavPad>
+        <CustomBox mr={20}>
+          <CustomRow>
+            <Flex gap={15}>
               <Input.Search
                 placeholder='Pesquisar usuário'
+                onChange={(e) => setInput(e.target.value)}
                 allowClear
                 enterButton
               />
-            </div>
-            <Cascader
-              removeIcon
-              placeholder='Filtrar por cargo'
-              multiple
-              maxTagCount={'responsive'}
-              options={positionItems}
-            />
+            </Flex>
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              iconPosition='end'
+              onClick={() => setOpenModal(true)}
+            >
+              Novo usuário
+            </Button>
+          </CustomRow>
+
+          <Flex gap={16}>
+            {loading ? (
+              <SkeletonCard total={4} />
+            ) : (
+              users.map((user) => (
+                <UserCard user={user} />
+              ))
+            )}
           </Flex>
-          <Button
-            type='primary'
-            icon={<PlusOutlined />}
-            iconPosition='end'
-            onClick={() => setOpenModal(true)}
-          >
-            Novo usuário
-          </Button>
-        </CustomRow>
+        </CustomBox>
 
-        <Flex gap={16}>
-          {users.map((user) => (
-            <UserCard user={user} />
-          ))}
-        </Flex>
-      </CustomBox>
-
-      <NewUser open={openModal} onClose={() => setOpenModal(false)} onOk={() => { }} />
-    </Layout>
+        <NewUser open={openModal} onClose={() => setOpenModal(false)} onSuccess={onSuccess} />
+      </StyledLayout>
+    </>
   )
 }
 

@@ -1,34 +1,33 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Avatar, Flex, Typography } from 'antd'
-import React, { useState } from 'react'
-import { CommentTime } from './styles'
-import { IIssue, IIssueComment } from '../../../interfaces'
-import { issuesListTest } from '../../../../../mocks/Issues'
+import React from 'react'
+import { ISubPage } from './interfaces'
+import { CommentTime, SectionFlex } from './styles'
+import { handleCommentDate } from '../../../../../utils/handleDate'
 
-const IssueComments: React.FC<{ issue?: IIssue }> = ({ }) => {
+const IssueComments: React.FC<ISubPage> = ({ issue }) => {
   const { Text } = Typography
-  const [comments, setComments] = useState<IIssueComment[]>(issuesListTest[0].comentarios || [])
 
   return (
-    <Flex vertical gap={15} style={{ overflowY: 'auto' }}>
-      {comments.map((value) => (
-        <Flex gap={12}>
+    <SectionFlex>
+      {issue.comentarios!.map((value, index) => (
+        <Flex key={index} gap={12}>
           <Avatar
             icon={<UserOutlined />}
             style={{ minWidth: '31px' }}
           />
           <Flex vertical gap={5}>
             <Flex gap={12}>
-              <Text style={{ fontWeight: '500' }}>{value.username}</Text>
-              <CommentTime>{value.time}</CommentTime>
+              <Text style={{ fontWeight: '500' }}>{value.nome}</Text>
+              <CommentTime>{handleCommentDate(value.dataCriacao)}</CommentTime>
             </Flex>
             <Flex>
-              <Text style={{ fontWeight: '300' }}>{value.description}</Text>
+              <Text style={{ fontWeight: '300' }}>{value.conteudo}</Text>
             </Flex>
           </Flex>
         </Flex>
       ))}
-    </Flex>
+    </SectionFlex>
   )
 }
 

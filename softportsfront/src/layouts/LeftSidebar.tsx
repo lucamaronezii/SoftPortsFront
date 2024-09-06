@@ -1,6 +1,7 @@
-import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, UserOutlined } from '@ant-design/icons'
+import { FolderFilled, FolderOutlined, LogoutOutlined, PieChartFilled, PieChartOutlined, SettingFilled, SettingOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons'
 import { useKeycloak } from '@react-keycloak/web'
 import { Flex } from 'antd'
+import { jwtDecode } from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import logo from '../assets/SoftPortsLogo.png'
 import { useAxios } from '../auth/useAxios'
@@ -15,6 +16,8 @@ const LeftSidebar = () => {
   const { keycloak } = useKeycloak()
   const { projects, setProjects } = useProjects()
   const axios = useAxios()
+
+  const user = jwtDecode<any>(keycloak.idToken!)
 
   const getProjects = async () => {
     await axios.get('/projeto')
@@ -55,8 +58,8 @@ const LeftSidebar = () => {
         />
         <SidebarItem
           text='Usuários'
-          icFilled={<UserOutlined />}
-          icOutlined={<UserOutlined />}
+          icFilled={<TeamOutlined />}
+          icOutlined={<TeamOutlined />}
           to='/usuarios'
         />
         <SidebarItem
@@ -66,12 +69,19 @@ const LeftSidebar = () => {
           to='/config'
         />
       </Flex>
-      <SidebarItem
-        text='Logout'
-        icFilled={<LogoutOutlined />}
-        icOutlined={<LogoutOutlined />}
-        onLogout={() => keycloak.logout()}
-      />
+      <Flex vertical gap={8}>
+        <SidebarItem
+          text={user.given_name}
+          icFilled={<UserOutlined />}
+          icOutlined={<UserOutlined />}
+        />
+        <SidebarItem
+          text='Logout'
+          icFilled={<LogoutOutlined />}
+          icOutlined={<LogoutOutlined />}
+          onLogout={() => keycloak.logout()}
+        />
+      </Flex>
     </CustomSidebar>
   )
 }

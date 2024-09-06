@@ -1,4 +1,3 @@
-import { CheckCircleOutlined } from '@ant-design/icons'
 import { Cascader, DatePicker, Flex, Input, message, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -6,18 +5,17 @@ import { useDebounce } from 'use-debounce'
 import img from '../../../assets/empty.svg'
 import { useAxios } from '../../../auth/useAxios'
 import { CustomRow } from '../../../components/CustomRow/styles'
-import SkeletonGroup from '../../../components/SkeletonGroup/SkeletonGroup'
+import SkeletonList from '../../../components/SkeletonGroup/SkeletonList'
 import useProjects from '../../../hooks/useProjects'
 import { classList } from '../../../utils/getClass'
 import { priorityList } from '../../../utils/getPriority'
 import { manipulateUsers } from '../../../utils/getUsers'
 import { IUser } from '../../Users/interfaces'
 import ClosedIssue from '../components/ClosedIssue/ClosedIssue'
+import IssueView from '../components/IssueView/IssueView'
 import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { IssuesBox, NoIssuesBox } from '../OpenIssues/styles'
 import { CustomBox } from '../styles'
-import ConfigProvider from '../../../config/ConfigProvider'
-import IssueView from '../components/IssueView/IssueView'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [input, setInput] = useState<string>()
@@ -127,7 +125,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   }
 
   const handleClear = () => {
-    setFilterPriority([]); setFilterUsers([])
+    setFilterPriority([]); setFilterUsers([]); setFilterClass([])
   }
 
   useEffect(() => {
@@ -151,7 +149,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handleIssueView = (issue: IIssue) => {
     setOpenIssue(true)
-    setSelectedIssue({ id: issue.id, titulo: issue.titulo })
+    setSelectedIssue({ id: Number(issue.id), titulo: issue.titulo })
   }
 
   return (
@@ -188,7 +186,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
         <IssuesBox>
           {loading ? (
-            <SkeletonGroup total={3} />
+            <SkeletonList total={3} />
           ) : (
             closedIssues && closedIssues.length > 0 ? (
               closedIssues.map((issue, index) => (

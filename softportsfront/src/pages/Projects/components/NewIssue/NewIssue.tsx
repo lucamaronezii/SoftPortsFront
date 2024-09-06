@@ -68,6 +68,19 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban, pr
         return false;
     };
 
+    const handleSuccess = () => {
+        onOk('success')
+        setTitle('')
+        setDescription('')
+        setRoad('')
+        setSystemVersion('')
+        setPriority(undefined)
+        setStatus(undefined)
+        setEstimated(dayjs())
+        setFileList([])
+        setSelectedUsers([])
+    }
+
     const handleCreateIssue = async () => {
         setLoading(true)
         const body = {
@@ -86,7 +99,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban, pr
             subclassificacaoId: classification[1]
         }
         await axios.post('tarefa', body)
-            .then(res => { console.log(res); onOk('success') })
+            .then(_ => handleSuccess())
             .catch(err => console.log(err))
             .finally(() => setLoading(false))
     }

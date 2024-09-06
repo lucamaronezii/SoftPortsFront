@@ -1,7 +1,7 @@
 import { IIssue } from "../../../interfaces";
-import { Id } from "../KanbanColumn/types";
 
 export interface IKanbanCard {
     issue: IIssue;
-    deleteIssue: (id: Id) => void;
+    deleteIssue: (id: number) => void;
+    onView?: (issue: IIssue) => void;
 }

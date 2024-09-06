@@ -12,4 +12,5 @@ export const IssuesBox = styled(Flex)`
     gap: 12px;
     flex-direction: column;
     flex-grow: 1;
+    overflow-y: auto;
 `

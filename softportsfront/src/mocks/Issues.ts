@@ -22,7 +22,7 @@ export const issuesListTest: IIssue[] = [
         prioridade: 2,
         usuarios: usersList,
         dataEstimada: 109389028,
-        comentarios: [
+        old_comentarios: [
             {
                 username: 'Luis Gonzaga',
                 description: 'Descrição do comentário!',
