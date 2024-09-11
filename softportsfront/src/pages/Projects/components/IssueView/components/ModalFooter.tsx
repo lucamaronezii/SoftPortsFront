@@ -12,13 +12,13 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
     const [input, setInput] = useState<string>()
     const [loadingPut, setLoadingPut] = useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage()
-    const [allUsers, setAllUsers] = useState<IUser[]>([])
     const [userId, setUserId] = useState<number>()
     const { keycloak } = useKeycloak()
     const axios = useAxios()
     const nameInKeycloak = jwtDecode<any>(keycloak.idToken!).given_name
 
     const handleFindUser = (response: IUser[]) => {
+        console.log(response)
         const activeUser = response.find(user => user.nome == nameInKeycloak)
         if (activeUser) {
             setUserId(activeUser.id)

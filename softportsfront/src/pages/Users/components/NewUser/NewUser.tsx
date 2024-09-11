@@ -2,11 +2,11 @@ import { PlusOutlined, UserAddOutlined } from '@ant-design/icons'
 import { Button, Flex, message, Modal, Typography, UploadProps } from 'antd'
 import { UploadFile } from 'antd/lib'
 import React, { useState } from 'react'
-import { useAxios } from '../../../auth/useAxios'
-import { TitleModal } from '../../../components/CustomRow/styles'
-import TitleInput from '../../../components/TitleInput/TitleInput'
-import { getBase64 } from '../../../utils/getBase64'
-import { FileType } from '../../Projects/components/NewIssue/NewIssue'
+import { useAxios } from '../../../../auth/useAxios'
+import { TitleModal } from '../../../../components/CustomRow/styles'
+import TitleInput from '../../../../components/TitleInput/TitleInput'
+import { getBase64 } from '../../../../utils/getBase64'
+import { FileType } from '../../../Projects/components/NewIssue/NewIssue'
 import { INewUser } from './interfaces'
 
 const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
@@ -55,6 +55,10 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
             .finally(() => setLoading(false))
     }
 
+    const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        e.nativeEvent.key == 'Enter' && (handleCreateUser())
+    }
+
     return (
         <>
             {contextHolder}
@@ -99,18 +103,21 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
                         text='Nome'
                         placeholder='Digite o nome do usuário'
                         value={name}
+                        onKeyDown={handleKey}
                         onChange={(e) => setName(e.target.value)}
                     />
                     <TitleInput
                         text='Username'
                         placeholder='Digite o username do usuário'
                         value={username}
+                        onKeyDown={handleKey}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                     <TitleInput
                         text='E-mail'
                         placeholder='Digite o e-mail de acesso do usuário'
                         value={email}
+                        onKeyDown={handleKey}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     {/* <TitleInput

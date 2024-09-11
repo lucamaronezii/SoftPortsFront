@@ -83,7 +83,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
 
     const handleChange: UploadProps['onChange'] = async ({ fileList }) => {
         setFileList(fileList)
-        console.log(fileList)
         const base64List = await Promise.all(fileList.map(async (file) => {
             if (!file.url && !file.preview) {
                 file.preview = await getBase64(file.originFileObj as FileType);
@@ -105,8 +104,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
     };
 
     const handleUpdateIssue = async () => {
-        console.log(fileList)
-        console.log('aa', fileList.map(image => image.url?.split(',')[1]))
         setLoading(true)
         if (!issue) return
         const body: any = {
@@ -192,10 +189,6 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
 
         }
     }, [issue])
-
-    useEffect(() => {
-        console.log(fileList)
-    }, [fileList])
 
     return (
         <Modal

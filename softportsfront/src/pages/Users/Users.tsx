@@ -7,11 +7,11 @@ import { CustomRow } from '../../components/CustomRow/styles'
 import { CustomBox } from '../Projects/styles'
 import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
-import NewUser from './NewUser/NewUser'
-import { StyledLayout, StyledTitle, SubnavPad } from './styles'
+import NewUser from './components/NewUser/NewUser'
+import { StyledLayout, StyledTitle, StyledUsersBox, SubnavPad } from './styles'
 import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 
-const Users: React.FC = () => {
+const Users = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
   const [input, setInput] = useState<string>('')
@@ -32,6 +32,11 @@ const Users: React.FC = () => {
   const onSuccess = () => {
     setOpenModal(false)
     messageApi.success('Usuário cadastrado com sucesso')
+    handleGetUsers()
+  }
+
+  const onDeleteSuccess = () => {
+    messageApi.success('Usuário excluído com sucesso.')
     handleGetUsers()
   }
 
@@ -66,15 +71,15 @@ const Users: React.FC = () => {
             </Button>
           </CustomRow>
 
-          <Flex gap={16}>
+          <StyledUsersBox>
             {loading ? (
               <SkeletonCard total={4} />
             ) : (
               users.map((user) => (
-                <UserCard user={user} />
+                <UserCard user={user} onDelete={onDeleteSuccess}/>
               ))
             )}
-          </Flex>
+          </StyledUsersBox>
         </CustomBox>
 
         <NewUser open={openModal} onClose={() => setOpenModal(false)} onSuccess={onSuccess} />

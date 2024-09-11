@@ -15,6 +15,13 @@ export const StyledTitle = styled(Typography)`
 
 export const StyledLayout = styled(Layout)`
     min-height: 100vh;
-    gap: 27px;
     padding-left: 16px;
+    gap: 27px;
+`
+
+export const StyledUsersBox = styled.div`
+    gap: 16px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 `
