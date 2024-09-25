@@ -32,6 +32,7 @@ type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, projectUsers }) => {
     const [selected, setSelected] = useState<SelectedOptions | any>('details')
     const [issue, setIssue] = useState<IIssue>()
+    const [logs, setLogs] = useState()
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [title, setTitle] = useState<string | undefined>()
     const [desc, setDesc] = useState<string>()
@@ -59,6 +60,13 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
         setLoadingIssue(true)
         await axios.get(`tarefa/${issueId}`)
             .then(res => setIssue(res.data))
+            .catch(err => console.error(err))
+            .finally(handleGetIssueLogs)
+    }
+
+    const handleGetIssueLogs = async () => {
+        await axios.get(`tarefa/auditoria/${issueId}`)
+            .then(res => { setLogs(res.data); console.log(res.data) })
             .catch(err => console.error(err))
             .finally(() => setTimeout(() => setLoadingIssue(false), 1000))
     }
@@ -404,7 +412,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 </ChildBox>
             ) : (
                 <ChildBox>
-                    <IssueLogs issue={issue!} />
+                    <IssueLogs issue={issue!} logs={logs}/>
                 </ChildBox>
             )}
             <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />

@@ -1,31 +1,53 @@
-import { Button, Cascader, Flex, Input, Table, TableColumnsType } from 'antd';
+import { Button, Cascader, Checkbox, Flex, Input, Table } from 'antd';
 import { useState } from 'react';
-import { DataType, matrixData } from '../../../mocks/Matrix';
+import { derivativesData, matrixData } from '../../../mocks/Matrix';
 import { CustomRow } from '../components/IssueView/styles';
 import { CustomBox } from '../styles';
 
-const columnsMap: TableColumnsType<DataType> = Array.from({ length: 15 }, (_, index) => ({
-  title: `Requisito ${index + 1}`,
-  dataIndex: `address`,
-  key: `${index + 1}`,
-  align: "center",
-  width: 150,
-}));
-
-columnsMap.splice(
-  0,
-  0,
-  {
-    title: 'Issue',
-    dataIndex: 'name',
-    key: 'name',
-    fixed: 'left',
-    width: 180
-  },
-)
-
 const Matrix = () => {
-  const [data, setData] = useState<DataType[]>(matrixData);
+  const [data, setData] = useState(matrixData);
+
+  // Função para lidar com a mudança de estado da checkbox
+  const handleCheckboxChange = (problemId: React.Key, derivativeId: number) => (e: any) => {
+    const checked = e.target.checked;
+
+    // Atualiza o estado local
+    setData(prevData => prevData.map(item => {
+      if (item.key === problemId) {
+        return { ...item, [`requisito${derivativeId}`]: checked };
+      }
+      return item;
+    }));
+
+    // Loga no console os IDs
+    console.log(`Derivative ID: ${derivativeId}, Problem ID: ${problemId}`);
+  };
+
+  const columnsMap: any = derivativesData.map((derivative) => ({
+    title: derivative.name,
+    dataIndex: `requisito${derivative.id}`, // Use um dataIndex único para cada derivado
+    key: `requisito${derivative.id}`,
+    align: "center",
+    width: 150,
+    render: (_: any, record: any) => (
+      <Checkbox
+        checked={record[`requisito${derivative.id}`]}
+        onChange={handleCheckboxChange(record.key, derivative.id)}
+      />
+    ),
+  }));
+
+  columnsMap.splice(
+    0,
+    0,
+    {
+      title: 'Issue',
+      dataIndex: 'name',
+      key: 'name',
+      fixed: 'left' as const,
+      width: 180
+    },
+  );
 
   return (
     <CustomBox>

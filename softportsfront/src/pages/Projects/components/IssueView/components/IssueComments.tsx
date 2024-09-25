@@ -10,7 +10,7 @@ const IssueComments: React.FC<ISubPage> = ({ issue }) => {
 
   return (
     <SectionFlex>
-      {issue.comentarios!.map((value, index) => (
+      {issue.comentarios && issue.comentarios!.map((value, index) => (
         <Flex key={index} gap={12}>
           <Avatar
             icon={<UserOutlined />}
