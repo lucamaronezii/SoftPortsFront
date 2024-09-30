@@ -5,24 +5,24 @@ export const usersList: IUser[] = [
         id: 1,
         nome: 'Luca Steyer',
         value: 'Luca Steyer',
-        cargo: 'Desenvolvedor'
+        roles: ['Desenvolvedor']
     },
     {
         id: 2,
         nome: 'Lucca Farinek',
         value: 'Lucca Farinek',
-        cargo: 'Testador'
+        roles: ['Testador']
     },
     {
         id: 3,
         nome: 'Eduardo Cordeiro',
         value: 'Eduardo Cordeiro',
-        cargo: 'Gestor'
+        roles: ['Gestor']
     },
     {
         id: 4,
         nome: 'John Doe',
         value: 'John Doe',
-        cargo: 'Gestor'
+        roles: ['Gestor']
     },
 ]

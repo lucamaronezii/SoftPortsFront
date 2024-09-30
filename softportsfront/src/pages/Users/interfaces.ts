@@ -4,8 +4,9 @@ export interface IUser {
     password?: string;
     email?: string;
     value?: string;
-    cargo?: string;
+    roles?: string[];
     keycloakId?: string;
+    foto?: string;
 }
 
 export interface IUserCardProps {

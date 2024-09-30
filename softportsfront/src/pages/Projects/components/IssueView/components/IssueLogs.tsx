@@ -5,6 +5,8 @@ import { ISubPage, LogResponse, MappedLog } from './interfaces'
 import { TimelineItemProps } from 'antd/lib'
 import { errColor } from '../../../../../styles/theme'
 import { ReactNode } from 'react'
+import { getStatus } from '../../../../../utils/getStatus'
+import { getPriority } from '../../../../../utils/getPriority'
 
 const mapLogToMessage = (log: LogResponse): MappedLog => {
   const { nome: keycloakId } = log.customRevisionEntityResponse;
@@ -17,16 +19,16 @@ const mapLogToMessage = (log: LogResponse): MappedLog => {
   if (log.caminhoModificado) changes.push(`caminho para "${log.caminho}"`);
   if (log.dataFechamentoModificado && log.dataFechamento) changes.push(`data de fechamento para ${new Date(log.dataFechamento).toLocaleDateString()}`);
   if (log.dataEstimadaModificado) changes.push(`data estimada para correção para ${new Date(log.dataEstimada).toLocaleDateString()}`);
-  if (log.statusModificado) changes.push(`status para "${log.status}"`);
+  if (log.statusModificado) changes.push(`status para "${getStatus(log.status)}"`);
   if (log.fechadaModificado) changes.push(`ocorrência ${log.fechada ? 'fechada' : 'aberta'}`);
-  if (log.prioridadeModificado) changes.push(`prioridade para "${log.prioridade}"`);
-  if (log.projetoModificado) changes.push(`projeto para "${log.projetoId}"`);
+  if (log.prioridadeModificado) changes.push(`prioridade para "${getPriority(log.prioridade)}"`);
+  // if (log.projetoModificado) changes.push(`projeto para "${log.projetoId}"`);
   if (log.feedbackModificado) changes.push(`feedback alterado`);
   if (log.classificacaoIdModificado) changes.push(`classificação alterada`);
-  if (log.usuariosModificado) changes.push(`usuários modificados`);
+  // if (log.usuariosModificado) changes.push(`usuários modificados`);
 
   const message = changes.length > 0
-    ? `Usuário ${keycloakId} alterou ${changes.join(", ")}.`
+    ? `Usuário ${keycloakId} alterou ${changes.join("; ")}.`
     : `Usuário ${keycloakId} não fez alterações.`;
 
   return {

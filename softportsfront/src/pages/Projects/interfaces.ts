@@ -23,10 +23,12 @@ export interface IShortIssue {
 }
 
 interface IComment {
-    id: number,
-    conteudo: string,
-    dataCriacao: number[],
-    nome: string
+    conteudo: {
+        id: number,
+        conteudo: string,
+        dataCriacao: number[],
+        nome: string
+    }[]
 }
 
 export interface IIssue {
@@ -43,7 +45,7 @@ export interface IIssue {
     screenshots?: string[];
     fechada?: boolean;
     caminho?: string;
-    comentarios?: IComment[],
+    comentarios?: IComment,
     feedback?: string;
     so?: string;
     projetoId?: number;

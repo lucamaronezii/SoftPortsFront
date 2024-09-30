@@ -10,23 +10,27 @@ const IssueComments: React.FC<ISubPage> = ({ issue }) => {
 
   return (
     <SectionFlex>
-      {issue.comentarios && issue.comentarios!.map((value, index) => (
-        <Flex key={index} gap={12}>
-          <Avatar
-            icon={<UserOutlined />}
-            style={{ minWidth: '31px' }}
-          />
-          <Flex vertical gap={5}>
-            <Flex gap={12}>
-              <Text style={{ fontWeight: '500' }}>{value.nome}</Text>
-              <CommentTime>{handleCommentDate(value.dataCriacao)}</CommentTime>
-            </Flex>
-            <Flex>
-              <Text style={{ fontWeight: '300' }}>{value.conteudo}</Text>
+      {issue.comentarios && issue.comentarios.conteudo.length > 0 ? (
+        issue.comentarios.conteudo.map((value, index) => (
+          <Flex key={index} gap={12}>
+            <Avatar
+              icon={<UserOutlined />}
+              style={{ minWidth: '31px' }}
+            />
+            <Flex vertical gap={5}>
+              <Flex gap={12}>
+                <Text style={{ fontWeight: '500' }}>{value.nome}</Text>
+                <CommentTime>{handleCommentDate(value.dataCriacao)}</CommentTime>
+              </Flex>
+              <Flex>
+                <Text style={{ fontWeight: '300' }}>{value.conteudo}</Text>
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
-      ))}
+        ))
+      ) : (
+        <Typography>Nenhum comentário encontrado.</Typography>
+      )}
     </SectionFlex>
   )
 }

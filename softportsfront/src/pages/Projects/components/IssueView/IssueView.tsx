@@ -97,6 +97,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             }
             return file.preview as string;
         }));
+        
         setBase64Images(base64List);
     };
 

@@ -1,15 +1,15 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Flex, Input, message } from 'antd'
+import { Button, Flex, Input, message, Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 import { useAxios } from '../../auth/useAxios'
-import { CustomRow } from '../../components/CustomRow/styles'
+import { CustomGrow, CustomRow } from '../../components/CustomRow/styles'
 import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 import { CustomBox } from '../Projects/styles'
 import NewUser from './components/NewUser/NewUser'
 import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
-import { StyledLayout, StyledTitle, StyledUsersBox, SubnavPad } from './styles'
+import { CustomSubgrow, StyledLayout, StyledTitle, StyledUsersBox, SubnavPad } from './styles'
 
 const Users = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -18,13 +18,25 @@ const Users = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [debounce] = useDebounce(input, 500)
   const [messageApi, contextHolder] = message.useMessage()
+  const [page, setPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [total, setTotal] = useState<number>()
+  const [count, setCount] = useState<number>(0)
+
   const axios = useAxios()
 
   const handleGetUsers = async () => {
     setLoading(true)
-    await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false))
+    setTimeout(async () => {
+      await axios.get(`usuario?nomeUsuario=${input}&tamanhoPagina=${pageSize}&numeroPagina=${page}`)
+        .then(res => {
+          setUsers([...res.data.conteudo])
+          setTotal(res.data.totalRegistros)
+          setPageSize(pageSize)
+        })
+        .catch(err => console.error(err))
+        .finally(() => setLoading(false))
+    }, 1500)
   }
 
   const onSuccess = () => {
@@ -40,7 +52,7 @@ const Users = () => {
 
   useEffect(() => {
     handleGetUsers()
-  }, [debounce])
+  }, [debounce, page, pageSize])
 
   return (
     <>
@@ -69,15 +81,28 @@ const Users = () => {
             </Button>
           </CustomRow>
 
-          <StyledUsersBox>
-            {loading ? (
-              <SkeletonCard total={4} />
-            ) : (
-              users.map((user) => (
-                <UserCard user={user} onDelete={onDeleteSuccess} />
-              ))
-            )}
-          </StyledUsersBox>
+          <CustomGrow>
+            <CustomSubgrow>
+              <StyledUsersBox>
+                {loading ? (
+                  <SkeletonCard total={4} />
+                ) : (
+                  users.map((user) => (
+                    <UserCard user={user} onDelete={onDeleteSuccess} />
+                  ))
+                )}
+              </StyledUsersBox>
+            </CustomSubgrow>
+            <Flex justify='end'>
+              <Pagination
+                current={page}
+                onChange={(page, pageSize) => { setPage(page); setPageSize(pageSize) }}
+                pageSize={pageSize}
+                showSizeChanger
+                total={total}
+              />
+            </Flex>
+          </CustomGrow>
         </CustomBox>
 
         <NewUser open={openModal} onClose={() => setOpenModal(false)} onSuccess={onSuccess} />

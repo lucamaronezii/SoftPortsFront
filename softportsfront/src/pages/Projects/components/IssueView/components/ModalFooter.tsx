@@ -15,12 +15,12 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
     const [userId, setUserId] = useState<number>()
     const { keycloak } = useKeycloak()
     const axios = useAxios()
-    const nameInKeycloak = jwtDecode<any>(keycloak.idToken!).given_name
+    const keycloakId = jwtDecode<any>(keycloak.idToken!).sub
 
     const handleFindUser = (response: IUser[]) => {
-        console.log(response)
-        const activeUser = response.find(user => user.nome == nameInKeycloak)
+        const activeUser = response.find(user => user.keycloakId == keycloakId)
         if (activeUser) {
+            console.log("userid ", userId)
             setUserId(activeUser.id)
         } else {
             console.error("User not found")
@@ -35,7 +35,7 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
 
     const handleGetAllUsers = async () => {
         await axios.get('usuario')
-            .then(res => handleFindUser(res.data.conteudo))
+            .then(res => setTimeout(() => handleFindUser(res.data.conteudo), 1000))
             .catch(err => console.error(err))
     }
 

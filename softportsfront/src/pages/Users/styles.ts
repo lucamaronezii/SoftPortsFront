@@ -20,8 +20,18 @@ export const StyledLayout = styled(Layout)`
 `
 
 export const StyledUsersBox = styled.div`
-    gap: 16px;
-    display: flex;
     flex-direction: row;
+    overflow-y: hidden;
+    position: absolute;
     flex-wrap: wrap;
+    display: flex;
+    flex-grow: 1;
+    gap: 16px;
+`
+
+export const CustomSubgrow = styled(Flex)`
+    flex-direction: column;
+    position: relative;
+    overflow-Y: auto;
+    flex-grow: 1;
 `

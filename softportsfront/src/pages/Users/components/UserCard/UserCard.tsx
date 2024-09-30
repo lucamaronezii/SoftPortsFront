@@ -5,7 +5,7 @@ import blankuser from '../../../../assets/blank_user.jpg'
 import { useAxios } from '../../../../auth/useAxios'
 import Popdelete from '../../../../components/Popdelete/Popdelete'
 import { IUserCardProps } from '../../interfaces'
-import { StyledCard } from './styles'
+import { StyledCard, StyledImg } from './styles'
 
 const UserCard: React.FC<IUserCardProps> = ({ user, onDelete }) => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -34,11 +34,17 @@ const UserCard: React.FC<IUserCardProps> = ({ user, onDelete }) => {
     return (
         <StyledCard
             actions={actions}
-            cover={<img src={blankuser} />}
+            cover={
+                <StyledImg
+                    src={user.foto ? `data:image/png;base64,${user.foto}` : blankuser}
+                    width={180}
+                    height={180}
+                />
+            }
         >
             <Card.Meta
                 title={user.nome}
-                // description={user.cargo}
+                description={user.roles![0] || '-'}
             />
         </StyledCard>
     )

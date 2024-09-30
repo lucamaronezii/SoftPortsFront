@@ -24,7 +24,7 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
         if (hasChild) {
             setIsOpen(!isOpen)
         } else {
-            navigate(to!)
+            if (to) navigate(to)
         }
     }
 

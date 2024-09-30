@@ -10,6 +10,14 @@ import Users from '../pages/Users/Users'
 
 const Router = () => {
     const { keycloak } = useKeycloak();
+    let tries = 0
+
+    if (keycloak.onAuthRefreshError) {
+        tries += 1
+        if (tries == 2) {
+            keycloak.logout()
+        }
+    }
 
     const router = createBrowserRouter([
         {
