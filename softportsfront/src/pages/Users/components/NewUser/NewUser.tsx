@@ -1,25 +1,28 @@
 import { PlusOutlined, UserAddOutlined } from '@ant-design/icons'
-import { Button, Flex, message, Modal, Typography, UploadProps } from 'antd'
+import { Button, Flex, Image, message, Modal, Typography, Upload, UploadProps } from 'antd'
 import { UploadFile } from 'antd/lib'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAxios } from '../../../../auth/useAxios'
 import { TitleModal } from '../../../../components/CustomRow/styles'
 import TitleInput from '../../../../components/TitleInput/TitleInput'
 import { getBase64 } from '../../../../utils/getBase64'
 import { FileType } from '../../../Projects/components/NewIssue/NewIssue'
 import { INewUser } from './interfaces'
+import TitleSelect from '../../../../components/TitleSelect/TitleSelect'
+import { useKeycloakServer } from '../../../../auth/useKeycloakServer'
 
 const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
     const [name, setName] = useState<string>()
     const [username, setUsername] = useState<string>()
+    const [surname, setSurname] = useState<string>()
     const [email, setEmail] = useState<string>()
-    const [password, setPassword] = useState<string>()
     const [loading, setLoading] = useState<boolean>(false)
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [messageApi, contextHolder] = message.useMessage()
     const axios = useAxios()
+    const axiosKc = useKeycloakServer()
 
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
@@ -55,6 +58,7 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
             .finally(() => setLoading(false))
     }
 
+    
     const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.nativeEvent.key == 'Enter' && (handleCreateUser())
     }
@@ -76,28 +80,27 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
             >
                 <Flex vertical gap={10} style={{ marginBlock: '15px' }}>
                     <Flex justify='center'>
-                        <></>
-                        {/* <Upload
-                        listType="picture-circle"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
-                        beforeUpload={beforeUpload}
-                        accept='.jpg, .png, .jpeg'
-                    >
-                        {fileList.length == 1 ? null : uploadButton}
-                    </Upload>
-                    {previewImage && (
-                        <Image
-                            wrapperStyle={{ display: 'none' }}
-                            preview={{
-                                visible: previewOpen,
-                                onVisibleChange: (visible) => setPreviewOpen(visible),
-                                afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                            }}
-                            src={previewImage}
-                        />
-                    )} */}
+                        <Upload
+                            listType="picture-circle"
+                            fileList={fileList}
+                            onPreview={handlePreview}
+                            onChange={handleChange}
+                            beforeUpload={beforeUpload}
+                            accept='.jpg, .png, .jpeg'
+                        >
+                            {fileList.length == 1 ? null : uploadButton}
+                        </Upload>
+                        {previewImage && (
+                            <Image
+                                wrapperStyle={{ display: 'none' }}
+                                preview={{
+                                    visible: previewOpen,
+                                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                                    afterOpenChange: (visible) => !visible && setPreviewImage(''),
+                                }}
+                                src={previewImage}
+                            />
+                        )}
                     </Flex>
                     <TitleInput
                         text='Nome'
@@ -105,6 +108,13 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
                         value={name}
                         onKeyDown={handleKey}
                         onChange={(e) => setName(e.target.value)}
+                    />
+                    <TitleInput
+                        text='Sobrenome'
+                        placeholder='Digite o sobrenome do usuário'
+                        value={surname}
+                        onKeyDown={handleKey}
+                        onChange={(e) => setSurname(e.target.value)}
                     />
                     <TitleInput
                         text='Username'
@@ -120,15 +130,11 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
                         onKeyDown={handleKey}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    {/* <TitleInput
-                    text='Senha'
-                    placeholder='Digite a senha de acesso do usuário'
-                />
-                <TitleSelect
-                    text='Cargo'
-                    allowClear
-                    placeholder='Selecione o cargo do usuário'
-                /> */}
+                    <TitleSelect
+                        text='Cargo'
+                        allowClear
+                        placeholder='Selecione o cargo do usuário'
+                    />
                 </Flex>
             </Modal>
         </>

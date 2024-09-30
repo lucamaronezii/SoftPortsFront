@@ -1,15 +1,15 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Flex, Input, Layout, message } from 'antd'
+import { Button, Flex, Input, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 import { useAxios } from '../../auth/useAxios'
 import { CustomRow } from '../../components/CustomRow/styles'
+import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 import { CustomBox } from '../Projects/styles'
+import NewUser from './components/NewUser/NewUser'
 import UserCard from './components/UserCard/UserCard'
 import { IUser } from './interfaces'
-import NewUser from './components/NewUser/NewUser'
 import { StyledLayout, StyledTitle, StyledUsersBox, SubnavPad } from './styles'
-import SkeletonCard from '../../components/SkeletonGroup/SkeletonCard'
 
 const Users = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -22,11 +22,9 @@ const Users = () => {
 
   const handleGetUsers = async () => {
     setLoading(true)
-    setTimeout(async () => {
-      await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
-        .catch(err => console.error(err))
-        .finally(() => setLoading(false))
-    }, 1500)
+    await axios.get(`usuario?nomeUsuario=${input}`).then(res => setUsers([...res.data.conteudo]))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false))
   }
 
   const onSuccess = () => {
@@ -76,7 +74,7 @@ const Users = () => {
               <SkeletonCard total={4} />
             ) : (
               users.map((user) => (
-                <UserCard user={user} onDelete={onDeleteSuccess}/>
+                <UserCard user={user} onDelete={onDeleteSuccess} />
               ))
             )}
           </StyledUsersBox>

@@ -56,7 +56,7 @@ export interface LogResponse extends IIssue {
     customRevisionEntityResponse: {
         id: number;
         revtstmp: number;
-        keycloakId: string;
+        nome: string;
     };
 };
 

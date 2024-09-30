@@ -7,7 +7,7 @@ import { errColor } from '../../../../../styles/theme'
 import { ReactNode } from 'react'
 
 const mapLogToMessage = (log: LogResponse): MappedLog => {
-  const { keycloakId } = log.customRevisionEntityResponse;
+  const { nome: keycloakId } = log.customRevisionEntityResponse;
   let changes: string[] = [];
 
   if (log.tituloModificado) changes.push(`título para "${log.titulo}"`);
@@ -42,8 +42,6 @@ const mapLogs = (logs: LogResponse[]): MappedLog[] => {
 const IssueLogs: React.FC<ISubPage> = ({ issue, logs }) => {
 
   const mappedLogs = mapLogs(logs.conteudo);
-
-  console.log(mappedLogs);
 
   const mapItems = mappedLogs.map(value => {
     const list: TimelineItemProps[] = []

@@ -19,7 +19,6 @@ root.render(
       </ProjectsContext>
     </ConfigProvider>
   </ReactKeycloakProvider>
-
 );
 
 reportWebVitals();

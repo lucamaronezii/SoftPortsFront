@@ -128,6 +128,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             status: status,
             projetoId: selectedProject.id,
             usuarioIds: selectedUserIds,
+            feedback: feedback,
             classificacaoId: classification[0],
             subclassificacaoId: classification[1]
         }
