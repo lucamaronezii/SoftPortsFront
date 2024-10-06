@@ -1,8 +1,11 @@
-import { AreaChart, DonutChart, Legend } from '@tremor/react';
-import { Flex, message } from 'antd';
+import { Flex, message, Typography } from 'antd';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { CustomChild, CustomDashBox, CustomDashLayout, CustomFirstLine } from './styles';
+import { LineGraph } from './components/Line';
+import { CustomDashBox, CustomDashLayout, CustomFirstLine, DashTitle } from './styles';
+import { PieGraph } from './components/Pie';
+import { ColumnGraph } from './components/Column';
+import { RadarGraph } from './components/Radar';
 
 const registersData = [
     { date: 'Jan 24', Incidentes: 60, Problemas: 65, Mudancas: 24 },
@@ -19,7 +22,7 @@ const registersData = [
     { date: 'Dez 24', Incidentes: 79, Problemas: 34, Mudancas: 49 },
 ];
 
-const sales = [
+const registers = [
     {
         name: 'Incidentes',
         quantity: 980,
@@ -51,35 +54,23 @@ export const Dashboard = () => {
     return (
         <div>
             {contextHolder}
+            {/* dashboard */}
             <CustomDashLayout>
                 <CustomDashBox>
                     <CustomFirstLine>
-                        <CustomChild>
-                            <DonutChart
-                                data={sales}
-                                category="quantity"
-                                index="name"
-                                colors={['rose', 'amber', 'slate']}
-                            />
-                            <Legend
-                                categories={['Incidentes', 'Problemas', 'Mudanças']}
-                                colors={['rose', 'amber', 'slate']}
-                            />
-                        </CustomChild>
-                        <CustomChild><></></CustomChild>
-                        <CustomChild><></></CustomChild>
+                        <Flex vertical gap={12}>
+                            <DashTitle>Ocorrências abertas</DashTitle>
+                            <PieGraph />
+                        </Flex>
+                        <Flex vertical gap={12}>
+                            <DashTitle>Ocorrências por projeto</DashTitle>
+                            <ColumnGraph />
+                        </Flex>
                     </CustomFirstLine>
-
-                    <AreaChart
-                        className="h-80"
-                        data={registersData}
-                        index="date"
-                        categories={['Incidentes', 'Problemas', 'Mudancas']}
-                        colors={['rose', 'amber', 'slate']}
-                        valueFormatter={dataFormatter}
-                        yAxisWidth={100}
-                        onValueChange={(v) => console.log(v)}
-                    />
+                    <Flex vertical gap={8} style={{ flex: 1 }}>
+                        <DashTitle>Ocorrências abertas em 2024</DashTitle>
+                        <LineGraph />
+                    </Flex>
                 </CustomDashBox>
             </CustomDashLayout>
         </div>

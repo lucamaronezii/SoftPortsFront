@@ -89,7 +89,7 @@ const NewProjectModal: React.FC<INewProjectModalProps> = ({ open, onClose }) => 
                         value={selectedUsers}
                         onChange={(e) => setSelectedUsers(e)}
                         fieldNames={{ label: "nome", value: "id" }}
-                        placeholder={'Selecione os usuários relacionados ao projeto'}
+                        placeholder='Selecione os usuários relacionados ao projeto'
                     />
                 </StyledFieldsContainer>
             </Modal>

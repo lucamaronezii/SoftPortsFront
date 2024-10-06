@@ -21,7 +21,6 @@ const Users = () => {
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>()
-  const [count, setCount] = useState<number>(0)
 
   const axios = useAxios()
 

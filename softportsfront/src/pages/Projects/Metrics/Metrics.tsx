@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DefectDensity = () => {
+const Metrics = () => {
   return (
     <div>
       defect density
@@ -8,4 +8,4 @@ const DefectDensity = () => {
   )
 }
 
-export default DefectDensity
+export default Metrics

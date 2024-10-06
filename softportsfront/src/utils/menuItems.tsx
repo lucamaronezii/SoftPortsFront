@@ -19,21 +19,9 @@ export const OpenIssuesMenu: MenuItem[] = [
     icon: <CheckCircleOutlined />,
   },
   {
-    label: 'Rastreamento',
-    key: 'track',
-    icon: <MergeOutlined />,
-    children: [
-      {
-        label: 'Casos de teste',
-        key: 'test',
-        icon: <ScheduleOutlined />
-      },
-      {
-        label: 'Matriz de conflitos',
-        key: 'matrix',
-        icon: <TableOutlined />
-      }
-    ]
+    label: 'Matriz de conflitos',
+    key: 'matrix',
+    icon: <TableOutlined />
   },
   {
     label: 'Métricas',

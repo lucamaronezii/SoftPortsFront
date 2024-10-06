@@ -5,7 +5,7 @@ import OpenIssues from './OpenIssues/OpenIssues';
 import FixedIssues from './ClosedIssues/ClosedIssues';
 import Matrix from './Matrix/Matrix';
 import TestCases from './TestCases/TestCases';
-import DefectDensity from './Metrics/DefectDensity/DefectDensity';
+import Metrics from './Metrics/Metrics';
 import Requests from './Requests/Requests';
 import { SubnavPad } from '../Users/styles';
 import useProjects from '../../hooks/useProjects';
@@ -35,7 +35,7 @@ const Projects = () => {
       case "matrix":
         return <Matrix />
       case "defect":
-        return <DefectDensity />
+        return <Metrics />
       case "requests":
         return <Requests />
       case "config":
