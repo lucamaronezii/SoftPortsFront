@@ -1,10 +1,11 @@
-import { message } from 'antd';
-import { useEffect } from 'react';
+import { message, Spin } from 'antd';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ColumnGraph } from './components/Column';
 import { LineGraph } from './components/Line';
 import { PieGraph } from './components/Pie';
 import { CustomDashBox, CustomDashLayout, CustomFirstLine, DashTitle, StyledBox } from './styles';
+import { useAxios } from '../../auth/useAxios';
 
 const registersData = [
     { date: 'Jan 24', Incidentes: 60, Problemas: 65, Mudancas: 24 },
@@ -42,6 +43,16 @@ const dataFormatter = (number: number) =>
 export const Dashboard = () => {
     const location = useLocation()
     const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState<boolean>(false)
+    const [data, setData] = useState<any>()
+    const axios = useAxios()
+
+    const getDashboard = async () => {
+        await axios.get('/dashboard')
+            .then(res => setData(res.data))
+            .catch(err => console.error(err))
+    }
+
 
     useEffect(() => {
         message.destroy()
@@ -50,28 +61,38 @@ export const Dashboard = () => {
         }
     }, [location.state])
 
+    useEffect(() => {
+        getDashboard()
+    }, [])
+
     return (
         <div>
             {contextHolder}
             {/* dashboard */}
-            <CustomDashLayout>
-                <CustomDashBox>
-                    <CustomFirstLine>
-                        <StyledBox>
-                            <DashTitle>Ocorrências abertas</DashTitle>
-                            <PieGraph />
+            {!data ? (
+                <CustomDashLayout align='center' justify='center'>
+                    <Spin size='large' />
+                </CustomDashLayout>
+            ) : (
+                <CustomDashLayout>
+                    <CustomDashBox>
+                        <CustomFirstLine>
+                            <StyledBox>
+                                <DashTitle>Ocorrências abertas</DashTitle>
+                                <PieGraph dados={data.dados}/>
+                            </StyledBox>
+                            <StyledBox>
+                                <DashTitle>Ocorrências por projeto</DashTitle>
+                                <ColumnGraph dadosPorProjeto={data.dadosPorProjeto}/>
+                            </StyledBox>
+                        </CustomFirstLine>
+                        <StyledBox flex={1}>
+                            <DashTitle>Ocorrências abertas em 2024</DashTitle>
+                            <LineGraph dadosPorAno={data.dadosPorAno} />
                         </StyledBox>
-                        <StyledBox>
-                            <DashTitle>Ocorrências por projeto</DashTitle>
-                            <ColumnGraph />
-                        </StyledBox>
-                    </CustomFirstLine>
-                    <StyledBox flex={1}>
-                        <DashTitle>Ocorrências abertas em 2024</DashTitle>
-                        <LineGraph />
-                    </StyledBox>
-                </CustomDashBox>
-            </CustomDashLayout>
+                    </CustomDashBox>
+                </CustomDashLayout>
+            )}
         </div>
     )
 }
