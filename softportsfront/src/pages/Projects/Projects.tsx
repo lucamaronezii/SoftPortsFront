@@ -34,7 +34,7 @@ const Projects = () => {
         return <TestCases />
       case "matrix":
         return <Matrix />
-      case "defect":
+      case "metric":
         return <Metrics />
       case "requests":
         return <Requests />

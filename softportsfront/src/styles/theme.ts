@@ -47,5 +47,8 @@ export const components: Partial<ComponentsToken> = {
     },
     Typography: {
         fontFamily: 'Inter'
+    },
+    Progress: {
+        defaultColor: prColor
     }
 }

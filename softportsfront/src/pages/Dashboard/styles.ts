@@ -37,3 +37,11 @@ export const CustomChild = styled(Flex)`
 export const DashTitle = styled(Typography)`
     font-size: 1.25rem;
 `
+
+export const StyledBox = styled(Flex)`
+    background-color: #242424;
+    padding: 14px;
+    border-radius: 8px;
+    gap: 12px;
+    flex-direction: column;
+`

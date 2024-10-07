@@ -26,14 +26,7 @@ export const OpenIssuesMenu: MenuItem[] = [
   {
     label: 'Métricas',
     key: 'metric',
-    icon: <SlidersOutlined />,
-    children: [
-      {
-        label: 'Defect Density',
-        key: 'defect',
-        icon: <AlertOutlined />
-      }
-    ]
+    icon: <SlidersOutlined />
   },
   {
     label: 'Solicitações',

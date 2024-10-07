@@ -33,17 +33,20 @@ const lineChartData = {
         {
             label: "Incidentes",
             data: [1000, 2000, 3000, 4000, 5000],
-            borderColor: prColor
+            backgroundColor: prColor,
+            borderColor: prColor,
         },
         {
             label: "Problemas",
             data: [2000, 3000, 1000, 5000, 1000],
-            borderColor: darken(0.15, prColor)
+            backgroundColor: darken(0.15, prColor),
+            borderColor: darken(0.15, prColor),
         },
         {
             label: "Mudanças",
             data: [5000, 4000, 3000, 2000, 1000],
-            borderColor: lighten(0.2, prColor)
+            backgroundColor: lighten(0.2, prColor),
+            borderColor: lighten(0.2, prColor),
         },
     ]
 }

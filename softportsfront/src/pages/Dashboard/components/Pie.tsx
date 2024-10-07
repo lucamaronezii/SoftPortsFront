@@ -1,8 +1,7 @@
-import { Line, Pie, PolarArea } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, RadialLinearScale, ArcElement } from 'chart.js'
-import { prColor } from '../../../styles/theme'
+import { ArcElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, RadialLinearScale, Title, Tooltip } from 'chart.js'
 import { darken, lighten } from 'polished'
-import styled from 'styled-components'
+import { Pie } from 'react-chartjs-2'
+import { prColor } from '../../../styles/theme'
 
 ChartJS.register(
     CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, RadialLinearScale, ArcElement
@@ -21,6 +20,9 @@ const pieChartData = {
             prColor,
             darken(0.15, prColor),
             lighten(0.2, prColor)
+        ],
+        borderColor: [
+            'transparent'
         ]
     }]
 }

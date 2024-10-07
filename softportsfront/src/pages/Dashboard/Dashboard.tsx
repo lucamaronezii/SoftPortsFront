@@ -1,11 +1,10 @@
-import { Flex, message, Typography } from 'antd';
+import { message } from 'antd';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { LineGraph } from './components/Line';
-import { CustomDashBox, CustomDashLayout, CustomFirstLine, DashTitle } from './styles';
-import { PieGraph } from './components/Pie';
 import { ColumnGraph } from './components/Column';
-import { RadarGraph } from './components/Radar';
+import { LineGraph } from './components/Line';
+import { PieGraph } from './components/Pie';
+import { CustomDashBox, CustomDashLayout, CustomFirstLine, DashTitle, StyledBox } from './styles';
 
 const registersData = [
     { date: 'Jan 24', Incidentes: 60, Problemas: 65, Mudancas: 24 },
@@ -58,19 +57,19 @@ export const Dashboard = () => {
             <CustomDashLayout>
                 <CustomDashBox>
                     <CustomFirstLine>
-                        <Flex vertical gap={12}>
+                        <StyledBox>
                             <DashTitle>Ocorrências abertas</DashTitle>
                             <PieGraph />
-                        </Flex>
-                        <Flex vertical gap={12}>
+                        </StyledBox>
+                        <StyledBox>
                             <DashTitle>Ocorrências por projeto</DashTitle>
                             <ColumnGraph />
-                        </Flex>
+                        </StyledBox>
                     </CustomFirstLine>
-                    <Flex vertical gap={8} style={{ flex: 1 }}>
+                    <StyledBox flex={1}>
                         <DashTitle>Ocorrências abertas em 2024</DashTitle>
                         <LineGraph />
-                    </Flex>
+                    </StyledBox>
                 </CustomDashBox>
             </CustomDashLayout>
         </div>
