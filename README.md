@@ -12,4 +12,4 @@ Link Softports Figma: https://www.figma.com/design/NusAGBYoXfB2AXNDV5W5w1/SoftPo
 
 <br>
 
-Link Softports Back-end: https://github.com/Kominek11/SoftPortsBACK
+Link Softports Back-end: https://github.com/Kominek11/SoftPortsApi
