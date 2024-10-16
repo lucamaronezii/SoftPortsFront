@@ -39,7 +39,7 @@ const Projects = () => {
       case "requests":
         return <Requests />
       case "config":
-        return <ProjectConfig loadingUsers={loadingUsers} users={users} updated={handleGetUsers}/>
+        return <ProjectConfig loadingUsers={loadingUsers} users={users} updated={handleGetUsers} />
     }
   }
 
@@ -48,7 +48,7 @@ const Projects = () => {
     await axios.get(`usuario?projetoId=${selectedProject.id}`)
       .then(res => setUsers(res.data.conteudo))
       .catch(err => console.error(err))
-      .finally(() => setTimeout(() => { setLoadingUsers(false) }, 1000))
+      .finally(() => setLoadingUsers(false))
   }
 
   useEffect(() => {

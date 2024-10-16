@@ -116,7 +116,6 @@ export const LineGraph: React.FC<LineGraphProps> = ({ dadosPorAno }) => {
                 },
             },
         },
-
         scales: {
             y: {
                 beginAtZero: true,

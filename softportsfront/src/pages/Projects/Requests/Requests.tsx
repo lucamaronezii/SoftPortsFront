@@ -1,10 +1,19 @@
+import { Col, Row } from 'antd'
 import React from 'react'
+import { CustomBox } from '../styles'
 
 const Requests = () => {
   return (
-    <div>
-      requests
-    </div>
+    <CustomBox>
+      <Row style={{ backgroundColor: 'red' }}>
+        <Col span={12}>
+          a
+        </Col>
+        <Col span={12}>
+          a
+        </Col>
+      </Row>
+    </CustomBox>
   )
 }
 

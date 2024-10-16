@@ -44,9 +44,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       .then(res => setClosedIssues(res.data.conteudo))
       .catch(err => console.error(err))
       .finally(() => {
-        setTimeout(() => {
           setLoading(false)
-        }, 700)
       })
   }
 

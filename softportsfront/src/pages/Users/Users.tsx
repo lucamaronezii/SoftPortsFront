@@ -26,7 +26,6 @@ const Users = () => {
 
   const handleGetUsers = async () => {
     setLoading(true)
-    setTimeout(async () => {
       await axios.get(`usuario?nomeUsuario=${input}&tamanhoPagina=${pageSize}&numeroPagina=${page}`)
         .then(res => {
           setUsers([...res.data.conteudo])
@@ -35,7 +34,6 @@ const Users = () => {
         })
         .catch(err => console.error(err))
         .finally(() => setLoading(false))
-    }, 1500)
   }
 
   const onSuccess = () => {

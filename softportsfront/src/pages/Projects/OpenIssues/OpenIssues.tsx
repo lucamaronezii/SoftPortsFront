@@ -90,9 +90,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
       })
       .catch(err => console.error(err))
       .finally(() => {
-        setTimeout(() => {
-          setLoading(false)
-        }, 1500)
+        setLoading(false)
       })
   }
 
@@ -289,10 +287,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
     return positions;
   };
-
-  useEffect(() => {
-    const issuesPositions = displayIssuesPositions();
-  }, [columns, issues, seg]);
 
   return (
     <CustomBox>

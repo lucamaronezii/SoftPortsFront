@@ -35,7 +35,7 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
 
     const handleGetAllUsers = async () => {
         await axios.get('usuario')
-            .then(res => setTimeout(() => handleFindUser(res.data.conteudo), 1000))
+            .then(res => handleFindUser(res.data.conteudo))
             .catch(err => console.error(err))
     }
 

@@ -1,4 +1,4 @@
-import { UserOutlined } from '@ant-design/icons'
+import { CommentOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Flex, Typography } from 'antd'
 import React from 'react'
 import { ISubPage } from './interfaces'
@@ -29,7 +29,10 @@ const IssueComments: React.FC<ISubPage> = ({ issue }) => {
           </Flex>
         ))
       ) : (
-        <Typography>Nenhum comentário encontrado.</Typography>
+        <Flex vertical align='center' gap={12}>
+          <CommentOutlined style={{ fontSize: 25 }} />
+          <Typography>Nenhum comentário encontrado.</Typography>
+        </Flex>
       )}
     </SectionFlex>
   )

@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Cascader, Checkbox, Flex, Input, message, Segmented, Table, Typography } from 'antd';
+import { Button, Cascader, Checkbox, Flex, Input, message, Segmented, Spin, Table, Typography } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
 import { useEffect, useState } from 'react';
 import emptySvg from '../../../assets/empty-table.svg';
@@ -14,6 +14,7 @@ import DerivativeModal from './components/DerivativeModal';
 
 const Matrix = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [loadingDv, setLoadingDv] = useState<boolean>(true)
   const [messageApi, contextHolder] = message.useMessage()
   const [derivatives, setDerivatives] = useState<any[]>([]);
   const [issues, setIssues] = useState<any[]>([]);
@@ -114,12 +115,14 @@ const Matrix = () => {
   }
 
   const fetchDerivatives = async () => {
+    setLoadingDv(true)
     try {
       const response = await axios.get(`/derivado?tamanhoPagina=1000&projetoId=${selectedProject.id}`);
       setDerivatives(response.data.conteudo);
     } catch (error) {
       messageApi.error('Erro ao buscar derivados.');
     }
+    setLoadingDv(false)
   };
 
   const fetchIssues = async () => {
@@ -192,7 +195,7 @@ const Matrix = () => {
           </Flex>
         </CustomRow>
 
-        {!derivatives.length ? (
+        {!loadingDv && !derivatives.length ? (
           <>
             <NoIssuesBox>
               <img src={emptySvg} width={500} />
@@ -201,6 +204,10 @@ const Matrix = () => {
               </Typography.Title>
             </NoIssuesBox>
           </>
+        ) : loadingDv ? (
+          <Flex align='center' justify='center' style={{ flexGrow: 1 }}>
+            <Spin size='large' />
+          </Flex>
         ) : (
           <div style={{ position: 'relative', overflowX: 'auto', overflowY: 'auto', height: '100%' }}>
             <div style={{ position: 'absolute' }}>
@@ -214,6 +221,7 @@ const Matrix = () => {
             </div>
           </div>
         )}
+
         <DerivativeModal
           derivatives={derivatives && derivatives}
           open={openModal}

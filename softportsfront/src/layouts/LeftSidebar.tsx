@@ -27,9 +27,7 @@ const LeftSidebar = () => {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      getProjects()
-    }, 2000)
+    getProjects()
   }, [])
 
   return (
