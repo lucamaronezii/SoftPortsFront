@@ -27,6 +27,8 @@ import { IIssue, IProjectPage, IShortIssue } from '../interfaces'
 import { CustomBox } from '../styles'
 import { IssuesBox, NoIssuesBox } from './styles'
 import SkeletonKanban from '../../../components/SkeletonGroup/SkeletonKanban'
+import useRoles from '../../../hooks/useRoles'
+import RequestForm from '../components/RequestForm/RequestForm'
 
 const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [issues, setIssues] = useState<IIssue[]>([])
@@ -37,6 +39,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [filterClass, setFilterClass] = useState<number[]>([])
   const [seg, setSeg] = useState<number>(0)
   const [openForm, setOpenForm] = useState<boolean>(false)
+  const [openRequest, setOpenRequest] = useState<boolean>(false)
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(true)
   const [openIssue, setOpenIssue] = useState<boolean>(false)
@@ -44,6 +47,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
   const [selectedKanban, setSelectedKanban] = useState<number>()
   const [columns, setColumns] = useState<Column[]>(statusList)
   const { selectedProject } = useProjects()
+  const { isIncluding } = useRoles()
   const axios = useAxios()
 
   const handleIssueView = (issue: IIssue) => {
@@ -71,27 +75,34 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setOpenIssue(false)
   }
 
+  const handleCreatedRequest = () => {
+    setOpenRequest(false)
+    messageApi.success('Solicitação enviada com sucesso.')
+  }
+
   const handleGetIssues = async () => {
     setLoading(true)
-    let params = `projetoId=${selectedProject.id}&fechada=false`
-    input && (params += `&titulo=${input}`)
-    filterPriority.length && (params += `&prioridades=${filterPriority}`)
-    filterUsers.length && (params += `&usuarios=${filterUsers}`)
-    filterClass.length && (params += `&classificacao=${filterClass}`)
-
-    await axios.get(`tarefa?${params}`)
-      .then(res => {
-        const mappedIssues = res.data.conteudo.map((issue: IIssue) => ({
-          ...issue,
-          id: String(issue.id),
-          columnId: issue.status,
-        }));
-        setIssues(mappedIssues);
-      })
-      .catch(err => console.error(err))
-      .finally(() => {
-        setLoading(false)
-      })
+    setTimeout(async () => {
+      let params = `projetoId=${selectedProject.id}&fechada=false`
+      input && (params += `&titulo=${input}`)
+      filterPriority.length && (params += `&prioridades=${filterPriority}`)
+      filterUsers.length && (params += `&usuarios=${filterUsers}`)
+      filterClass.length && (params += `&classificacao=${filterClass}`)
+  
+      await axios.get(`tarefa?${params}`)
+        .then(res => {
+          const mappedIssues = res.data.conteudo.map((issue: IIssue) => ({
+            ...issue,
+            id: String(issue.id),
+            columnId: issue.status,
+          }));
+          setIssues(mappedIssues);
+        })
+        .catch(err => console.error(err))
+        .finally(() => {
+          setLoading(false)
+        })
+    }, 1000)
   }
 
   useEffect(() => {
@@ -219,6 +230,11 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setOpenForm(true)
   }
 
+  const handleOpenRequest = (id?: number) => {
+    id ? setSelectedKanban(Number(id)) : setSelectedKanban(undefined)
+    setOpenRequest(true)
+  }
+
   const handlePriority = (array: any[]) => {
     return array.includes('priority')
       ? setFilterPriority([1, 2, 3, 4])
@@ -273,21 +289,6 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
     setFilterPriority([]); setFilterUsers([]); setFilterClass([])
   }
 
-  const displayIssuesPositions = () => {
-    const positions = columns.map(column => {
-      const issuesInColumn = issues.filter(issue => issue.columnId === column.id);
-      return {
-        columnTitle: column.title,
-        issues: issuesInColumn.map((issue, index) => ({
-          title: issue.titulo,
-          position: index + 1,
-        }))
-      };
-    });
-
-    return positions;
-  };
-
   return (
     <CustomBox>
       {contextHolder}
@@ -320,7 +321,7 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
           />
         </Flex>
         <Button
-          onClick={() => handleOpenForm()}
+          onClick={() => !isIncluding('DESENVOLVEDOR') ? handleOpenForm() : handleOpenRequest()}
           icon={<PlusOutlined />}
           type='primary'
           iconPosition='end'>
@@ -421,6 +422,8 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
         onOk={handleOkButton}
         onClose={() => setOpenForm(false)}
       />
+
+      <RequestForm onCreated={handleCreatedRequest} open={openRequest} onClose={() => setOpenRequest(false)} />
     </CustomBox>
   )
 }

@@ -7,6 +7,7 @@ import { FooterFlex } from './styles'
 import { jwtDecode } from 'jwt-decode'
 import { useKeycloak } from '@react-keycloak/web'
 import { IUser } from '../../../../Users/interfaces'
+import useRoles from '../../../../../hooks/useRoles'
 
 const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, loading, closed, issue, created }) => {
     const [input, setInput] = useState<string>()
@@ -16,6 +17,7 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
     const { keycloak } = useKeycloak()
     const axios = useAxios()
     const keycloakId = jwtDecode<any>(keycloak.idToken!).sub
+    const { isIncluding } = useRoles()
 
     const handleFindUser = (response: IUser[]) => {
         const activeUser = response.find(user => user.keycloakId == keycloakId)
@@ -75,20 +77,22 @@ const ModalFooter: React.FC<IModalFooter> = ({ onSave, selected, onCloseIssue, l
                         />
                     </Flex>
                 }
-                <FooterFlex>
-                    <Button
-                        icon={closed ? <RollbackOutlined /> : <CheckOutlined />}
-                        iconPosition='end'
-                        loading={loading}
-                        onClick={onCloseIssue}>
-                        {closed ? 'Reabrir' : 'Fechar'} ocorrência
-                    </Button>
-                    <Button
-                        type="primary"
-                        onClick={onSave}
-                        loading={loading}>
-                        Salvar</Button>
-                </FooterFlex>
+                {!isIncluding('DESENVOLVEDOR') &&
+                    <FooterFlex>
+                        <Button
+                            icon={closed ? <RollbackOutlined /> : <CheckOutlined />}
+                            iconPosition='end'
+                            loading={loading}
+                            onClick={onCloseIssue}>
+                            {closed ? 'Reabrir' : 'Fechar'} ocorrência
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={onSave}
+                            loading={loading}>
+                            Salvar</Button>
+                    </FooterFlex>
+                }
             </Flex>
         </>
     )

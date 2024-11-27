@@ -11,6 +11,12 @@ import { FileType } from '../../../Projects/components/NewIssue/NewIssue'
 import { INewUser } from './interfaces'
 import { IRole, rolesList } from '../../../../mocks/Roles'
 
+const tooltipText = `
+    ADMIN - Todas as permissões<br/><br/>
+    GESTOR - Apenas não pode criar novos projetos<br/><br/>
+    DESENVOLVEDOR - Pode apenas criar e mudar status de solicitações
+`;
+
 const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
     const [name, setName] = useState<string>()
     const [username, setUsername] = useState<string>()
@@ -151,6 +157,7 @@ const NewUser: React.FC<INewUser> = ({ open, onClose, onSuccess }) => {
                     />
                     <TitleSelect
                         text='Cargo'
+                        tooltip={<span dangerouslySetInnerHTML={{ __html: tooltipText }} />}
                         allowClear
                         onChange={(_, role) => setRole(role as IRole)}
                         fieldNames={{ label: 'name', value: 'id' }}

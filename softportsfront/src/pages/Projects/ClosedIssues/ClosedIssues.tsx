@@ -34,18 +34,20 @@ const OpenIssues: React.FC<IProjectPage> = ({ loadingUsers, users }) => {
 
   const handleGetClosedIssues = async () => {
     setLoading(true)
-    let params = `projetoId=${selectedProject.id}&fechada=true`
-    input && (params += `&titulo=${input}`)
-    filterPriority.length && (params += `&prioridades=${filterPriority}`)
-    filterUsers.length && (params += `&usuarios=${filterUsers}`)
-    filterDate.length && (params += `&dataInicio=${filterDate[0]}&dataFim=${filterDate[1]}`)
-    filterClass.length && (params += `&classificacao=${filterClass}`)
-    await axios.get(`tarefa?${params}`)
-      .then(res => setClosedIssues(res.data.conteudo))
-      .catch(err => console.error(err))
-      .finally(() => {
+    setTimeout(async () => {
+      let params = `projetoId=${selectedProject.id}&fechada=true`
+      input && (params += `&titulo=${input}`)
+      filterPriority.length && (params += `&prioridades=${filterPriority}`)
+      filterUsers.length && (params += `&usuarios=${filterUsers}`)
+      filterDate.length && (params += `&dataInicio=${filterDate[0]}&dataFim=${filterDate[1]}`)
+      filterClass.length && (params += `&classificacao=${filterClass}`)
+      await axios.get(`tarefa?${params}`)
+        .then(res => setClosedIssues(res.data.conteudo))
+        .catch(err => console.error(err))
+        .finally(() => {
           setLoading(false)
-      })
+        })
+    }, 1000)
   }
 
   const handleOkButton = (status?: string | undefined) => {

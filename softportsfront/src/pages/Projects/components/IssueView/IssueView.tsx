@@ -26,6 +26,7 @@ import ModalFooter from './components/ModalFooter'
 import { SelectedOptions } from './components/interfaces'
 import { IIssueView } from './interfaces'
 import { ChildBox, colProps, CustomCol, CustomRow, SpinBox } from './styles'
+import useRoles from '../../../../hooks/useRoles'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -54,6 +55,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
     const [loading, setLoading] = useState<boolean>(false)
     const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false)
     const { selectedProject } = useProjects()
+    const { isIncluding } = useRoles()
     const axios = useAxios()
 
     const handleGetIssue = async () => {
@@ -97,7 +99,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             }
             return file.preview as string;
         }));
-        
+
         setBase64Images(base64List);
     };
 
@@ -173,16 +175,16 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
 
     useEffect(() => {
         if (issue) {
-            setTitle(issue.titulo)
-            setDesc(issue.descricao)
-            setSo(issue.so)
-            setPriority(issue.prioridade)
-            setStatus(issue.status)
-            setRoad(issue.caminho)
-            setFeedback(issue.feedback)
-            setClassification([issue.classificacao!.id, issue.classificacao!.subclassificacaoId])
-            setEstimated(dayjs.unix(issue.dataEstimada / 1000))
-            setIssueUsers(issue.usuarios)
+            setTitle(issue.titulo && issue.titulo)
+            setDesc(issue.descricao && issue.descricao)
+            setSo(issue.so && issue.so)
+            setPriority(issue.prioridade && issue.prioridade)
+            setStatus(issue.status && issue.prioridade)
+            setRoad(issue.caminho && issue.caminho)
+            setFeedback(issue.feedback && issue.feedback)
+            setClassification(issue.classificacao && [issue.classificacao!.id, issue.classificacao!.subclassificacaoId] as any)
+            setEstimated(issue.dataEstimada && dayjs.unix(issue.dataEstimada / 1000) as any)
+            setIssueUsers(issue.usuarios && issue.usuarios)
             const assignedUserIds = issue.usuarios.map(user => user.id);
             setSelectedUserIds(assignedUserIds);
 
@@ -211,31 +213,33 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
             title={
                 <Flex align='center' gap={15}>
                     {issueTitle}
-                    <Flex gap={10} align='center'>
-                        {selected === 'details' &&
-                            <Tooltip placement='top' title={'Editar campos'}>
+                    {!isIncluding('DESENVOLVEDOR') &&
+                        <Flex gap={10} align='center'>
+                            {selected === 'details' &&
+                                <Tooltip placement='top' title={'Editar campos'}>
+                                    <Button
+                                        type={isEditing ? 'primary' : 'dashed'}
+                                        onClick={() => setIsEditing(!isEditing)}
+                                        icon={isEditing ? <CheckOutlined /> : <EditOutlined />}
+                                        size='small'
+                                    />
+                                </Tooltip>
+                            }
+                            <Popdelete
+                                title={'Excluir ocorrência'}
+                                description={'Tem certeza que deseja excluir a ocorrência?'}
+                                onConfirm={handleDeleteIssue}
+                                placement='right'
+                            >
                                 <Button
-                                    type={isEditing ? 'primary' : 'dashed'}
-                                    onClick={() => setIsEditing(!isEditing)}
-                                    icon={isEditing ? <CheckOutlined /> : <EditOutlined />}
+                                    type='primary'
+                                    icon={<DeleteOutlined />}
                                     size='small'
+                                    danger
                                 />
-                            </Tooltip>
-                        }
-                        <Popdelete
-                            title={'Excluir ocorrência'}
-                            description={'Tem certeza que deseja excluir a ocorrência?'}
-                            onConfirm={handleDeleteIssue}
-                            placement='right'
-                        >
-                            <Button
-                                type='primary'
-                                icon={<DeleteOutlined />}
-                                size='small'
-                                danger
-                            />
-                        </Popdelete>
-                    </Flex>
+                            </Popdelete>
+                        </Flex>
+                    }
                 </Flex>
             }
             footer={[<ModalFooter
@@ -414,7 +418,7 @@ const IssueView: React.FC<IIssueView> = ({ open, onClose, issueId, issueTitle, p
                 </ChildBox>
             ) : (
                 <ChildBox>
-                    <IssueLogs issue={issue!} logs={logs}/>
+                    <IssueLogs issue={issue!} logs={logs} />
                 </ChildBox>
             )}
             <FeedbackModal issueId={issueId} open={feedbackOpen} onCancel={() => setFeedbackOpen(false)} onSuccess={handleIssueClosed} />

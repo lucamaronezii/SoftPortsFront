@@ -9,31 +9,43 @@ import { getStatus } from '../../../../../utils/getStatus'
 import { getPriority } from '../../../../../utils/getPriority'
 
 const mapLogToMessage = (log: LogResponse): MappedLog => {
-  const { nome: keycloakId } = log.customRevisionEntityResponse;
+  const { nome: keycloakId, revtstmp } = log.customRevisionEntityResponse;
   let changes: string[] = [];
 
-  if (log.tituloModificado) changes.push(`título para "${log.titulo}"`);
-  if (log.descricaoModificado) changes.push(`descrição para "${log.descricao}"`);
-  if (log.soModificado) changes.push(`sistema operacional para "${log.so}"`);
-  if (log.screenshotsModificado) changes.push(`screenshots alteradas`);
-  if (log.caminhoModificado) changes.push(`caminho para "${log.caminho}"`);
-  if (log.dataFechamentoModificado && log.dataFechamento) changes.push(`data de fechamento para ${new Date(log.dataFechamento).toLocaleDateString()}`);
-  if (log.dataEstimadaModificado) changes.push(`data estimada para correção para ${new Date(log.dataEstimada).toLocaleDateString()}`);
-  if (log.statusModificado) changes.push(`status para "${getStatus(log.status)}"`);
-  if (log.fechadaModificado) changes.push(`ocorrência ${log.fechada ? 'fechada' : 'aberta'}`);
-  if (log.prioridadeModificado) changes.push(`prioridade para "${getPriority(log.prioridade)}"`);
-  // if (log.projetoModificado) changes.push(`projeto para "${log.projetoId}"`);
-  if (log.feedbackModificado) changes.push(`feedback alterado`);
-  if (log.classificacaoIdModificado) changes.push(`classificação alterada`);
-  // if (log.usuariosModificado) changes.push(`usuários modificados`);
+  const timestamp = new Date(revtstmp).toLocaleString('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  });
 
-  const message = changes.length > 0
-    ? `Usuário ${keycloakId} alterou ${changes.join("; ")}.`
-    : `Usuário ${keycloakId} não fez alterações.`;
+  let message;
+
+  if (log.dataFechamentoModificado && log.fechadaModificado) {
+    changes.push(`${log.fechada ? 'fechou' : 'reabriu'} a ocorrência`)
+    message = `Usuário ${keycloakId} ${changes.join("; ")} - ${timestamp}.` 
+  } else {
+    if (log.tituloModificado) changes.push(`título para "${log.titulo}"`);
+    if (log.descricaoModificado) changes.push(`descrição para "${log.descricao}"`);
+    if (log.soModificado) changes.push(`sistema operacional para "${log.so}"`);
+    if (log.screenshotsModificado) changes.push(`screenshots alteradas`);
+    if (log.caminhoModificado) changes.push(`caminho para "${log.caminho}"`);
+    // if (log.dataFechamentoModificado && log.dataFechamento) changes.push(`data de fechamento para ${new Date(log.dataFechamento).toLocaleDateString()}`);
+    if (log.dataEstimadaModificado) changes.push(`data estimada para correção para ${new Date(log.dataEstimada).toLocaleDateString()}`);
+    if (log.statusModificado) changes.push(`status para "${getStatus(log.status)}"`);
+    // if (log.fechadaModificado) changes.push(`ocorrência ${log.fechada ? 'fechada' : 'aberta'}`);
+    if (log.prioridadeModificado) changes.push(`prioridade para "${getPriority(log.prioridade)}"`);
+    // if (log.projetoModificado) changes.push(`projeto para "${log.projetoId}"`);
+    if (log.feedbackModificado) changes.push(`feedback atribuindo "${log.feedback}"`);
+    if (log.classificacaoIdModificado) changes.push(`classificação alterada`);
+    // if (log.usuariosModificado) changes.push(`usuários modificados`);
+
+    message = changes.length > 0
+      ? `Usuário ${keycloakId} alterou ${changes.join("; ")} - ${timestamp}.`
+      : `Usuário ${keycloakId} não fez alterações.`;
+  }
 
   return {
     userId: keycloakId,
-    message,
+    message: message || '',
   };
 };
 
@@ -53,7 +65,8 @@ const IssueLogs: React.FC<ISubPage> = ({ issue, logs }) => {
 
   let items: TimelineItemProps[] | undefined = [
     {
-      children: `Ocorrência criada em ${formatUnix(issue.dataCriacao!)}`
+      children: `Ocorrência criada em ${formatUnix(issue.dataCriacao!)}`,
+      color: '#FFF'
     },
     ...mapItems.flat(),
     ...(issue.fechada ?

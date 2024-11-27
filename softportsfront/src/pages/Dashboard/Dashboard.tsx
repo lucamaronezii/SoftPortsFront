@@ -1,11 +1,11 @@
 import { message, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAxios } from '../../auth/useAxios';
 import { ColumnGraph } from './components/Column';
 import { LineGraph } from './components/Line';
 import { PieGraph } from './components/Pie';
 import { CustomDashBox, CustomDashLayout, CustomFirstLine, DashTitle, StyledBox } from './styles';
-import { useAxios } from '../../auth/useAxios';
 
 const registersData = [
     { date: 'Jan 24', Incidentes: 60, Problemas: 65, Mudancas: 24 },
@@ -52,7 +52,6 @@ export const Dashboard = () => {
             .then(res => setData(res.data))
             .catch(err => console.error(err))
     }
-
 
     useEffect(() => {
         message.destroy()

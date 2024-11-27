@@ -89,7 +89,7 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban, pr
             so: systemVersion,
             screenshots: fileList.map(image => image.preview?.split(',')[1]),
             caminho: road,
-            dataEstimada: estimated!.format(),
+            dataEstimada: estimated && estimated!.format(),
             prioridade: priority,
             posicao: 1,
             status: status,
@@ -125,13 +125,6 @@ const NewIssue: React.FC<INewIssue> = ({ open, onClose, onOk, selectedKanban, pr
                 destroyOnClose
             >
                 <Flex gap={10} style={{ marginTop: 20 }}>
-                    <Flex>
-                        <Steps
-                            direction='vertical'
-                            items={stepperItems}
-                            style={{ height: 'calc(100% + 100px)' }}
-                        />
-                    </Flex>
                     <FieldsBox>
                         <TitleInput
                             text='Título'

@@ -1,8 +1,8 @@
 import { Button, Card, Flex, Typography } from "antd";
 import styled from "styled-components";
 
-export const ConfigBox = styled(Flex)`
-    flex-direction: column;
+export const ConfigBox = styled(Flex) <{ row?: boolean }>`
+    flex-direction: ${props => props.row ? 'row' : 'column'};
     gap: 20px;
     width: 200px;
 `
@@ -14,7 +14,7 @@ export const CustomCard = styled(Card)`
 
 export const CustomText = styled(Typography.Text)`
     font-size: 12px;
-` 
+`
 
 export const CustomButton = styled(Button)`
     width: 40%;

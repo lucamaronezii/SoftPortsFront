@@ -6,6 +6,7 @@ import { darken } from "polished";
 export const StyledItem = styled(Flex)`
     background-color: ${secBgColor};
     border-radius: 6px;
+    margin-right: 6px;
     padding: 10px;
     gap: 12px;
     justify-content: space-between;

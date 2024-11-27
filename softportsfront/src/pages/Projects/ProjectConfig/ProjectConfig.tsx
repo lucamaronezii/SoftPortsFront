@@ -1,4 +1,4 @@
-import { Button, Flex, message, Select } from 'antd'
+import { Button, Flex, Input, message, Select } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAxios } from '../../../auth/useAxios'
@@ -15,9 +15,11 @@ const ProjectConfig: React.FC<IProjectPage> = ({ users, updated }) => {
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false)
     const [loadingAllUsers, setLoadingAllUsers] = useState<boolean>(true)
     const [loadingNewUsers, setLoadingNewUsers] = useState<boolean>(false)
+    const [loadingName, setLoadingName] = useState<boolean>(false)
+    const [newName, setNewName] = useState<string>('')
     const [selectedUserIds, setSelectedUserIds] = useState<number[]>(users.map(user => user.id))
     const [messageApi, contextHolder] = message.useMessage()
-    const { selectedProject, projects, setProjects } = useProjects()
+    const { selectedProject, projects, setProjects, setSelectedProject } = useProjects()
     const navigate = useNavigate()
     const axios = useAxios()
 
@@ -50,9 +52,36 @@ const ProjectConfig: React.FC<IProjectPage> = ({ users, updated }) => {
     }
 
     const handleUpdated = () => {
-        messageApi.success('Lista de usuários atualizada com sucesso.')
+        messageApi.success('Projeto atualizado com sucesso.')
         setLoadingNewUsers(false)
         updated!()
+    }
+
+    const handleUpdatedName = () => {
+        messageApi.success('Projeto atualizado com sucesso.')
+        setLoadingName(false)
+        const updatedProject = { ...selectedProject, nome: newName };
+        setSelectedProject(updatedProject);
+        const updatedProjects = projects.map(project =>
+            project.id === selectedProject.id ? updatedProject : project
+        );
+        setProjects(updatedProjects);
+        updated!()
+    }
+
+    const handleSaveName = async () => {
+        setLoadingName(true)
+        const body = {
+            id: selectedProject.id,
+            nome: newName,
+            organizacaoId: 1,
+            usuarios: users.map(user => user.id)
+        }
+        setTimeout(async () => {
+            await axios.put('projeto', body)
+                .then(handleUpdatedName)
+                .catch(err => console.error(err))
+        }, 1300)
     }
 
     const handleSaveUsers = async () => {
@@ -71,6 +100,7 @@ const ProjectConfig: React.FC<IProjectPage> = ({ users, updated }) => {
     }
 
     useEffect(() => {
+        setNewName(selectedProject.nome)
         setRelatedUsers(users)
         handleGetAllUsers()
     }, [])
@@ -79,7 +109,24 @@ const ProjectConfig: React.FC<IProjectPage> = ({ users, updated }) => {
         <>
             {contextHolder}
             <CustomBox>
-                <ConfigBox>
+                <ConfigBox row>
+                    <CustomCard
+                        title='Nome do projeto'
+                        bordered={false}
+                    >
+                        <Flex vertical gap={12}>
+                            <CustomText>Edite o nome do projeto selecinado atual.</CustomText>
+                            <Input
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                                placeholder='Digite o novo nome do projeto'
+                            />
+                            <CustomButton
+                                loading={loadingName}
+                                onClick={handleSaveName}>
+                                Salvar</CustomButton>
+                        </Flex>
+                    </CustomCard>
                     <CustomCard
                         title='Gerenciar usuários do projeto'
                         bordered={false}
@@ -102,6 +149,8 @@ const ProjectConfig: React.FC<IProjectPage> = ({ users, updated }) => {
                                 Salvar</CustomButton>
                         </Flex>
                     </CustomCard>
+                </ConfigBox>
+                <ConfigBox>
                     <CustomCard
                         title='Excluir projeto'
                         bordered={false}

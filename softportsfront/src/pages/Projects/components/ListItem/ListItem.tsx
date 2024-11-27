@@ -29,10 +29,12 @@ const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, 
         <Typography>{getStatus(status)}</Typography>
       </StyledChild>
       <StyledChild width='10%' justify='center'>
-        <IssueTag priority={prioridade}>{getPriority(prioridade)}</IssueTag>
+        <IssueTag priority={prioridade}>
+          {prioridade ? getPriority(prioridade) : 'Nenhuma'}
+        </IssueTag>
       </StyledChild>
       <StyledChild width='15%' justify='center'>
-        <Typography>{getClass(classificacao?.id!)} / {getClass(classificacao?.subclassificacaoId!)}</Typography>
+        <Typography>{classificacao ? getClass(classificacao?.id!) + ' / ' + getClass(classificacao?.subclassificacaoId!) : '-'}</Typography>
       </StyledChild>
       <StyledChild justify='center'>
         <Avatar.Group
@@ -49,7 +51,7 @@ const ListItem: React.FC<IIssue> = ({ id, titulo, prioridade, usuarios, status, 
         </Avatar.Group>
       </StyledChild>
       <StyledChild width='15%' justify='end'>
-        <Typography>{formatDate(dataEstimada)}</Typography>
+        <Typography>{dataEstimada ? formatDate(dataEstimada) : '-'}</Typography>
       </StyledChild>
     </StyledItem>
   )

@@ -8,11 +8,13 @@ import { prColor } from '../../styles/theme'
 import NewProjectModal from '../../layouts/components/NewProjectModal/NewProjectModal'
 import { ISidebarItemProps } from './interfaces'
 import { ArrowDown, OptionsBox, PjtsContainer, StyledOption, StyledSidebarItem, StyledText } from './styles'
+import useRoles from '../../hooks/useRoles'
 
 const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlined, hasChild, projects, loadingPjts, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
     const { selectedProject, setSelectedProject } = useProjects()
+    const { isIncluding } = useRoles()
     const navigate = useNavigate()
     const location = useLocation()
     const selIcon = cloneElement(icFilled as React.ReactElement, { style: { color: '#FFF', fontSize: '19px' } })
@@ -71,12 +73,14 @@ const SidebarItem: React.FC<ISidebarItemProps> = ({ text, to, icFilled, icOutlin
                             </StyledOption>
                         ))}
                     </PjtsContainer>
-                    <StyledOption onClick={() => setOpenModal(true)}>
-                        <Flex align='center' gap={12}>
-                            <PlusOutlined />
-                            <StyledText>Novo projeto</StyledText>
-                        </Flex>
-                    </StyledOption>
+                    {!isIncluding('DESENVOLVEDOR') &&
+                        <StyledOption onClick={() => setOpenModal(true)}>
+                            <Flex align='center' gap={12}>
+                                <PlusOutlined />
+                                <StyledText>Novo projeto</StyledText>
+                            </Flex>
+                        </StyledOption>
+                    }
                 </OptionsBox>
             }
             <NewProjectModal open={openModal} onClose={() => setOpenModal(false)} />
